@@ -1,0 +1,26 @@
+{
+    "name": "Orkhon Valley Guide",
+    "short_name": "Orkhon",
+    "description": "Орхоны хөндийн соёлын дурсгалт газрын виртуал хөтөч | Orkhon Valley Cultural Landscape Virtual Guide",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0a0f1e",
+    "theme_color": "#0a0f1e",
+    "categories": ["travel", "education", "tourism"],
+    "lang": "mn",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
