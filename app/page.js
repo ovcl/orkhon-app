@@ -18,7 +18,7 @@ const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: { staggerChildren: 0.06, delayChildren: 0.15 }
+        transition: { staggerChildren: 0.06, delayChildren: 0.1 }
     }
 };
 
@@ -34,7 +34,6 @@ export default function Home() {
     useEffect(() => {
         const savedLang = localStorage.getItem('language');
         if (savedLang) setLanguage(savedLang);
-
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -58,7 +57,7 @@ export default function Home() {
     const navCards = [
         { href: "/sites", icon: "fa-solid fa-landmark", title: t.navSites, desc: language === 'mn' ? `${sitesData.length} дурсгал` : `${sitesData.length} sites`, gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", accentColor: "bg-blue-500" },
         { href: "/map", icon: "fa-solid fa-map-location-dot", title: t.navMap, desc: language === 'mn' ? 'Интерактив' : 'Interactive', gradient: "from-emerald-500/20 via-teal-500/10 to-transparent", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-400", accentColor: "bg-emerald-500" },
-        { href: "/tours", icon: "fa-solid fa-vr-cardboard", title: t.navTours, desc: language === 'mn' ? `${vrSitesCount} VR` : `${vrSitesCount} VR`, gradient: "from-orange-500/20 via-amber-500/10 to-transparent", iconBg: "bg-orange-500/15", iconColor: "text-orange-400", accentColor: "bg-orange-500" },
+        { href: "/tours", icon: "fa-solid fa-vr-cardboard", title: t.navTours, desc: `${vrSitesCount} VR`, gradient: "from-orange-500/20 via-amber-500/10 to-transparent", iconBg: "bg-orange-500/15", iconColor: "text-orange-400", accentColor: "bg-orange-500" },
         { href: "/info", icon: "fa-solid fa-circle-info", title: t.navInfo, desc: language === 'mn' ? 'Мэдээлэл' : 'Details', gradient: "from-purple-500/20 via-pink-500/10 to-transparent", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", accentColor: "bg-purple-500" }
     ];
 
@@ -67,49 +66,48 @@ export default function Home() {
             <OfflineIndicator />
 
             {/* Header */}
-            <header
-                className={clsx(
-                    "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-5 py-4 flex justify-between items-center max-w-[480px] mx-auto w-full",
-                    scrolled
-                        ? "bg-[#070b14]/90 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20"
-                        : "bg-transparent"
-                )}
-            >
+            <header className={clsx(
+                "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-5 py-4 flex justify-between items-center max-w-[480px] mx-auto w-full",
+                scrolled
+                    ? "bg-[#070b14]/90 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20"
+                    : "bg-transparent"
+            )}>
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shadow-black/10 bg-white">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg bg-white">
                         <img src="/logo.png" className="w-6 h-6 object-contain" alt="Logo" />
                     </div>
-                    <h1 className={clsx("font-heading font-bold text-lg tracking-wide text-white transition-all duration-500", scrolled ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2")}>
+                    <h1 className={clsx(
+                        "font-heading font-bold text-lg tracking-wide text-white transition-all duration-500",
+                        scrolled ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"
+                    )}>
                         {t.appName}
                     </h1>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={toggleLanguage}
-                        className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/8"
-                        style={{ backdropFilter: 'blur(8px)' }}
-                    >
-                        {language === 'mn' ? 'EN' : 'MN'}
-                    </button>
-                </div>
+                <button
+                    onClick={toggleLanguage}
+                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/10"
+                    style={{ backdropFilter: 'blur(8px)' }}
+                >
+                    {language === 'mn' ? 'EN' : 'MN'}
+                </button>
             </header>
 
             <main>
                 {/* Hero */}
-                <div className="relative h-[60vh] flex items-end p-6 overflow-hidden">
+                <div className="relative h-[62vh] flex items-end p-6 overflow-hidden">
                     <div className="absolute inset-0 z-0">
                         <img src="/hero.jpg" className="w-full h-full object-cover scale-105" alt="Orkhon Valley" />
-                        {/* Multi-layer gradient for maximum depth */}
                         <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-[#070b14]/50 to-transparent"></div>
                         <div className="absolute inset-0 bg-gradient-to-r from-[#070b14]/30 to-transparent"></div>
-                        {/* Ambient glow orbs */}
                         <div className="absolute bottom-0 left-1/4 w-56 h-56 bg-amber-500/8 rounded-full blur-[100px] animate-pulse"></div>
                         <div className="absolute top-1/3 right-0 w-40 h-40 bg-blue-500/5 rounded-full blur-[80px]"></div>
                     </div>
 
+                    {/* FIX: initial="hidden" — анимейшн зөв ажиллана */}
                     <motion.div
                         className="relative z-10 w-full mb-8"
-                        initial="visible" animate="visible"
+                        initial="hidden"
+                        animate="visible"
                         variants={staggerContainer}
                     >
                         <motion.div variants={fadeIn} className="flex items-center gap-2 mb-4">
@@ -118,8 +116,7 @@ export default function Home() {
                                     background: 'rgba(245, 158, 11, 0.06)',
                                     backdropFilter: 'blur(16px)',
                                     boxShadow: '0 0 24px rgba(245, 158, 11, 0.08)',
-                                }}
-                            >
+                                }}>
                                 <i className="fa-solid fa-crown text-[10px] text-amber-400"></i>
                                 <span className="text-amber-300 text-[10px] font-bold uppercase tracking-[0.15em]">{t.heroBadge}</span>
                             </span>
@@ -138,7 +135,8 @@ export default function Home() {
                 {/* Nav Grid */}
                 <motion.div
                     className="grid grid-cols-2 gap-3 px-5 -mt-8 relative z-20"
-                    initial="visible" animate="visible"
+                    initial="hidden"
+                    animate="visible"
                     variants={staggerContainer}
                 >
                     {navCards.map((item, idx) => (
@@ -149,7 +147,6 @@ export default function Home() {
                                 className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-gradient-to-br ${item.gradient} border border-white/6 transition-all duration-300 group-hover:border-white/12 group-hover:shadow-lg relative overflow-hidden`}
                                 style={{ backdropFilter: 'blur(10px)' }}
                             >
-                                {/* Subtle inner glow */}
                                 <div className={`absolute -top-6 -right-6 w-16 h-16 ${item.accentColor} rounded-full opacity-[0.06] blur-xl`}></div>
                                 <div className={`w-9 h-9 rounded-xl ${item.iconBg} flex items-center justify-center ${item.iconColor} transition-transform duration-300 group-hover:scale-110`}>
                                     <i className={`${item.icon} text-base`}></i>
@@ -205,8 +202,7 @@ export default function Home() {
                 <div className="px-5 mt-1 mb-8">
                     <Link href="/map" className="block group">
                         <div className="relative rounded-2xl overflow-hidden h-28 border border-white/6 transition-all duration-300 group-hover:border-white/12 group-hover:shadow-lg"
-                            style={{ background: 'linear-gradient(135deg, rgba(10,15,30,0.95), rgba(25,35,55,0.8))' }}
-                        >
+                            style={{ background: 'linear-gradient(135deg, rgba(10,15,30,0.95), rgba(25,35,55,0.8))' }}>
                             <div className="absolute inset-0 opacity-15 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center"></div>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-[60px]"></div>
                             <div className="absolute inset-0 z-10 flex items-center justify-between px-6">

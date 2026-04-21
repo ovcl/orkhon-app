@@ -10,18 +10,13 @@ import BottomNav from '../../../components/BottomNav';
 
 export default function SiteDetail({ params }) {
     const [language, setLanguage] = useState('mn');
+    const [activeImg, setActiveImg] = useState(0);
     const site = sitesData.find(s => s.id.toString() === params.id);
-    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
         const savedLang = localStorage.getItem('language');
         if (savedLang) setLanguage(savedLang);
-
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', () => {});
     }, []);
 
     const toggleLanguage = () => {
@@ -31,154 +26,180 @@ export default function SiteDetail({ params }) {
     };
 
     if (!site) return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f172a] text-slate-400">
+        <div className="flex flex-col items-center justify-center min-h-screen text-slate-400" style={{ background: '#070b14' }}>
             <i className="fa-solid fa-triangle-exclamation text-4xl mb-4 text-amber-500"></i>
-            <p>Site not found</p>
-            <Link href="/sites" className="mt-4 text-amber-500 hover:underline">Return to Sites</Link>
+            <p className="mb-4">Дурсгалт газар олдсонгүй</p>
+            <Link href="/sites" className="px-4 py-2 rounded-xl bg-amber-500 text-slate-900 text-sm font-bold">
+                Буцах
+            </Link>
         </div>
     );
 
     const t = translations[language];
-    const heroImage = site.images && site.images.length > 0 ? site.images[0] : getPlaceHolder(site.id);
-
+    const images = site.images && site.images.length > 0 ? site.images : [getPlaceHolder(site.id)];
+    const heroImage = images[activeImg];
     const siteName = language === 'en' && site.nameEn ? site.nameEn : site.name;
     const siteDescription = language === 'en' && site.descriptionEn ? site.descriptionEn : site.description;
-    const siteCategory = t[site.category] || site.category;
+    const catLabel = t[site.category] || site.category;
 
-    // Protection status colors
     const protectionColors = {
         'Улсын хамгаалалтад': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
         'Аймаг, нийслэлийн хамгаалалтад': 'text-blue-400 bg-blue-500/10 border-blue-500/20',
         'Сум, дүүргийн хамгаалалтад': 'text-orange-400 bg-orange-500/10 border-orange-500/20',
     };
-    const protectionStyle = site.protectionStatus
+    const protStyle = site.protectionStatus
         ? (protectionColors[site.protectionStatus] || 'text-slate-400 bg-slate-500/10 border-slate-500/20')
         : null;
 
     return (
-        <div className="pb-28 min-h-screen bg-[#0f172a]">
-            {/* Navbar Controls */}
-            <div className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-start pointer-events-none">
-                <Link href="/sites" className="pointer-events-auto w-10 h-10 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10">
-                    <i className="fa-solid fa-arrow-left"></i>
+        <div className="pb-28 min-h-screen" style={{ background: '#070b14' }}>
+            {/* Top controls */}
+            <div className="fixed top-0 left-0 right-0 z-50 p-5 flex justify-between items-start pointer-events-none max-w-[480px] mx-auto w-full">
+                <Link href="/sites"
+                    className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15"
+                    style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                    <i className="fa-solid fa-arrow-left text-sm"></i>
                 </Link>
-
-                <button
-                    onClick={toggleLanguage}
-                    className="pointer-events-auto glass-panel px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:bg-white/20 transition-colors uppercase tracking-wider border border-white/20 bg-black/40 backdrop-blur-md"
-                >
-                    {language === 'mn' ? 'EN' : 'MN'}
-                </button>
+                <div className="flex items-center gap-2 pointer-events-auto">
+                    {site.panoramaUrl && (
+                        <Link href="/tours"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors"
+                            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                            <i className="fa-solid fa-vr-cardboard text-[11px]"></i>
+                            VR
+                        </Link>
+                    )}
+                    <button onClick={toggleLanguage}
+                        className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-widest border border-white/15 transition-colors"
+                        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                        {language === 'mn' ? 'EN' : 'MN'}
+                    </button>
+                </div>
             </div>
 
-            {/* Hero Image */}
-            <div className="relative h-[400px]">
-                <img
-                    src={heroImage}
-                    alt={siteName}
-                    className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-black/30"></div>
+            {/* Hero image with thumbnail strip */}
+            <div className="relative h-[420px]">
+                <img src={heroImage} alt={siteName} className="w-full h-full object-cover transition-all duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-[#070b14]/30 to-transparent"></div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
-                        <span className="inline-block px-3 py-1 rounded-lg bg-amber-500 text-slate-900 text-xs font-bold uppercase tracking-wider mb-3 shadow-lg shadow-amber-500/20">
-                            {siteCategory}
+                {/* Image counter */}
+                {images.length > 1 && (
+                    <div className="absolute top-16 right-5 px-2.5 py-1 rounded-lg text-[10px] font-bold text-white border border-white/15"
+                        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}>
+                        {activeImg + 1} / {images.length}
+                    </div>
+                )}
+
+                {/* Thumbnail strip */}
+                {images.length > 1 && (
+                    <div className="absolute bottom-20 left-0 right-0 flex gap-2 px-5 overflow-x-auto no-scrollbar">
+                        {images.map((img, i) => (
+                            <button key={i} onClick={() => setActiveImg(i)}
+                                className={clsx(
+                                    "flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden border-2 transition-all duration-200",
+                                    activeImg === i ? "border-amber-400 scale-105" : "border-white/20 opacity-60 hover:opacity-90"
+                                )}>
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* Title overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                        <span className="inline-block px-3 py-1 rounded-lg bg-amber-500 text-slate-900 text-[10px] font-bold uppercase tracking-wider mb-2.5 shadow-lg shadow-amber-500/20">
+                            {catLabel}
                         </span>
-                        <h1 className="font-heading text-3xl font-bold text-white leading-tight drop-shadow-lg">{siteName}</h1>
+                        <h1 className="font-heading text-[1.7rem] font-bold text-white leading-tight drop-shadow-lg">{siteName}</h1>
                     </motion.div>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="px-6 -mt-6 relative z-10">
+            <div className="px-5 -mt-2 relative z-10">
+                {/* Stats row */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="flex gap-3 mb-6"
-                >
-                    <div className="flex-1 bg-slate-800/80 backdrop-blur-md p-3 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center shadow-lg">
-                        <i className="fa-regular fa-clock text-blue-400 mb-1"></i>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">{t.openStatus}</span>
+                    initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                    className="flex gap-3 mb-5">
+                    <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center"
+                        style={{ background: 'rgba(16,24,48,0.7)' }}>
+                        <i className="fa-regular fa-clock text-blue-400 mb-1 text-sm"></i>
+                        <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.openStatus || 'Нээлтэй'}</span>
                         <span className="text-xs font-bold text-slate-200">24/7</span>
                     </div>
                     {site.altitude && (
-                        <div className="flex-1 bg-slate-800/80 backdrop-blur-md p-3 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center shadow-lg">
-                            <i className="fa-solid fa-mountain text-purple-400 mb-1"></i>
-                            <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">{t.altitudeLabel}</span>
+                        <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center"
+                            style={{ background: 'rgba(16,24,48,0.7)' }}>
+                            <i className="fa-solid fa-mountain text-purple-400 mb-1 text-sm"></i>
+                            <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.altitudeLabel || 'Өндөр'}</span>
                             <span className="text-xs font-bold text-slate-200">{site.altitude}</span>
                         </div>
                     )}
-                    <Link href={`/map?id=${site.id}`} className="flex-1 bg-slate-800/80 backdrop-blur-md p-3 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center shadow-lg active:scale-95 transition-transform cursor-pointer group">
-                        <i className="fa-solid fa-location-dot text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">{t.viewOnMap}</span>
+                    <Link href={`/map?id=${site.id}`}
+                        className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center transition-all active:scale-95 group"
+                        style={{ background: 'rgba(16,24,48,0.7)' }}>
+                        <i className="fa-solid fa-location-dot text-emerald-400 mb-1 text-sm group-hover:scale-110 transition-transform"></i>
+                        <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.viewOnMap}</span>
                         <span className="text-xs font-bold text-slate-200">Map</span>
                     </Link>
                 </motion.div>
 
-                {/* Protection status badge */}
+                {/* Protection badge */}
                 {site.protectionStatus && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.15 }}
-                        className="mb-5"
-                    >
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold ${protectionStyle}`}>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-5">
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${protStyle}`}>
                             <i className="fa-solid fa-shield text-[10px]"></i>
                             <span>{t.protectionStatus}: {site.protectionStatus}</span>
                         </div>
                     </motion.div>
                 )}
 
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                >
+                {/* Description */}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                     <h3 className="font-heading text-lg font-bold text-white mb-3 flex items-center gap-2">
                         <span className="w-1 h-5 bg-amber-500 rounded-full block"></span>
                         {t.detailAbout}
                     </h3>
-                    <div className="text-slate-300 text-sm leading-relaxed text-justify glass-panel p-5 rounded-xl border-none bg-slate-800/30">
+                    <div className="text-slate-300 text-sm leading-relaxed text-justify p-4 rounded-2xl border border-white/5"
+                        style={{ background: 'rgba(16,24,48,0.5)' }}>
                         {siteDescription}
                     </div>
                 </motion.div>
 
-                {/* Photo Gallery if more than 1 image */}
-                {site.images && site.images.length > 1 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="mt-8"
-                    >
+                {/* Gallery grid — show all images as tappable grid */}
+                {images.length > 1 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-7">
                         <h3 className="font-heading text-lg font-bold text-white mb-4 flex items-center gap-2">
                             <span className="w-1 h-5 bg-blue-500 rounded-full block"></span>
                             {t.detailGallery}
+                            <span className="text-xs font-normal text-slate-500 ml-1">({images.length})</span>
                         </h3>
-                        <div className="grid grid-cols-2 gap-3">
-                            {site.images.slice(1).map((img, index) => (
-                                <div key={index} className="h-32 rounded-xl overflow-hidden border border-white/5 relative group">
-                                    <img
-                                        src={img}
-                                        alt={`${siteName} Gallery ${index + 1}`}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    />
-                                </div>
+                        <div className="grid grid-cols-3 gap-2">
+                            {images.map((img, i) => (
+                                <button key={i} onClick={() => { setActiveImg(i); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    className={clsx(
+                                        "relative rounded-xl overflow-hidden border-2 transition-all duration-200",
+                                        i === 0 ? "col-span-2 row-span-2 h-48" : "h-[90px]",
+                                        activeImg === i ? "border-amber-400" : "border-transparent opacity-80 hover:opacity-100"
+                                    )}>
+                                    <img src={img} alt={`${siteName} ${i + 1}`} className="w-full h-full object-cover" />
+                                    {activeImg === i && (
+                                        <div className="absolute inset-0 bg-amber-500/10 flex items-center justify-center">
+                                            <i className="fa-solid fa-check text-amber-400 text-sm drop-shadow"></i>
+                                        </div>
+                                    )}
+                                </button>
                             ))}
                         </div>
                     </motion.div>
                 )}
 
+                {/* CTA */}
                 <div className="mt-8 mb-4">
                     <Link href="/tours">
                         <button className="btn btn-primary w-full h-14 text-base shadow-lg shadow-amber-500/20">
-                            {t.startTourHere}
+                            {t.startTourHere || 'Аялал эхлэх'}
                             <i className="fa-solid fa-arrow-right ml-2"></i>
                         </button>
                     </Link>
