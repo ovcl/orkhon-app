@@ -38,3 +38,8 @@ next-env.d.ts
 
 # IDE / tools
 .gemini
+
+# PWA artifacts
+/public/sw.js
+/public/workbox-*.js
+/public/fallback-*.js
