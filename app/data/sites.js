@@ -320,8 +320,8 @@ export const sitesData = [
         "altitude": "1455м",
         "nameEn": "Kharakhorum (Karakorum) City Ruins",
         "category": "Хот суурин",
-        "description": "Хархорум хотыг Чингис хаан 1220 онд Монголын эзэнт гүрний нийслэл болгон байгуулах зарлиг буулгаж түүний III хүү Өгөдэй хаан 1235 он гэхэд орд харш, засаг захиргааны байшин барилгууд, олон шашны сүм дугана, эд эрдэнэс, хөрөнгө зоорийн агуулах савтай, гар үйлдвэр, худалдааны талбай, байшин сууц бүхий дөрвөн талдаа асар хаалгатай хэрмээр хүрээлэгдсэн хотыг байгуулжээ.\n\nХархорум нь тухайн үеийн Монгол орны улс төр, эдийн засаг, соёл, засаг захиргаа, олон улсын харилцааны чухал төв болж байсан. Мөнх хааны үе буюу 1251-1259 онд хотын төв хэсэгт Хятад загварын хороолол буюу гар урчуудын дүүрэг, баруун хойно гэр хороолол, зүүн хойно Ислам шашинтны хороолол болон дэлхийн өнцөг булан бүрээс ирсэн улс үндэстний элч төлөөлөгчид, түүний дотор нангиад, түвэд, уйгур, перс, энэтхэгчүүд, франц, герман, мажар, орос зэрэг олон үндэстэн ястны 10 000- 15 000 орчим хүн төвлөрөн сууж байжээ.\n\nЮНЕСКО-гоос 1995–1996 онд зохион байгуулсан Монгол–Японы хамтарсан шинжилгээний анги тус хотын бүрэн хэмжээний топографийн зураг үйлдэж, Монгол Улсын Засгийн Газрын 1997 оны 241 дүгээр тогтоолоор хотын туурийн хамгаалалтын бүсийг тогтоосон. Тус туурийн хойд талд чулуун яст мэлхий (ID 28) байрладаг.",
-        "descriptionEn": "The capital of the Mongol Empire, founded in 1220 by Genghis Khan and fully established by Ogedei Khan in 1235. It served as the empire's administrative, political, and cultural hub for decades. The city was remarkably cosmopolitan, featuring craft quarters, markets, and temples representing various major world religions. Archaeological mapping by joint Mongol-Japanese expeditions in the 1990s confirmed the city's complex layout, including distinct residential districts for diverse nationalities ranging from French to Indian and Russian. A significant stone turtle (ID 28) is located to the north of the ruins.",
+        "description": "Хархорум хотыг Чингис хаан 1220 онд Монголын эзэнт гүрний нийслэл болгон байгуулах зарлиг буулгаж түүний III хүү Өгөдэй хаан 1235 он гэхэд орд харш, засаг захиргааны байшин барилгууд, олон шашны сүм дугана, эд эрдэнэс, хөрөнгө зоорийн агуулах савтай, гар үйлдвэр, худалдааны талбай, байшин сууц бүхий дөрвөн талдаа асар хаалгатай хэрмээр хүрээлэгдсэн хотыг байгуулжээ.\n\nХархорум нь тухайн үеийн Монгол орны улс төр, эдийн засаг, соёл, засаг захиргаа, олон улсын харилцааны чухал төв болж байсан. Мөнх хааны үе буюу 1251-1259 онд хотын төв хэсэгт Хятад загварын хороолол буюу гар урчуудын дүүрэг, баруун хойно гэр хороолол, зүүн хойно Ислам шашинтны хороолол болон дэлхийн өнцөг булан бүрээс ирсэн улс үндэстний элч төлөөлөгчид, түүний дотор нангиад, түвэд, уйгур, перс, энэтхэгчүүд, франц, герман, мажар, орос зэрэг олон үндэстэн ястны 10 000- 15 000 орчим хүн төвлөрөн сууж байжээ.\n\nЮНЕСКО-гоос 1995–1996 онд зохион байгуулсан Монгол–Японы хамтарсан шинжилгээний анги тус хотын бүрэн хэмжээний топографийн зураг үйлдэж, Монгол Улсын Засгийн Газрын 1997 оны 241 дүгээр тогтоолоор хотын туурийн хамгаалалтын бүсийг тогтоосон. Тус туурийн хойд талд чулуун яст мэлхий байрладаг.",
+        "descriptionEn": "The capital of the Mongol Empire, founded in 1220 by Genghis Khan and fully established by Ogedei Khan in 1235. It served as the empire's administrative, political, and cultural hub for decades. The city was remarkably cosmopolitan, featuring craft quarters, markets, and temples representing various major world religions. Archaeological mapping by joint Mongol-Japanese expeditions in the 1990s confirmed the city's complex layout, including distinct residential districts for diverse nationalities ranging from French to Indian and Russian. A significant stone turtle is located to the north of the ruins.",
         "panoramaUrl": "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775788799/panoramas/pano-16.jpg",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462573/images/16.jpg"
@@ -356,8 +356,8 @@ export const sitesData = [
         "altitude": "1596м",
         "nameEn": "Melkhiit Tolgoi Palace Ruins",
         "category": "Хот суурин",
-        "description": "Өвөрхангай аймгийн Хархорин сумын төвийн урд талын толгойг “Мэлхийт толгой” гэнэ. Энд 106х78 метрийн хэмжээтэй барилгын дөрвөлжин хэрэмний туурь байдаг. Элэгдэж мэдэгдэхээ больсон хэрмийн дотор 2 хэсэг овгор байх бөгөөд зүүн овгорын доторх довцог дээр чулуун яст мэлхий (ID 29), түүний нуруун дээр гэрэлт хөшөө суулгах дөрвөлжин суурь байгаа нь гэрэлт хөшөө байсныг гэрчилнэ.",
-        "descriptionEn": "Located on Melkhiit Tolgoi hill, south of Kharkhorin. The site contains a 106x78m rectangular enclosure. Inside the remains of the eroded walls are two distinct mounds. On the eastern mound, a stone turtle (ID 29) base survives, which originally held a large celebratory or commemorative stele.",
+        "description": "Өвөрхангай аймгийн Хархорин сумын төвийн урд талын толгойг “Мэлхийт толгой” гэнэ. Энд 106х78 метрийн хэмжээтэй барилгын дөрвөлжин хэрэмний туурь байдаг. Элэгдэж мэдэгдэхээ больсон хэрмийн дотор 2 хэсэг овгор байх бөгөөд зүүн овгорын доторх довцог дээр чулуун яст мэлхий, түүний нуруун дээр гэрэлт хөшөө суулгах дөрвөлжин суурь байгаа нь гэрэлт хөшөө байсныг гэрчилнэ.",
+        "descriptionEn": "Located on Melkhiit Tolgoi hill, south of Kharkhorin. The site contains a 106x78m rectangular enclosure. Inside the remains of the eroded walls are two distinct mounds. On the eastern mound, a stone turtle base survives, which originally held a large celebratory or commemorative stele.",
         "panoramaUrl": "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1781246900/panoramas/pano-18.jpg",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462591/images/18.jpg",
@@ -523,15 +523,15 @@ export const sitesData = [
     },
     {
         "id": 28,
-        "name": "Эрдэнэзуу хийдийн хойд талд орших чулуун яст мэлхий",
+        "name": "Хархорум хотын туурь дах чулуун яст мэлхий",
         "nameEn": "Karakorum Museum Stone Turtle",
         "category": "Хөшөө дурсгал",
         "location": {
             "lat": 47.206931,
             "lng": 102.840953
         },
-        "description": "Энэхүү чулуун яст мэлхий нь Эрдэнэ Зуу хийдийн хойд орших Хархорум хотын туурийн (ID 16) ил музейн урд бий. Дурсгал нь 1,10 метр өндөр, 1,25 метр өргөн, 2,6 метр урт хэмжээтэй. Энэхүү чулуун яст мэлхий нь бусад мэлхийнүүдээс ур хийцийн хувьд сайн бөгөөд хэмжээний хувь хамгийн том нь юм.",
-        "descriptionEn": "The largest and most finely crafted of the surviving stone turtles in the valley. Located south of the Karakorum Museum (ID 16), this monument (2.6m long, 1.25m wide) originally served as a supportive base for an imperial commemorative stele, symbolizing longevity and stability in the Mongol tradition.",
+        "description": "Энэхүү чулуун яст мэлхий нь Эрдэнэ Зуу хийдийн хойд орших Хархорум хотын туурийн ил музейн урд бий. Дурсгал нь 1,10 метр өндөр, 1,25 метр өргөн, 2,6 метр урт хэмжээтэй. Энэхүү чулуун яст мэлхий нь бусад мэлхийнүүдээс ур хийцийн хувьд сайн бөгөөд хэмжээний хувь хамгийн том нь юм.",
+        "descriptionEn": "The largest and most finely crafted of the surviving stone turtles in the valley. Located south of the Karakorum Museum, this monument (2.6m long, 1.25m wide) originally served as a supportive base for an imperial commemorative stele, symbolizing longevity and stability in the Mongol tradition.",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462810/images/28.jpg"
         ]
@@ -545,8 +545,8 @@ export const sitesData = [
             "lat": 47.18108,
             "lng": 102.8521
         },
-        "description": "Энэхүү дурсгал нь XIII зууны үеийн Хархорум хотыг үер усны аюул болон гаднын халдлагад өртөлгүй, он удаан жил энх амгалан оршин тогтнохыг бэлгэдэж түүний дөрвөн талд боржин чулуугаар урлан бүтээж байрлуулсан лусын амьтан яст мэлхийнүүдийн нэг юм. Чулуун яст мэлхий нь Өвөрхангай аймгийн Хархорин сумын төвөөс урагш 1 км зайд орших Мэлхий толгойн ордны туурийн (ID 18) дээр байрлуулжээ.",
-        "descriptionEn": "One of four granite turtles originally placed at the cardinal points of Karakorum to symbolize everlasting stability and protect the capital from flood and invasion. Located on Melkhiit Tolgoi hill (ID 18), 1km south of modern Kharkhorin.",
+        "description": "Энэхүү дурсгал нь XIII зууны үеийн Хархорум хотыг үер усны аюул болон гаднын халдлагад өртөлгүй, он удаан жил энх амгалан оршин тогтнохыг бэлгэдэж түүний дөрвөн талд боржин чулуугаар урлан бүтээж байрлуулсан лусын амьтан яст мэлхийнүүдийн нэг юм. Чулуун яст мэлхий нь Өвөрхангай аймгийн Хархорин сумын төвөөс урагш 1 км зайд орших Мэлхий толгойн ордны туурийн дээр байрлуулжээ.",
+        "descriptionEn": "One of four granite turtles originally placed at the cardinal points of Karakorum to symbolize everlasting stability and protect the capital from flood and invasion. Located on Melkhiit Tolgoi hill, 1km south of modern Kharkhorin.",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462816/images/29.jpg"
         ]
