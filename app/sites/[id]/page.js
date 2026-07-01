@@ -19,6 +19,15 @@ export default function SiteDetail({ params }) {
         window.addEventListener('scroll', () => {});
     }, []);
 
+    // Auto-slide images
+    useEffect(() => {
+        if (!site || !site.images || site.images.length <= 1) return;
+        const autoSlide = setInterval(() => {
+            setActiveImg((prev) => (prev + 1) % site.images.length);
+        }, 4000);
+        return () => clearInterval(autoSlide);
+    }, [site]);
+
     const toggleLanguage = () => {
         const newLang = language === 'mn' ? 'en' : 'mn';
         setLanguage(newLang);
@@ -90,28 +99,29 @@ export default function SiteDetail({ params }) {
                     </div>
                 )}
 
-                {/* Thumbnail strip */}
-                {images.length > 1 && (
-                    <div className="absolute bottom-20 left-0 right-0 flex gap-2 px-5 overflow-x-auto no-scrollbar">
-                        {images.map((img, i) => (
-                            <button key={i} onClick={() => setActiveImg(i)}
-                                className={clsx(
-                                    "flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden border-2 transition-all duration-200",
-                                    activeImg === i ? "border-amber-400 scale-105" : "border-white/20 opacity-60 hover:opacity-90"
-                                )}>
-                                <img src={img} alt="" className="w-full h-full object-cover" />
-                            </button>
-                        ))}
-                    </div>
-                )}
+                {/* Bottom Overlay - Thumbnail strip & Title */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 pt-12 bg-gradient-to-t from-[#070b14] via-[#070b14]/80 to-transparent flex flex-col justify-end">
+                    
+                    {/* Thumbnail strip */}
+                    {images.length > 1 && (
+                        <div className="flex gap-2 w-full overflow-x-auto no-scrollbar mb-4 mask-fade-right">
+                            {images.map((img, i) => (
+                                <button key={i} onClick={() => setActiveImg(i)}
+                                    className={clsx(
+                                        "flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-200",
+                                        activeImg === i ? "border-amber-400 scale-105" : "border-white/20 opacity-60 hover:opacity-90"
+                                    )}>
+                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
-                {/* Title overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-5">
                     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                         <span className="inline-block px-3 py-1 rounded-lg bg-amber-500 text-slate-900 text-[10px] font-bold uppercase tracking-wider mb-2.5 shadow-lg shadow-amber-500/20">
                             {catLabel}
                         </span>
-                        <h1 className="font-heading text-[1.7rem] font-bold text-white leading-tight drop-shadow-lg">{siteName}</h1>
+                        <h1 className="font-heading text-2xl md:text-[1.7rem] font-bold text-white leading-tight drop-shadow-lg">{siteName}</h1>
                     </motion.div>
                 </div>
             </div>

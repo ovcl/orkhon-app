@@ -58,15 +58,27 @@ export default function PanoramaViewer({ imageUrl }) {
         });
 
         controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableZoom = true;
+        controls.enableZoom = false; // Disable dolly zoom, use FOV zoom instead
         controls.enablePan = false;
-        controls.rotateSpeed = -0.5; // Invert rotation for inside sphere
+        controls.rotateSpeed = -0.25; // Gentle rotation for comfortable panorama browsing
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.12; // Smooth inertia on release
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.5;
+        controls.autoRotateSpeed = 0.2;
+
+        // FOV-based zoom for panorama (scroll wheel)
+        const onWheel = (e) => {
+            e.preventDefault();
+            camera.fov = Math.max(30, Math.min(100, camera.fov + e.deltaY * 0.05));
+            camera.updateProjectionMatrix();
+        };
+        renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
 
         camera.position.set(0, 0, 0.1);
 
-        camera.position.set(0, 0, 0.1);
+        // Look downward (~30°) and rotated 120° left so the monument is visible on first load
+        controls.target.set(-0.87, -0.58, 0.5);
+        controls.update();
 
         // Add "ENTER VR" button overlay
         const vrButtonElement = VRButton.createButton(renderer);
@@ -104,6 +116,7 @@ export default function PanoramaViewer({ imageUrl }) {
 
         return () => {
             isCancelled = true;
+            renderer.domElement.removeEventListener('wheel', onWheel);
             resizeObserver.disconnect();
             renderer.setAnimationLoop(null);
             

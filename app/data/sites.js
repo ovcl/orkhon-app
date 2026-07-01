@@ -25,7 +25,7 @@ export const sitesData = [
         "category": "Чулуун зэвсэг",
         "description": "Дурсгалт газар нь Өвөрхангай аймгийн Хархорин сумын нутаг Хангай хайрхан уулын өвөр Мойлтын амны рашааны зүүн дэнжид оршдог. Дурсгал нь палеолитын дээд үеэс мезолит, неолитын эхэн үед хамаардаг. Дурсгалт газрыг анх 1949 онд археологич А.П Окладинковын удирдсан Монгол–Зөвлөлтийн чулуун зэвсгийн дурсгал судлах анги илрүүлэн судалгааны эргэлтэнд оруулжээ. А.П.Окладников, Д. Дорж нарын удирдсан “Монголын чулуун зэвсгийн дурсгал судлах анги” 1960, 1961, 1963-1964 онд дурсгалт газарт малтлага судалгаа хийж суурингын соёлт давхрагын зузаан нь 1,5-2 метр бөгөөд малтлагын явцад дээд палеолитын түрүү үеэс мезолит, неолитын эхэн үехийг хамарсан дөрвөн соёлт давхрага байгааг тогтоосон нь Төв, Умард, Дорнод Азийн хэмжээнд нэн ховор дурсгал болохыг тодорхойлсон байна.\n\nМөн 1996-1997 онд Монгол-Францын хамтарсан судалгааны анги дурсгалт газарт ажиллаж хөрсний давхаргыг судлан гурван хурдсаас бүрэлдэх 5 давхарга байгааг тодорхойлон археологийн олдвор хадгалсан 4 давхаргад хийсэн он цаг тогтоох шинжилгээгээр 240+-300 жилиийн өмнө болохыг тогтоожээ. 2018, 2019 онд Монгол-Орос-Америкийн хамтарсан \"Умард монголын чулуун зэвсгийн үе\" төслийн хүрээнд дурсгалын он цаг тогтоох, хөрсний дээж авах судалгааг хийсэн.",
         "descriptionEn": "Located on the eastern terrace of Moiltyn Am valley at the southern foot of Khangai Khairkhan mountain. This site contains 4 cultural layers ranging from the Upper Paleolithic to the Early Neolithic. First discovered in 1949 by the Mongol-Soviet archaeological expedition led by A.P. Okladnikov, subsequent research has shown the cultural layers reach a thickness of 1.5-2 meters. It is considered one of the rarest Paleolithic sites in Central, North, and East Asia, with carbon dating from joint Mongol-French expeditions placing the findings around 24,000 years ago.",
-        "panoramaUrl": "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775788765/panoramas/pano-1.jpg",
+        "panoramaUrl": "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1781246900/panoramas/pano-1.jpg",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462133/images/1.jpg",
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462138/images/1-1.jpg",
@@ -358,6 +358,7 @@ export const sitesData = [
         "category": "Хот суурин",
         "description": "Өвөрхангай аймгийн Хархорин сумын төвийн урд талын толгойг “Мэлхийт толгой” гэнэ. Энд 106х78 метрийн хэмжээтэй барилгын дөрвөлжин хэрэмний туурь байдаг. Элэгдэж мэдэгдэхээ больсон хэрмийн дотор 2 хэсэг овгор байх бөгөөд зүүн овгорын доторх довцог дээр чулуун яст мэлхий (ID 29), түүний нуруун дээр гэрэлт хөшөө суулгах дөрвөлжин суурь байгаа нь гэрэлт хөшөө байсныг гэрчилнэ.",
         "descriptionEn": "Located on Melkhiit Tolgoi hill, south of Kharkhorin. The site contains a 106x78m rectangular enclosure. Inside the remains of the eroded walls are two distinct mounds. On the eastern mound, a stone turtle (ID 29) base survives, which originally held a large celebratory or commemorative stele.",
+        "panoramaUrl": "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1781246900/panoramas/pano-18.jpg",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462591/images/18.jpg",
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462598/images/18-1.jpg"
@@ -391,6 +392,7 @@ export const sitesData = [
         },
         "description": "Өвөрхангай аймгийн Хархорин сумын төвөөс зүүн урагш 5 км орчим зайд Маамуу толгойн зүүн урд орших 120х85 метр хэмжээтэй шавар хэрэмний нурангийн төв хэсэгт барилгын шавар үлдэцтэй эртний хотын туурийн ором бий. Эрдэмтэд  Юань улсын судар, Персийн түүхч Рашид ад дины “Судрын чуулган” гэх мэт түүхэн сурвалжуудаас үндэслэн 1238 онд байгуулсан Тосох хот мөн байх хэмээн таамагладаг.",
         "descriptionEn": "Situated 5km southeast of Kharkhorin near Maamuu Tolgoi hill. The site features a 120x85m rectangular earthen wall enclosure. Based on historical records from the Yuan Dynasty and Rashid al-Din's 'Compendium of Chronicles', historians identify this site as the ancient city of Tosokh, founded in 1238.",
+        "panoramaUrl": "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1781246900/panoramas/pano-20.jpg",
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462616/images/20.jpg",
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462622/images/20-1.jpg"
