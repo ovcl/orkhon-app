@@ -6,7 +6,7 @@ This guide explains how to set up the Unity project for the AR/VR Tours feature.
 
 - Unity 2022 LTS (Download from [Unity Hub](https://unity.com/download))
 - Basic Unity knowledge
-- Firebase account
+
 - OpenAI API key
 
 ## Step 1: Create Unity Project
@@ -31,13 +31,7 @@ This guide explains how to set up the Unity project for the AR/VR Tours feature.
    - Should install automatically with AR Foundation
    - If not: `com.unity.xr.management`
 
-3. **Firebase SDK**
-   - Download from [Firebase Unity SDK](https://firebase.google.com/download/unity)
-   - Import these packages:
-     - `FirebaseAuth.unitypackage`
-     - `FirebaseDatabase.unitypackage`
-     - `FirebaseFirestore.unitypackage`
-     - `FirebaseStorage.unitypackage`
+
 
 ## Step 3: Configure Project Settings
 
@@ -340,4 +334,3 @@ Application.ExternalCall("OnSiteSelected", siteId);
 
 - [Unity AR Foundation Documentation](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@4.2/manual/index.html)
 - [Unity WebGL Documentation](https://docs.unity3d.com/Manual/webgl.html)
-- [Firebase Unity SDK](https://firebase.google.com/docs/unity/setup)

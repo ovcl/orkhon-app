@@ -21,8 +21,7 @@ A Next.js web application showcasing the UNESCO World Heritage Site of Orkhon Va
 - **3D/AR**: Unity WebGL (react-unity-webgl)
 
 ### Backend
-- **Database**: Firebase Firestore
-- **Storage**: Firebase Storage
+
 - **AI**: OpenAI GPT-3.5 Turbo
 - **Hosting**: Vercel (recommended)
 
@@ -32,7 +31,7 @@ A Next.js web application showcasing the UNESCO World Heritage Site of Orkhon Va
 
 - Node.js 18+ 
 - npm or yarn
-- Firebase account
+
 - OpenAI API key
 - Unity 2022 LTS (for VR/AR development)
 
@@ -57,29 +56,11 @@ cp .env.local.example .env.local
 ```
 
 Edit `.env.local` and add your credentials:
-- Firebase configuration
+
 - OpenAI API key
 - Cloudinary credentials (optional)
 
-4. **Set up Firebase**
 
-Follow the [Firebase Setup Guide](./docs/FIREBASE_SETUP.md) to:
-- Create Firebase project
-- Enable Firestore and Storage
-- Get service account credentials
-
-5. **Migrate data to Firebase**
-
-```bash
-# Dry run (preview without writing)
-node scripts/migrate-to-firebase.js --dry-run
-
-# Execute migration
-node scripts/migrate-to-firebase.js
-
-# Verify migration
-node scripts/migrate-to-firebase.js --verify
-```
 
 6. **Run development server**
 
@@ -105,11 +86,7 @@ orkhon-app/
 ├── components/
 │   ├── VirtualTour.js    # Classic tour component
 │   └── UnityPlayer.js    # Unity WebGL player
-├── lib/
-│   ├── firebase.js       # Firebase client config
-│   └── firebase-admin.js # Firebase admin config
-├── scripts/
-│   └── migrate-to-firebase.js  # Data migration
+
 └── public/
     └── unity-build/      # Unity WebGL build files
 ```
@@ -204,7 +181,7 @@ Contributions are welcome! Please:
 
 - UNESCO World Heritage Centre
 - Orkhon Valley World Heritage Site Administration
-- Firebase & OpenAI for infrastructure
+- OpenAI for infrastructure
 - Unity Technologies for AR/VR platform
 
 ## Support

@@ -2,19 +2,7 @@
 
 ## Одоо хийх зүйлс (Next Steps)
 
-### 1. Firebase тохиргоо (5 минут)
-```bash
-# 1. Firebase console дээр шинэ project үүсгэ
-https://console.firebase.google.com
 
-# 2. Firestore Database идэвхжүүл
-# 3. Firebase Storage идэвхжүүл
-# 4. Service account key татаж ав
-# 5. .env.local файл үүсгэ:
-cp .env.local.example .env.local
-
-# 6. Firebase credentials оруул
-```
 
 ### 2. OpenAI API Key (2 минут)
 ```bash
@@ -25,17 +13,7 @@ https://platform.openai.com
 # 3. .env.local файлд нэм
 ```
 
-### 3. Өгөгдөл шилжүүлэх (1 минут)
-```bash
-# Эхлээд dry-run хий (шалгах)
-node scripts/migrate-to-firebase.js --dry-run
 
-# Өгөгдөл шилжүүл
-node scripts/migrate-to-firebase.js
-
-# Шалгах
-node scripts/migrate-to-firebase.js --verify
-```
 
 ### 4. Туршиж үзэх
 ```bash
@@ -65,7 +43,7 @@ npm run dev
 ## Бүх зүйл бэлэн! ✅
 
 **Одоо байгаа:**
-- ✅ Firebase backend бэлэн
+
 - ✅ AI virtual guide бэлэн
 - ✅ API endpoints бэлэн
 - ✅ Unity WebGL integration бэлэн
@@ -73,7 +51,7 @@ npm run dev
 - ✅ Бүрэн documentation
 
 **Дутуу зүйл:**
-- ⏳ Firebase credentials (.env.local)
+
 - ⏳ Unity project build
 - ⏳ 360° зургууд
 
