@@ -4,9 +4,27 @@ const crypto = require('crypto');
 const https = require('https');
 const sharp = require('sharp');
 
-const cloudName = 'dsyqxmmxi';
-const apiKey = '868587311597355';
-const apiSecret = '_MxEvSqVihdjq9ZMcMc_sSlfZFI';
+// Inline .env.local loader
+try {
+    const envFile = fs.readFileSync(path.join(__dirname, '../.env.local'), 'utf8');
+    envFile.split('\n').forEach(line => {
+        const match = line.match(/^([^#\s][^=]+)=(.*)/);
+        if (match) {
+            process.env[match[1].trim()] = match[2].trim().replace(/^['"](.*)['"]$/, '$1');
+        }
+    });
+} catch (e) {
+    // Ignore error if file doesn't exist
+}
+
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const apiKey = process.env.CLOUDINARY_API_KEY;
+const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+if (!cloudName || !apiKey || !apiSecret) {
+    console.error("Missing Cloudinary credentials. Please set NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in .env.local");
+    process.exit(1);
+}
 
 const uploadDir = path.join(__dirname, '../upload_panoramas');
 
