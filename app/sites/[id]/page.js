@@ -16,7 +16,6 @@ export default function SiteDetail({ params }) {
     useEffect(() => {
         const savedLang = localStorage.getItem('language');
         if (savedLang) setLanguage(savedLang);
-        window.addEventListener('scroll', () => {});
     }, []);
 
     // Auto-slide images
