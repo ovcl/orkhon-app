@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './VirtualTour.module.css';
 import { getPlaceHolder } from '../app/data/sites';
 import { translations } from '../app/data/translations';
+import BackgroundAudio from './BackgroundAudio';
 import PanoramaViewer from './PanoramaViewer';
 
 export default function VirtualTour({ sites, onClose, language = 'mn', onToggleLanguage }) {
@@ -103,6 +104,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
 
     return (
         <div className={styles.container} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+            <BackgroundAudio />
             <button className={styles.closeBtn} onClick={onClose} aria-label={t.shortcutsExit}>
                 <i className="fa-solid fa-xmark"></i>
             </button>
