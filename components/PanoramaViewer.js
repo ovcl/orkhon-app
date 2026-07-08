@@ -1,72 +1,148 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 
-export default function PanoramaViewer({ imageUrl }) {
+/**
+ * PanoramaViewer — VR-native 360° харагч
+ *
+ * ШИНЭ БОЛОМЖУУД (2026-07 сайжруулалт):
+ * 1. VR session-той зөрчилдөж байсан OrbitControls-ыг session эхлэхэд автоматаар унтраана
+ * 2. Headset дотор controller (trigger)-оор дарж болох 3D navigation UI
+ *    (Өмнөх / Дараах / Гарах) — HTML overlay биш, THREE.js dэx бодит 3D объект тул VR дотор харагдана
+ * 3. Тайван "fade to black" шилжилт — толгой эргэх мэдрэмжгүй, шууд солигдохгүй
+ * 4. Олон панорама (scenes array)-ийг нэг viewer дотор шилжүүлэх боломж — VR-ээс гарахгүйгээр
+ *    дараагийн дурсгал руу шилждэг
+ *
+ * PROPS:
+ * - scenes: [{ url, name, description }] — панорама бүхий дурсгалуудын жагсаалт
+ * - initialIndex: эхлэх индекс (default 0)
+ * - onIndexChange: (index) => void — flat 2D horizontal UI-д зориулсан callback (info overlay update хийхэд)
+ */
+export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange }) {
     const containerRef = useRef(null);
     const [loading, setLoading] = useState(true);
+    const [isPresenting, setIsPresenting] = useState(false); // XR session идэвхтэй эсэх
+    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+    const [showDragHint, setShowDragHint] = useState(true);
+    const [xrSupported, setXrSupported] = useState(null); // null = шалгаж байна, true/false = үр дүн
+
+    // Refs — эффект дотор бус, callback дотор шинэ утга ашиглах шаардлагатай тул ref-ээр дамжуулна
+    const currentIndexRef = useRef(initialIndex);
+    const sceneStateRef = useRef({}); // three.js объектуудыг effect хооронд хадгална
+
+    const goTo = useCallback((delta) => {
+        const next = currentIndexRef.current + delta;
+        if (next < 0 || next >= scenes.length) return;
+        currentIndexRef.current = next;
+        setCurrentIndex(next);
+        onIndexChange?.(next);
+    }, [scenes.length, onIndexChange]);
 
     useEffect(() => {
-        if (!containerRef.current || !imageUrl) return;
+        if (!containerRef.current || !scenes || scenes.length === 0) return;
 
         let isCancelled = false;
-
-        const initWidth = containerRef.current.clientWidth || window.innerWidth;
-        const initHeight = containerRef.current.clientHeight || window.innerHeight;
+        const container = containerRef.current;
+        const initWidth = container.clientWidth || window.innerWidth;
+        const initHeight = container.clientHeight || window.innerHeight;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, initWidth / initHeight, 0.1, 1000);
-        
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(initWidth, initHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // cap pixel ratio for performance
-        renderer.xr.enabled = true; // ENABLE WEBXR FOR VR GLASSES
-        
-        // Ensure container is empty before appending
-        while (containerRef.current.firstChild) {
-            containerRef.current.removeChild(containerRef.current.firstChild);
-        }
-        containerRef.current.appendChild(renderer.domElement);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.xr.enabled = true;
 
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.appendChild(renderer.domElement);
+
+        // ---------- Панорама sphere ----------
         const geometry = new THREE.SphereGeometry(500, 60, 40);
-        geometry.scale(-1, 1, 1); // Invert the sphere
+        geometry.scale(-1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
 
         const textureLoader = new THREE.TextureLoader();
         textureLoader.crossOrigin = 'Anonymous';
-        
-        let mesh;
-        let controls;
-        let animationId;
 
-        console.log('Starting texture load for:', imageUrl);
-
-        textureLoader.load(imageUrl, (texture) => {
-            if (isCancelled) return;
-            console.log('Texture loaded successfully');
-            texture.colorSpace = THREE.SRGBColorSpace;
-            const material = new THREE.MeshBasicMaterial({ map: texture });
-            mesh = new THREE.Mesh(geometry, material);
-            scene.add(mesh);
-            setLoading(false);
-        }, undefined, (error) => {
-            if (isCancelled) return;
-            console.error('Error loading panorama:', error);
-            setLoading(false);
+        // ---------- Fade overlay (тайван шилжилт) ----------
+        // Камерын өмнө байрлах хар бөмбөгөр — opacity-г 0↔1 болгож fade хийнэ
+        const fadeGeometry = new THREE.SphereGeometry(1, 16, 16);
+        const fadeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            side: THREE.BackSide,
+            transparent: true,
+            opacity: 1,
+            depthTest: false,
         });
+        const fadeMesh = new THREE.Mesh(fadeGeometry, fadeMaterial);
+        fadeMesh.renderOrder = 999;
+        camera.add(fadeMesh);
+        scene.add(camera);
 
-        controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableZoom = false; // Disable dolly zoom, use FOV zoom instead
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        const loadTexture = (url, fadeIn = true) => {
+            setLoading(true);
+            textureLoader.load(url, (texture) => {
+                if (isCancelled) return;
+                texture.colorSpace = THREE.SRGBColorSpace;
+                // Зурагны тод, өндөр чанарыг хангах: anisotropic filtering + mipmap
+                // (эх зураг бага нягтралтай бол код үүнийг нөхөж чадахгүй — эх файлыг
+                // өндөр нягтралаар (жишээ нь 4096×2048+, equirectangular) экспортлохыг зөвлөж байна)
+                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.magFilter = THREE.LinearFilter;
+                texture.generateMipmaps = true;
+                material.map = texture;
+                material.color.set(0xffffff);
+                material.needsUpdate = true;
+                setLoading(false);
+                if (fadeIn) fadeTo(0); // хараас гэрэл рүү аажим гарна
+            }, undefined, () => { if (!isCancelled) setLoading(false); });
+        };
+
+        let fadeAnim = null;
+        const fadeTo = (targetOpacity, duration = 400) => {
+            if (fadeAnim) cancelAnimationFrame(fadeAnim);
+            const start = fadeMaterial.opacity;
+            const startTime = performance.now();
+            const step = (now) => {
+                const t = Math.min(1, (now - startTime) / duration);
+                fadeMaterial.opacity = start + (targetOpacity - start) * t;
+                if (t < 1) fadeAnim = requestAnimationFrame(step);
+            };
+            fadeAnim = requestAnimationFrame(step);
+        };
+
+        loadTexture(scenes[currentIndexRef.current].url, true);
+
+        // ---------- Flat (non-VR) controls: mouse/touch эргүүлэх ----------
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableZoom = false;
         controls.enablePan = false;
-        controls.rotateSpeed = -0.25; // Gentle rotation for comfortable panorama browsing
+        controls.rotateSpeed = -0.25;
         controls.enableDamping = true;
-        controls.dampingFactor = 0.12; // Smooth inertia on release
+        controls.dampingFactor = 0.12;
+        // Эхлээд илүү тод хурдтай эргүүлж "энэ бол 360° панорама" гэдгийг тод мэдрүүлнэ,
+        // 3 секундийн дараа энгийн, тайван хурд руу буурна (хэрэглэгч гар хүрэхгүй бол)
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.2;
+        controls.autoRotateSpeed = 1.4;
+        setTimeout(() => { if (!isCancelled) controls.autoRotateSpeed = 0.2; }, 3000);
+        camera.position.set(0, 0, 0.1);
+        controls.target.set(-0.87, -0.58, 0.5);
+        controls.update();
 
-        // FOV-based zoom for panorama (scroll wheel)
+        const onFirstInteract = () => {
+            setShowDragHint(false);
+            controls.autoRotate = false;
+        };
+        renderer.domElement.addEventListener('pointerdown', onFirstInteract, { once: true });
+
         const onWheel = (e) => {
             e.preventDefault();
             camera.fov = Math.max(30, Math.min(100, camera.fov + e.deltaY * 0.05));
@@ -74,34 +150,121 @@ export default function PanoramaViewer({ imageUrl }) {
         };
         renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
 
-        camera.position.set(0, 0, 0.1);
+        // ---------- VR: 3D navigation UI (controller raycast-аар дарна) ----------
+        // Canvas texture-аар товч үүсгэх туслах функц
+        const makeButtonSprite = (label, icon) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(10,10,14,0.75)';
+            ctx.beginPath();
+            ctx.arc(128, 128, 118, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(245,158,11,0.9)'; // amber accent
+            ctx.lineWidth = 6;
+            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 90px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(icon, 128, 120);
+            ctx.font = '28px sans-serif';
+            ctx.fillText(label, 128, 200);
+            const tex = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(0.18, 0.18, 0.18);
+            sprite.renderOrder = 1000;
+            return sprite;
+        };
 
-        // Look downward (~30°) and rotated 120° left so the monument is visible on first load
-        controls.target.set(-0.87, -0.58, 0.5);
-        controls.update();
+        const vrUiGroup = new THREE.Group();
+        vrUiGroup.visible = false; // зөвхөн VR session-ий үед харагдана
+        const btnPrev = makeButtonSprite('Өмнөх', '◀');
+        const btnNext = makeButtonSprite('Дараах', '▶');
+        const btnExit = makeButtonSprite('Гарах', '✕');
+        btnPrev.position.set(-0.5, -0.35, -1.2);
+        btnNext.position.set(0.5, -0.35, -1.2);
+        btnExit.position.set(0, -0.35, -1.2);
+        btnPrev.userData.action = () => goTo(-1);
+        btnNext.userData.action = () => goTo(1);
+        btnExit.userData.action = () => { renderer.xr.getSession()?.end(); };
+        vrUiGroup.add(btnPrev, btnNext, btnExit);
+        camera.add(vrUiGroup); // камерт наасан тул толгой хаашаа ч харсан "гараар дагадаг" биш, session эхлэхэд урд байрандаа тогтмол байна
 
-        // Add "ENTER VR" button overlay
-        const vrButtonElement = VRButton.createButton(renderer);
-        vrButtonElement.style.position = 'absolute';
-        vrButtonElement.style.bottom = '20px';
-        vrButtonElement.style.left = '50%';
-        vrButtonElement.style.transform = 'translateX(-50%)';
-        vrButtonElement.style.zIndex = '100';
-        containerRef.current.appendChild(vrButtonElement);
+        // Controller raycast setup
+        const raycaster = new THREE.Raycaster();
+        const tempMatrix = new THREE.Matrix4();
+        const uiTargets = [btnPrev, btnNext, btnExit];
 
-        // WebXR requires setAnimationLoop instead of requestAnimationFrame
+        const makeController = (index) => {
+            const controller = renderer.xr.getController(index);
+            controller.addEventListener('selectstart', () => {
+                tempMatrix.identity().extractRotation(controller.matrixWorld);
+                raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+                raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+                const hits = raycaster.intersectObjects(uiTargets, false);
+                if (hits.length > 0) hits[0].object.userData.action?.();
+            });
+            // Энгийн ray line (харагдац)
+            const rayGeom = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -3),
+            ]);
+            const rayLine = new THREE.Line(rayGeom, new THREE.LineBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.6 }));
+            controller.add(rayLine);
+            scene.add(controller);
+            return controller;
+        };
+        const controller0 = makeController(0);
+        const controller1 = makeController(1);
+
+        // ---------- XR session lifecycle ----------
+        const onSessionStart = () => {
+            setIsPresenting(true);
+            controls.enabled = false; // OrbitControls-той зөрчилдөхгүйн тулд унтраана — XR camera-г WebXR өөрөө удирдана
+            vrUiGroup.visible = true;
+        };
+        const onSessionEnd = () => {
+            setIsPresenting(false);
+            controls.enabled = true;
+            vrUiGroup.visible = false;
+        };
+        renderer.xr.addEventListener('sessionstart', onSessionStart);
+        renderer.xr.addEventListener('sessionend', onSessionEnd);
+
+        // WebXR дэмжигдэж байгаа эсэхийг эхлээд шалгаад, дэмжихгүй бол
+        // three.js-ийн стандарт цайвар "VR NOT SUPPORTED" харагдацыг өөрийн
+        // зөөлөн, тайлбартай tooltip-ээр орлуулна
+        if (navigator.xr) {
+            navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+                if (isCancelled) return;
+                setXrSupported(supported);
+            }).catch(() => { if (!isCancelled) setXrSupported(false); });
+        } else {
+            setXrSupported(false);
+        }
+
+        let vrButtonElement = null;
+        if (navigator.xr) {
+            vrButtonElement = VRButton.createButton(renderer);
+            vrButtonElement.style.position = 'absolute';
+            vrButtonElement.style.bottom = '20px';
+            vrButtonElement.style.left = '50%';
+            vrButtonElement.style.transform = 'translateX(-50%)';
+            vrButtonElement.style.zIndex = '100';
+            container.appendChild(vrButtonElement);
+        }
+
         renderer.setAnimationLoop(() => {
             if (isCancelled) return;
-            controls.update();
+            if (controls.enabled) controls.update();
             renderer.render(scene, camera);
         });
 
-        // Use ResizeObserver instead of window resize for more accurate container tracking
         const resizeObserver = new ResizeObserver((entries) => {
-            if (!containerRef.current || isCancelled) return;
-            for (let entry of entries) {
-                const width = entry.contentRect.width;
-                const height = entry.contentRect.height;
+            if (!container || isCancelled) return;
+            for (const entry of entries) {
+                const { width, height } = entry.contentRect;
                 if (width > 0 && height > 0) {
                     camera.aspect = width / height;
                     camera.updateProjectionMatrix();
@@ -109,34 +272,41 @@ export default function PanoramaViewer({ imageUrl }) {
                 }
             }
         });
-        
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current);
-        }
+        resizeObserver.observe(container);
+
+        sceneStateRef.current = { loadTexture, fadeTo };
 
         return () => {
             isCancelled = true;
             renderer.domElement.removeEventListener('wheel', onWheel);
+            renderer.xr.removeEventListener('sessionstart', onSessionStart);
+            renderer.xr.removeEventListener('sessionend', onSessionEnd);
             resizeObserver.disconnect();
             renderer.setAnimationLoop(null);
-            
             renderer.dispose();
-            if (controls) controls.dispose();
-            
-            if (mesh) {
-                if (mesh.geometry) mesh.geometry.dispose();
-                if (mesh.material) {
-                    if (mesh.material.map) mesh.material.map.dispose();
-                    mesh.material.dispose();
-                }
-            }
+            controls.dispose();
+            if (material.map) material.map.dispose();
+            material.dispose();
+            geometry.dispose();
             scene.clear();
-            
-            if (containerRef.current && containerRef.current.contains(renderer.domElement)) {
-                containerRef.current.removeChild(renderer.domElement);
-            }
+            if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
+            if (vrButtonElement && container.contains(vrButtonElement)) container.removeChild(vrButtonElement);
         };
-    }, [imageUrl]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scenes]);
+
+    // Дурсгал солигдоход: fade out → texture солих → fade in
+    useEffect(() => {
+        const state = sceneStateRef.current;
+        if (!state?.loadTexture || currentIndex === initialIndex) return;
+        state.fadeTo(1, 250);
+        const timer = setTimeout(() => {
+            state.loadTexture(scenes[currentIndex].url, false);
+            state.fadeTo(0, 300);
+        }, 260);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentIndex]);
 
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#000', borderRadius: '12px', overflow: 'hidden' }}>
@@ -146,6 +316,48 @@ export default function PanoramaViewer({ imageUrl }) {
                     <span style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>Loading 360...</span>
                 </div>
             )}
+
+            {/* Толгой/хулгана чирж тойрч харах боломжтойг сануулах, эхний хүрэлцээний дараа алга болно */}
+            {!loading && showDragHint && !isPresenting && (
+                <div style={{ position: 'absolute', top: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '999px', fontSize: '12px', zIndex: 60, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa-solid fa-arrows-up-down-left-right" style={{ fontSize: '11px' }}></i>
+                    Чирж тойрч хараарай
+                </div>
+            )}
+
+            {/* WebXR дэмжигдэхгүй орчинд (жишээ нь энгийн desktop browser) three.js-ийн
+                default "VR NOT SUPPORTED" харагдацын оронд зөөлөн тайлбар харуулна */}
+            {xrSupported === false && !isPresenting && (
+                <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa-solid fa-circle-info"></i>
+                    VR-ээр үзэхийн тулд Meta Quest Browser-аар нээнэ үү
+                </div>
+            )}
+
+            {/* Flat (2D browser) preview-д зориулсан HTML nav — VR session идэвхтэй үед автоматаар нуугдана,
+                учир нь энэ overlay headset дотор ажиглагдахгүй бөгөөд ХОЁР дахин удирдлага болохоос сэргийлнэ */}
+            {!isPresenting && scenes.length > 1 && (
+                <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', zIndex: 50, pointerEvents: 'none' }}>
+                    <button
+                        onClick={() => goTo(-1)}
+                        disabled={currentIndex === 0}
+                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.6)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', padding: '10px 18px', opacity: currentIndex === 0 ? 0.3 : 1 }}
+                    >
+                        <i className="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.6)', color: '#fff', borderRadius: '999px', padding: '10px 18px', fontSize: '13px' }}>
+                        {currentIndex + 1} / {scenes.length}
+                    </span>
+                    <button
+                        onClick={() => goTo(1)}
+                        disabled={currentIndex === scenes.length - 1}
+                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.6)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', padding: '10px 18px', opacity: currentIndex === scenes.length - 1 ? 0.3 : 1 }}
+                    >
+                        <i className="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            )}
+
             <div ref={containerRef} style={{ width: '100%', height: '100%', cursor: 'grab' }} />
         </div>
     );

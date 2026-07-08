@@ -92,6 +92,13 @@
     animation: fadeIn 0.5s ease;
 }
 
+/* Panorama нь энгийн зурагнаас ялгаатай — 90% хязгаарлалтгүй, бүрэн дэлгэцээр дүүрнэ */
+.panoramaWrapper {
+    width: 100%;
+    height: 100%;
+    animation: fadeIn 0.5s ease;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -157,8 +164,10 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 70%, transparent 100%);
-    padding: 60px 40px 120px 40px;
+    /* Илүү зөөлөн, урт scrim — текст доод хэсэгт бүрэн уншигдана,
+       panorama/зурагны дэлгэрэнгүйг дарж бүрхэхгүй */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.65) 55%, transparent 100%);
+    padding: 80px 40px 130px 40px;
     animation: slideUp 0.3s ease;
 }
 
@@ -181,19 +190,22 @@
 
 .category {
     display: inline-block;
-    background: #d97706;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-bottom: 10px;
+    background: transparent;
+    border: 1px solid #f59e0b;
+    color: #fbbf24;
+    padding: 3px 12px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
     text-transform: uppercase;
 }
 
 .siteName {
-    font-size: 1.5rem;
-    font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 600;
     margin-bottom: 10px;
     color: white;
     line-height: 1.3;
@@ -202,9 +214,9 @@
 }
 
 .description {
-    font-size: 1rem;
-    color: #cbd5e1;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    color: #d4d0c8;
+    line-height: 1.65;
     margin-bottom: 15px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
