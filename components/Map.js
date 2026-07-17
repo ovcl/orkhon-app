@@ -1,196 +1,247 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap, LayersControl } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import MarkerClusterGroup from "react-leaflet-cluster";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { sitesData, getPlaceHolder } from "../app/data/sites";
 import { translations } from "../app/data/translations";
 
-const { BaseLayer } = LayersControl;
+// ---------------------------------------------------------------------------
+// Category -> {icon, color} — same visual language as the previous Leaflet map
+// ---------------------------------------------------------------------------
+const CATEGORY_STYLE = {
+    "Сүм хийд": { icon: "fa-place-of-worship", color: "#8b5cf6" },
+    "Хот суурин": { icon: "fa-archway", color: "#3b82f6" },
+    "Хадны зураг": { icon: "fa-palette", color: "#10b981" },
+    "Булш хиргисүүр": { icon: "fa-monument", color: "#64748b" },
+    "Тахилгат газар": { icon: "fa-mountain", color: "#f59e0b" },
+};
+const DEFAULT_STYLE = { icon: "fa-location-dot", color: "#1e3a8a" };
+const getCategoryStyle = (category) => CATEGORY_STYLE[category] || DEFAULT_STYLE;
 
-// Custom icons based on category
-const createIcon = (category) => {
-    let iconHTML = '';
-    let color = '#d97706';
-
-    switch (category) {
-        case "Сүм хийд":
-            iconHTML = '<i class="fa-solid fa-place-of-worship"></i>';
-            color = '#8b5cf6';
-            break;
-        case "Хот суурин":
-            iconHTML = '<i class="fa-solid fa-archway"></i>';
-            color = '#3b82f6';
-            break;
-        case "Хадны зураг":
-            iconHTML = '<i class="fa-solid fa-palette"></i>';
-            color = '#10b981';
-            break;
-        case "Булш хиргисүүр":
-            iconHTML = '<i class="fa-solid fa-monument"></i>';
-            color = '#64748b';
-            break;
-        case "Тахилгат газар":
-            iconHTML = '<i class="fa-solid fa-mountain"></i>';
-            color = '#f59e0b';
-            break;
-        default:
-            iconHTML = '<i class="fa-solid fa-location-dot"></i>';
-            color = '#1e3a8a';
-    }
-
-    return L.divIcon({
-        html: `<div class="marker-pin" style="background-color: ${color}; transform: rotate(-45deg);">${iconHTML}</div>`,
-        className: 'custom-div-icon',
-        iconSize: [40, 42],
-        iconAnchor: [20, 42],
-        popupAnchor: [0, -42]
-    });
+// ---------------------------------------------------------------------------
+// Base layer definitions — raster sources, no API key required (same
+// providers as the previous Leaflet TileLayers, so no visual regression).
+// ---------------------------------------------------------------------------
+const BASE_LAYERS = {
+    standard: {
+        label: { mn: "Стандарт", en: "Standard" },
+        tiles: [
+            "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        ],
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxzoom: 19,
+    },
+    satellite: {
+        label: { mn: "Хиймэл дагуул", en: "Satellite" },
+        tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+        attribution: "Tiles &copy; Esri",
+        maxzoom: 19,
+    },
+    terrain: {
+        label: { mn: "Гадаргын хэлбэр", en: "Terrain" },
+        tiles: [
+            "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
+            "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
+            "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
+        ],
+        attribution: "&copy; OpenStreetMap contributors, SRTM | &copy; OpenTopoMap (CC-BY-SA)",
+        maxzoom: 17,
+    },
 };
 
+function buildStyle(baseKey) {
+    const base = BASE_LAYERS[baseKey];
+    return {
+        version: 8,
+        sources: {
+            "base-tiles": {
+                type: "raster",
+                tiles: base.tiles,
+                tileSize: 256,
+                attribution: base.attribution,
+                maxzoom: base.maxzoom,
+            },
+        },
+        layers: [{ id: "base-tiles-layer", type: "raster", source: "base-tiles" }],
+    };
+}
 
-
-export default function Map({ language = 'mn' }) {
+export default function Map({ language = "mn" }) {
     const t = translations[language];
-    const position = [47.1975, 102.8256];
-    const sitesWithLocation = sitesData.filter(s => s.location);
+    const mapContainerRef = useRef(null);
+    const mapRef = useRef(null);
+    const markersRef = useRef([]);
     const searchParams = useSearchParams();
-    const selectedId = searchParams.get('id');
+    const selectedId = searchParams.get("id");
 
-    // Filter State
+    const [mapReady, setMapReady] = useState(false);
+    const [baseKey, setBaseKey] = useState("standard");
     const [filterCategory, setFilterCategory] = useState("All");
-    const categories = ["All", ...new Set(sitesWithLocation.map(s => s.category))];
 
-    // Filtered sites
-    const displayedSites = filterCategory === "All"
-        ? sitesWithLocation
-        : sitesWithLocation.filter(s => s.category === filterCategory);
+    const sitesWithLocation = sitesData.filter((s) => s.location);
+    const categories = ["All", ...new Set(sitesWithLocation.map((s) => s.category))];
+    const displayedSites =
+        filterCategory === "All" ? sitesWithLocation : sitesWithLocation.filter((s) => s.category === filterCategory);
+
+    // --- Initialize the map once ---------------------------------------
+    useEffect(() => {
+        if (mapRef.current) return; // guard against StrictMode double-invoke
+
+        const map = new maplibregl.Map({
+            container: mapContainerRef.current,
+            style: buildStyle("standard"),
+            center: [102.8256, 47.1975], // maplibre uses [lng, lat]
+            zoom: 9,
+            attributionControl: true,
+        });
+
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+
+        map.on("load", () => setMapReady(true));
+        mapRef.current = map;
+
+        return () => {
+            map.remove();
+            mapRef.current = null;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // --- Swap base layer style without tearing down markers -------------
+    useEffect(() => {
+        const map = mapRef.current;
+        if (!map || !mapReady) return;
+        map.setStyle(buildStyle(baseKey));
+        // markers are DOM-based (maplibregl.Marker), so they survive a
+        // setStyle call automatically — no need to re-add them here.
+    }, [baseKey, mapReady]);
+
+    // --- Render / refresh markers whenever the filtered site list changes
+    useEffect(() => {
+        const map = mapRef.current;
+        if (!map || !mapReady) return;
+
+        // Clear previous markers
+        markersRef.current.forEach((m) => m.remove());
+        markersRef.current = [];
+
+        displayedSites.forEach((site) => {
+            const style = getCategoryStyle(site.category);
+            const isSelected = selectedId === site.id.toString();
+
+            const el = document.createElement("div");
+            el.className = "orkhon-marker-pin";
+            el.style.setProperty("--marker-color", style.color);
+            el.innerHTML = `<i class="fa-solid ${style.icon}"></i>`;
+            if (isSelected) el.classList.add("orkhon-marker-selected");
+
+            const popupHtml = `
+                <div class="orkhon-popup">
+                    <div class="orkhon-popup-image">
+                        <img src="${site.images && site.images.length > 0 ? site.images[0] : getPlaceHolder(site.id)}" alt="${site.name}" />
+                    </div>
+                    <b class="orkhon-popup-title">${language === "en" && site.nameEn ? site.nameEn : site.name}</b>
+                    <span class="orkhon-popup-category">${t[site.category] || site.category}</span>
+                    <a class="orkhon-popup-link" href="/sites/${site.id}">${language === "mn" ? "Дэлгэрэнгүй" : "Details"}</a>
+                </div>
+            `;
+
+            const popup = new maplibregl.Popup({ offset: 30, maxWidth: "280px", closeButton: true }).setHTML(popupHtml);
+
+            const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+                .setLngLat([site.location.lng, site.location.lat])
+                .setPopup(popup)
+                .addTo(map);
+
+            markersRef.current.push(marker);
+        });
+
+        // --- AutoZoom equivalent -----------------------------------------
+        if (selectedId) {
+            const site = displayedSites.find((s) => s.id.toString() === selectedId);
+            if (site && site.location) {
+                map.flyTo({ center: [site.location.lng, site.location.lat], zoom: 15, duration: 1500 });
+                return;
+            }
+        }
+
+        if (displayedSites.length > 0) {
+            const bounds = displayedSites.reduce(
+                (b, s) => b.extend([s.location.lng, s.location.lat]),
+                new maplibregl.LngLatBounds(
+                    [displayedSites[0].location.lng, displayedSites[0].location.lat],
+                    [displayedSites[0].location.lng, displayedSites[0].location.lat]
+                )
+            );
+            map.fitBounds(bounds, { padding: 50, duration: 1500, maxZoom: 13 });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mapReady, filterCategory, selectedId, language]);
+
+    // -----------------------------------------------------------------
+    // Extension point for future GIS layers (Living Protection Map).
+    // Once mapReady, addSource/addLayer calls for protection-zone
+    // GeoJSON, buffer boundaries, etc. can be added in a dedicated
+    // useEffect here without touching the marker logic above.
+    // -----------------------------------------------------------------
 
     return (
-        <div style={{ height: "100%", width: "100%", background: '#0f172a', position: 'relative' }}>
-            {/* Filter Control */}
+        <div style={{ height: "100%", width: "100%", background: "#0f172a", position: "relative" }}>
+            {/* Category filter */}
             <div className="filter-control">
-                {categories.map(cat => (
+                {categories.map((cat) => (
                     <button
                         key={cat}
                         onClick={() => setFilterCategory(cat)}
-                        className={`filter-btn ${filterCategory === cat ? 'active' : ''}`}
+                        className={`filter-btn ${filterCategory === cat ? "active" : ""}`}
                     >
-                        {cat === "All" ? (language === 'mn' ? 'Бүгд' : 'All') : (t[cat] || cat)}
+                        {cat === "All" ? (language === "mn" ? "Бүгд" : "All") : t[cat] || cat}
                     </button>
                 ))}
             </div>
 
-            <MapContainer center={position} zoom={9} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
-                <LayersControl position="topright">
-                    <BaseLayer checked name="Standard">
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                    </BaseLayer>
-                    <BaseLayer name="Satellite">
-                        <TileLayer
-                            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
-                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                        />
-                    </BaseLayer>
-                    <BaseLayer name="Terrain">
-                        <TileLayer
-                            attribution='Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-                            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-                        />
-                    </BaseLayer>
-                </LayersControl>
-
-                {/* Auto Zoom Controller */}
-                <AutoZoom displayedSites={displayedSites} selectedId={selectedId} />
-
-                {displayedSites.map((site) => (
-                    <Marker
-                        key={site.id}
-                        position={[site.location.lat, site.location.lng]}
-                        icon={createIcon(site.category)}
-                        zIndexOffset={selectedId === site.id.toString() ? 1000 : 0}
+            {/* Base layer switcher */}
+            <div className="baselayer-control">
+                {Object.entries(BASE_LAYERS).map(([key, layer]) => (
+                    <button
+                        key={key}
+                        onClick={() => setBaseKey(key)}
+                        className={`baselayer-btn ${baseKey === key ? "active" : ""}`}
                     >
-                        <Popup maxWidth={280} className="custom-popup">
-                            <div style={{ textAlign: 'left', minWidth: '220px', padding: '4px' }}>
-                                <div style={{
-                                    width: '100%',
-                                    height: '140px',
-                                    borderRadius: '12px',
-                                    overflow: 'hidden',
-                                    marginBottom: '12px',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <img
-                                        src={site.images && site.images.length > 0 ? site.images[0] : getPlaceHolder(site.id)}
-                                        alt={site.name}
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
-                                </div>
-                                <b style={{
-                                    fontSize: '1rem',
-                                    color: '#0f172a',
-                                    display: 'block',
-                                    marginBottom: '4px',
-                                    lineHeight: '1.4'
-                                }}>
-                                    {language === 'en' && site.nameEn ? site.nameEn : site.name}
-                                </b>
-                                <span style={{
-                                    display: 'inline-block',
-                                    padding: '4px 8px',
-                                    background: '#f1f5f9',
-                                    color: '#64748b',
-                                    fontSize: '0.75rem',
-                                    borderRadius: '6px',
-                                    marginBottom: '12px',
-                                    fontWeight: '500'
-                                }}>
-                                    {t[site.category] || site.category}
-                                </span>
-                                <a
-                                    href={`/sites/${site.id}`}
-                                    style={{
-                                        display: 'block',
-                                        width: '100%',
-                                        background: '#3b82f6',
-                                        color: 'white',
-                                        padding: '8px 0',
-                                        borderRadius: '8px',
-                                        fontSize: '0.875rem',
-                                        textDecoration: 'none',
-                                        fontWeight: '600',
-                                        textAlign: 'center',
-                                        transition: 'background 0.2s'
-                                    }}
-                                >
-                                    {language === 'mn' ? 'Дэлгэрэнгүй' : 'Details'}
-                                </a>
-                            </div>
-                        </Popup>
-                    </Marker>
+                        {layer.label[language] || layer.label.en}
+                    </button>
                 ))}
-            </MapContainer>
+            </div>
+
+            <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
 
             <style jsx global>{`
                 .filter-control {
                     position: absolute;
                     top: 10px;
-                    left: 50px; /* moved right to avoid zoom controls */
-                    z-index: 1000;
+                    left: 10px;
+                    z-index: 10;
                     display: flex;
                     gap: 6px;
                     flex-wrap: wrap;
-                    max-width: 90%;
+                    max-width: 70%;
                 }
-                .filter-btn {
+                .baselayer-control {
+                    position: absolute;
+                    top: 10px;
+                    right: 50px;
+                    z-index: 10;
+                    display: flex;
+                    gap: 4px;
+                }
+                .filter-btn,
+                .baselayer-btn {
                     background: rgba(255, 255, 255, 0.95);
-                    border: 1px solid rgba(0,0,0,0.05);
+                    border: 1px solid rgba(0, 0, 0, 0.05);
                     padding: 4px 10px;
                     border-radius: 12px;
                     font-size: 0.7rem;
@@ -198,105 +249,105 @@ export default function Map({ language = 'mn' }) {
                     color: #475569;
                     cursor: pointer;
                     transition: all 0.2s;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
                     backdrop-filter: blur(4px);
                 }
-                .filter-btn:hover {
+                .filter-btn:hover,
+                .baselayer-btn:hover {
                     background: white;
                     transform: translateY(-1px);
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 }
-                .filter-btn.active {
+                .filter-btn.active,
+                .baselayer-btn.active {
                     background: #3b82f6;
                     color: white;
                     border-color: #3b82f6;
                 }
 
-                .marker-pin {
+                .orkhon-marker-pin {
                     width: 40px;
                     height: 40px;
                     border-radius: 50% 50% 50% 0;
-                    background: #3b82f6;
-                    position: absolute;
+                    background: var(--marker-color, #3b82f6);
                     transform: rotate(-45deg);
-                    left: 50%;
-                    top: 50%;
-                    margin: -20px 0 0 -20px;
                     box-shadow: -3px 3px 6px 2px rgba(0, 0, 0, 0.3);
                     border: 2px solid white;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     transition: all 0.2s ease;
+                    cursor: pointer;
                 }
-                
-                .marker-pin i {
-                    transform: rotate(45deg); /* Counter-rotate icon */
+                .orkhon-marker-pin i {
+                    transform: rotate(45deg);
                     color: white;
                     font-size: 18px;
                 }
-
-                .marker-pin:hover {
+                .orkhon-marker-pin:hover {
                     transform: rotate(-45deg) scale(1.1);
-                    z-index: 999;
+                }
+                .orkhon-marker-selected {
+                    z-index: 999 !important;
+                    transform: rotate(-45deg) scale(1.15);
                 }
 
-                .custom-div-icon {
-                    background: transparent;
-                    border: none;
-                }
-
-                .custom-popup .leaflet-popup-content-wrapper {
-                    padding: 0;
-                    border-radius: 16px;
+                .maplibregl-popup-content {
+                    padding: 0 !important;
+                    border-radius: 16px !important;
                     overflow: hidden;
                     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
                 }
-                .custom-popup .leaflet-popup-content {
-                    margin: 16px;
-                    line-height: 1.5;
+                .orkhon-popup {
+                    text-align: left;
+                    min-width: 220px;
+                    padding: 4px 16px 16px 16px;
                 }
-                .custom-popup a.leaflet-popup-close-button {
-                    top: 8px;
-                    right: 8px;
-                    background: rgba(255, 255, 255, 0.8);
-                    border-radius: 50%;
-                    width: 24px;
-                    height: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                .orkhon-popup-image {
+                    width: calc(100% + 32px);
+                    margin: -4px -16px 12px -16px;
+                    height: 140px;
+                    overflow: hidden;
+                }
+                .orkhon-popup-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .orkhon-popup-title {
+                    font-size: 1rem;
+                    color: #0f172a;
+                    display: block;
+                    margin-bottom: 4px;
+                    line-height: 1.4;
+                }
+                .orkhon-popup-category {
+                    display: inline-block;
+                    padding: 4px 8px;
+                    background: #f1f5f9;
                     color: #64748b;
-                    font-size: 16px;
+                    font-size: 0.75rem;
+                    border-radius: 6px;
+                    margin-bottom: 12px;
+                    font-weight: 500;
+                }
+                .orkhon-popup-link {
+                    display: block;
+                    width: 100%;
+                    background: #3b82f6;
+                    color: white;
+                    padding: 8px 0;
+                    border-radius: 8px;
+                    font-size: 0.875rem;
+                    text-decoration: none;
+                    font-weight: 600;
+                    text-align: center;
+                    transition: background 0.2s;
+                }
+                .orkhon-popup-link:hover {
+                    background: #2563eb;
                 }
             `}</style>
         </div>
     );
-}
-
-// Separate component to handle map side-effects
-function AutoZoom({ displayedSites, selectedId }) {
-    const map = useMap();
-
-    useEffect(() => {
-        if (selectedId) {
-            const site = displayedSites.find(s => s.id.toString() === selectedId);
-            if (site && site.location) {
-                map.flyTo([site.location.lat, site.location.lng], 15, {
-                    duration: 1.5
-                });
-                return;
-            }
-        }
-
-        // Check if map tracks valid bounds
-        if (displayedSites.length > 0) {
-            const bounds = L.latLngBounds(displayedSites.map(s => [s.location.lat, s.location.lng]));
-            if (bounds.isValid()) {
-                map.flyToBounds(bounds, { padding: [50, 50], duration: 1.5 });
-            }
-        }
-    }, [displayedSites, map, selectedId]);
-
-    return null;
 }
