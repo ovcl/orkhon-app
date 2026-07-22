@@ -6,43 +6,56 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 
 /**
- * PanoramaViewer — VR-native 360° харагч
+ * PanoramaViewer — VR-native 360° харагч + HOTSPOT NAVIGATION
  *
- * ШИНЭ БОЛОМЖУУД (2026-07 сайжруулалт):
- * 1. VR session-той зөрчилдөж байсан OrbitControls-ыг session эхлэхэд автоматаар унтраана
- * 2. Headset дотор controller (trigger)-оор дарж болох 3D navigation UI
- *    (Өмнөх / Дараах / Гарах) — HTML overlay биш, THREE.js dэx бодит 3D объект тул VR дотор харагдана
- * 3. Тайван "fade to black" шилжилт — толгой эргэх мэдрэмжгүй, шууд солигдохгүй
- * 4. Олон панорама (scenes array)-ийг нэг viewer дотор шилжүүлэх боломж — VR-ээс гарахгүйгээр
- *    дараагийн дурсгал руу шилждэг
+ * ШИНЭ БОЛОМЖ (2026-07 сайжруулалт #2): Панорама ДОТОР нь бодит чиглэл рүү
+ * заасан сум (hotspot) байрлуулж, түүн дээр дарахад (эсвэл VR controller-оор
+ * онож trigger дарахад) холбогдсон дараагийн панорама руу шилждэг. Жишээ нь:
+ * Эрдэнэ Зуу хийдийн гол хаалганаас гурван сүм рүү харсан чиглэлд сум байна,
+ * түүн дээр дарахад тэр байрлал дахь панорам руу шилжинэ — Google Street View
+ * маягийн зам дагасан навигаци.
+ *
+ * HOTSPOT ӨГӨГДЛИЙН БҮТЭЦ (scenes[i].hotspots):
+ *   [{ yaw: 45, pitch: -5, targetIndex: 2, label: 'Гурван сүм рүү' }]
+ *   - yaw: 0–360°. 0° = тухайн панорамын зурган голын чиглэл (ихэвчлэн drone
+ *     авалт эхэлсэн чиглэл). Градус ЦАГИЙН ЗҮҮНИЙ дагуу нэмэгдэнэ (баруун тийш).
+ *   - pitch: -90..90°. 0° = хэвтээ хараа (нүдний түвшин), эерэг = дээш, сөрөг = доош.
+ *   - targetIndex: `scenes` array доtorх зорилтот индекс (ижил тур доторх өөр node).
+ *   - label: сум дээр харагдах богино тайлбар (жишээ нь "Гурван сүм рүү").
+ *
+ * Хэрэв scenes[i].hotspots байхгүй эсвэл хоосон бол энэ scene дээр ямар ч
+ * дотоод сум харагдахгүй — өмнөх шиг зөвхөн доод HTML prev/next ажиллана
+ * (бүрэн ухаангүй нийцтэй — хуучин site өгөгдөл өөрчлөгдөх шаардлагагүй).
  *
  * PROPS:
- * - scenes: [{ url, name, description }] — панорама бүхий дурсгалуудын жагсаалт
+ * - scenes: [{ url, name, description, hotspots? }]
  * - initialIndex: эхлэх индекс (default 0)
- * - onIndexChange: (index) => void — flat 2D horizontal UI-д зориулсан callback (info overlay update хийхэд)
+ * - onIndexChange: (index) => void
  */
 export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange }) {
     const containerRef = useRef(null);
     const [loading, setLoading] = useState(true);
-    const [isPresenting, setIsPresenting] = useState(false); // XR session идэвхтэй эсэх
+    const [isPresenting, setIsPresenting] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [showDragHint, setShowDragHint] = useState(true);
-    const [xrSupported, setXrSupported] = useState(null); // null = шалгаж байна, true/false = үр дүн
+    const [xrSupported, setXrSupported] = useState(null);
 
-    // Refs — эффект дотор бус, callback дотор шинэ утга ашиглах шаардлагатай тул ref-ээр дамжуулна
     const currentIndexRef = useRef(initialIndex);
-    const sceneStateRef = useRef({}); // three.js объектуудыг effect хооронд хадгална
+    const sceneStateRef = useRef({});
     const isFirstRun = useRef(true);
 
-    const goTo = useCallback((delta) => {
-        const next = currentIndexRef.current + delta;
-        if (next < 0 || next >= scenes.length) return;
-        currentIndexRef.current = next;
-        setCurrentIndex(next);
-        onIndexChange?.(next);
+    // navigateTo — ямар ч индекс рүү шууд шилжих (hotspot-той адилгүй, delta биш)
+    const navigateTo = useCallback((index) => {
+        if (index < 0 || index >= scenes.length || index === currentIndexRef.current) return;
+        currentIndexRef.current = index;
+        setCurrentIndex(index);
+        onIndexChange?.(index);
     }, [scenes.length, onIndexChange]);
 
-    // Parent UI (VirtualTour 2D buttons) өөрчлөгдөхөд дотоод state-ийг синхрончилно
+    const goTo = useCallback((delta) => {
+        navigateTo(currentIndexRef.current + delta);
+    }, [navigateTo]);
+
     useEffect(() => {
         if (initialIndex >= 0 && initialIndex < scenes.length && initialIndex !== currentIndexRef.current) {
             currentIndexRef.current = initialIndex;
@@ -78,15 +91,10 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         const textureLoader = new THREE.TextureLoader();
         textureLoader.crossOrigin = 'Anonymous';
 
-        // ---------- Fade overlay (тайван шилжилт) ----------
-        // Камерын өмнө байрлах хар бөмбөгөр — opacity-г 0↔1 болгож fade хийнэ
+        // ---------- Fade overlay ----------
         const fadeGeometry = new THREE.SphereGeometry(1, 16, 16);
         const fadeMaterial = new THREE.MeshBasicMaterial({
-            color: 0x000000,
-            side: THREE.BackSide,
-            transparent: true,
-            opacity: 1,
-            depthTest: false,
+            color: 0x000000, side: THREE.BackSide, transparent: true, opacity: 1, depthTest: false,
         });
         const fadeMesh = new THREE.Mesh(fadeGeometry, fadeMaterial);
         fadeMesh.renderOrder = 999;
@@ -100,9 +108,6 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             textureLoader.load(url, (texture) => {
                 if (isCancelled) return;
                 texture.colorSpace = THREE.SRGBColorSpace;
-                // Зурагны тод, өндөр чанарыг хангах: anisotropic filtering + mipmap
-                // (эх зураг бага нягтралтай бол код үүнийг нөхөж чадахгүй — эх файлыг
-                // өндөр нягтралаар (жишээ нь 4096×2048+, equirectangular) экспортлохыг зөвлөж байна)
                 texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.magFilter = THREE.LinearFilter;
@@ -111,7 +116,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 material.color.set(0xffffff);
                 material.needsUpdate = true;
                 setLoading(false);
-                if (fadeIn) fadeTo(0); // хараас гэрэл рүү аажим гарна
+                if (fadeIn) fadeTo(0);
             }, undefined, () => { if (!isCancelled) setLoading(false); });
         };
 
@@ -130,15 +135,13 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
 
         loadTexture(scenes[currentIndexRef.current].url, true);
 
-        // ---------- Flat (non-VR) controls: mouse/touch эргүүлэх ----------
+        // ---------- Flat (non-VR) controls ----------
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableZoom = false;
         controls.enablePan = false;
         controls.rotateSpeed = -0.25;
         controls.enableDamping = true;
         controls.dampingFactor = 0.12;
-        // Эхлээд илүү тод хурдтай эргүүлж "энэ бол 360° панорама" гэдгийг тод мэдрүүлнэ,
-        // 3 секундийн дараа энгийн, тайван хурд руу буурна (хэрэглэгч гар хүрэхгүй бол)
         controls.autoRotate = true;
         controls.autoRotateSpeed = 1.4;
         setTimeout(() => { if (!isCancelled) controls.autoRotateSpeed = 0.2; }, 3000);
@@ -159,48 +162,34 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         };
         renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
 
-        // ---------- VR: 3D navigation UI (controller raycast-аар дарна) ----------
-        
-        // Мэдээллийн текст үүсгэх canvas
+        // ---------- VR: 3D navigation UI (camera-т наасан, харах чиглэлээс үл хамаарна) ----------
         const createInfoTexture = (title, text) => {
             const canvas = document.createElement('canvas');
-            canvas.width = 1024; canvas.height = 768; // 4:3 харьцаа
+            canvas.width = 1024; canvas.height = 768;
             const ctx = canvas.getContext('2d');
-            
-            // bg
             ctx.fillStyle = 'rgba(10,14,26,0.92)';
-            ctx.fillRect(0,0,1024,768);
-            
-            // border
+            ctx.fillRect(0, 0, 1024, 768);
             ctx.strokeStyle = 'rgba(245,158,11,0.8)';
             ctx.lineWidth = 10;
-            ctx.strokeRect(5,5,1014,758);
-
-            // title
+            ctx.strokeRect(5, 5, 1014, 758);
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.font = 'bold 50px sans-serif';
             ctx.fillText(title || '', 512, 60);
-
-            // separator
             ctx.fillStyle = 'rgba(255,255,255,0.2)';
             ctx.fillRect(100, 140, 824, 2);
-
-            // description text
             ctx.fillStyle = '#e2e8f0';
             ctx.font = '36px sans-serif';
             ctx.textAlign = 'left';
-            
             const words = (text || '').split(' ');
-            let line = '';
-            let y = 180;
-            for(let i = 0; i < words.length; i++) {
+            let line = ''; let y = 180;
+            for (let i = 0; i < words.length; i++) {
                 const testLine = line + words[i] + ' ';
                 if (ctx.measureText(testLine).width > 880 && i > 0) {
                     ctx.fillText(line, 72, y);
                     line = words[i] + ' ';
-                    y += 50; // Мөр хоорондын зай
+                    y += 50;
                 } else {
                     line = testLine;
                 }
@@ -212,8 +201,6 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             return tex;
         };
 
-        // Canvas texture-аар товч үүсгэх туслах функц (Солигдов: Sprite -> Mesh PlaneGeometry)
-        // учир нь Sprite-ийн raycasting WebXR орчинд алдаа зааж асуудал үүсгэдэг. PlaneMesh илүү найдвартай!
         const makeButtonMesh = (label, icon) => {
             const canvas = document.createElement('canvas');
             canvas.width = 256; canvas.height = 256;
@@ -222,7 +209,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             ctx.beginPath();
             ctx.arc(128, 128, 118, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(245,158,11,0.9)'; // amber accent
+            ctx.strokeStyle = 'rgba(245,158,11,0.9)';
             ctx.lineWidth = 6;
             ctx.stroke();
             ctx.fillStyle = '#ffffff';
@@ -233,24 +220,110 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             ctx.font = '28px sans-serif';
             ctx.fillText(label, 128, 200);
             const tex = new THREE.CanvasTexture(canvas);
-            
             const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide });
-            const geom = new THREE.PlaneGeometry(0.3, 0.3); // 30cm дөрвөлжин mesh
-            const mesh = new THREE.Mesh(geom, mat);
-            mesh.renderOrder = 1000;
-            return mesh;
+            const geom = new THREE.PlaneGeometry(0.3, 0.3);
+            const meshObj = new THREE.Mesh(geom, mat);
+            meshObj.renderOrder = 1000;
+            return meshObj;
+        };
+
+        // -----------------------------------------------------------------
+        // HOTSPOT MESH — панорама sphere ДОТОР, тодорхой yaw/pitch чиглэлд
+        // байрлах, дараагийн scene рүү шилжүүлдэг чиглэлийн сум.
+        // Sprite биш PlaneGeometry ашиглаж байгаа шалтгаан: WebXR controller
+        // raycasting Sprite дээр найдваргүй ажилладаг (btnPrev/btnNext-д мөн
+        // адил шийдвэр аль хэдийн авсан байсан).
+        // Билборд эффект (үргэлж камер руу харах)-ыг render loop дотор
+        // `mesh.lookAt(camera.position)`-аар гараар хийнэ, учир нь энэ mesh
+        // camera-ийн хүүхэд биш, world space дотор тогтмол байрлалтай.
+        // -----------------------------------------------------------------
+        const makeHotspotMesh = (label) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 320; canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(10,10,14,0.55)';
+            ctx.beginPath();
+            ctx.roundRect(10, 10, 300, 180, 24);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(245,158,11,0.95)';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.roundRect(10, 10, 300, 180, 24);
+            ctx.stroke();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(120, 95); ctx.lineTo(160, 55); ctx.lineTo(200, 95);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(120, 125); ctx.lineTo(160, 85); ctx.lineTo(200, 125);
+            ctx.globalAlpha = 0.5;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 26px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label || '', 160, 160);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide });
+            const geom = new THREE.PlaneGeometry(16, 10);
+            const meshObj = new THREE.Mesh(geom, mat);
+            meshObj.renderOrder = 998;
+            return meshObj;
+        };
+
+        const hotspotPosition = (yawDeg, pitchDeg, r = 40) => {
+            const yaw = THREE.MathUtils.degToRad(yawDeg);
+            const pitch = THREE.MathUtils.degToRad(pitchDeg);
+            const x = -r * Math.cos(pitch) * Math.sin(yaw);
+            const y = r * Math.sin(pitch);
+            const z = -r * Math.cos(pitch) * Math.cos(yaw);
+            return new THREE.Vector3(x, y, z);
+        };
+
+        let hotspotMeshes = [];
+
+        const clearHotspots = () => {
+            hotspotMeshes.forEach((h) => {
+                scene.remove(h);
+                h.geometry.dispose();
+                h.material.map?.dispose();
+                h.material.dispose();
+            });
+            hotspotMeshes = [];
+        };
+
+        const buildHotspots = (index) => {
+            clearHotspots();
+            const hs = scenes[index]?.hotspots;
+            if (!hs || hs.length === 0) return;
+            hs.forEach((h) => {
+                const hm = makeHotspotMesh(h.label);
+                hm.position.copy(hotspotPosition(h.yaw, h.pitch));
+                hm.userData.action = () => {
+                    fadeTo(1, 250);
+                    setTimeout(() => {
+                        navigateTo(h.targetIndex);
+                    }, 260);
+                };
+                scene.add(hm);
+                hotspotMeshes.push(hm);
+            });
         };
 
         const vrUiGroup = new THREE.Group();
-        vrUiGroup.visible = false; // зөвхөн VR session-ий үед харагдана
+        vrUiGroup.visible = false;
 
-        // Текст харуулах Info Panel үүсгэх
         const infoPanelMat = new THREE.MeshBasicMaterial({ transparent: true, depthTest: false, side: THREE.DoubleSide });
         const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.9), infoPanelMat);
-        infoPanel.position.set(0, 0.35, -1.2); // Товчнуудын дээр байрлана
-        infoPanel.visible = false; // Эхлээд харагдахгүй
+        infoPanel.position.set(0, 0.35, -1.2);
+        infoPanel.visible = false;
         infoPanel.renderOrder = 999;
-        
+
         const updateInfoPanelText = (title, text) => {
             const oldMap = infoPanelMat.map;
             infoPanelMat.map = createInfoTexture(title, text);
@@ -262,13 +335,12 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         const btnInfo = makeButtonMesh('Мэдээлэл', 'i');
         const btnNext = makeButtonMesh('Дараах', '▶');
         const btnExit = makeButtonMesh('Гарах', '✕');
-        
+
         btnPrev.position.set(-0.6, -0.35, -1.2);
         btnInfo.position.set(-0.2, -0.35, -1.2);
         btnExit.position.set(0.2, -0.35, -1.2);
         btnNext.position.set(0.6, -0.35, -1.2);
 
-        // Click хийснээ мэдрэх зорилгоор жижигрэх анимейшн нэмэв
         const animateClick = (btn, action) => {
             btn.scale.set(0.8, 0.8, 0.8);
             setTimeout(() => { if (btn) btn.scale.set(1.0, 1.0, 1.0); }, 150);
@@ -280,27 +352,24 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         btnInfo.userData.action = () => animateClick(btnInfo, () => { infoPanel.visible = !infoPanel.visible; });
         btnExit.userData.action = () => animateClick(btnExit, () => renderer.xr.getSession()?.end());
         vrUiGroup.add(infoPanel, btnPrev, btnInfo, btnExit, btnNext);
-        camera.add(vrUiGroup); // камерт наасан тул толгой хаашаа ч харсан "гараар дагадаг" биш, session эхлэхэд урд байрандаа тогтмол байна
+        camera.add(vrUiGroup);
 
-        // Controller raycast setup
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
-        const uiTargets = [btnPrev, btnInfo, btnNext, btnExit]; // infoPanel дарагдахгүй (зөвхөн харагдана)
-        const controllers = []; // Render loop дотор hover шалгахын тулд хадгална
+        const uiTargets = [btnPrev, btnInfo, btnNext, btnExit];
+        const controllers = [];
 
         const makeController = (index) => {
             const controller = renderer.xr.getController(index);
             controller.addEventListener('select', () => {
-                // VR-д camera.matrixWorld хоцрох магадлалтай тул raycast хийхээс өмнө шинэчилнэ
                 scene.updateMatrixWorld(true);
-
                 tempMatrix.identity().extractRotation(controller.matrixWorld);
                 raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
                 raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-                const hits = raycaster.intersectObjects(uiTargets, false);
+                const allTargets = uiTargets.concat(hotspotMeshes);
+                const hits = raycaster.intersectObjects(allTargets, false);
                 if (hits.length > 0) hits[0].object.userData.action?.();
             });
-            // Энгийн ray line (харагдац)
             const rayGeom = new THREE.BufferGeometry().setFromPoints([
                 new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -3),
             ]);
@@ -313,23 +382,50 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         const controller0 = makeController(0);
         const controller1 = makeController(1);
 
-        // ---------- XR session lifecycle ----------
+        // ---------- Desktop/mobile: hotspot дээр ДАРАХ (drag-аас ялгаж) ----------
+        const isPresentingRef = { current: false };
+        const pointerNdc = new THREE.Vector2();
+        let pointerDownPos = null;
+        let pointerDownTime = 0;
+
+        const onPointerDown = (e) => {
+            pointerDownPos = { x: e.clientX, y: e.clientY };
+            pointerDownTime = performance.now();
+        };
+        const onPointerUp = (e) => {
+            if (!pointerDownPos) return;
+            const dx = e.clientX - pointerDownPos.x;
+            const dy = e.clientY - pointerDownPos.y;
+            const moved = Math.sqrt(dx * dx + dy * dy);
+            const elapsed = performance.now() - pointerDownTime;
+            pointerDownPos = null;
+            if (moved > 8 || elapsed > 500 || hotspotMeshes.length === 0 || isPresentingRef.current) return;
+
+            const rect = renderer.domElement.getBoundingClientRect();
+            pointerNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            pointerNdc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(pointerNdc, camera);
+            const hits = raycaster.intersectObjects(hotspotMeshes, false);
+            if (hits.length > 0) hits[0].object.userData.action?.();
+        };
+        renderer.domElement.addEventListener('pointerdown', onPointerDown);
+        renderer.domElement.addEventListener('pointerup', onPointerUp);
+
         const onSessionStart = () => {
             setIsPresenting(true);
-            controls.enabled = false; // OrbitControls-той зөрчилдөхгүйн тулд унтраана — XR camera-г WebXR өөрөө удирдана
+            isPresentingRef.current = true;
+            controls.enabled = false;
             vrUiGroup.visible = true;
         };
         const onSessionEnd = () => {
             setIsPresenting(false);
+            isPresentingRef.current = false;
             controls.enabled = true;
             vrUiGroup.visible = false;
         };
         renderer.xr.addEventListener('sessionstart', onSessionStart);
         renderer.xr.addEventListener('sessionend', onSessionEnd);
 
-        // WebXR дэмжигдэж байгаа эсэхийг эхлээд шалгаад, дэмжихгүй бол
-        // three.js-ийн стандарт цайвар "VR NOT SUPPORTED" харагдацыг өөрийн
-        // зөөлөн, тайлбартай tooltip-ээр орлуулна
         if (navigator.xr) {
             navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
                 if (isCancelled) return;
@@ -350,12 +446,14 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             container.appendChild(vrButtonElement);
         }
 
+        buildHotspots(currentIndexRef.current);
+
         renderer.setAnimationLoop(() => {
             if (isCancelled) return;
             if (controls.enabled) controls.update();
 
-            // VR Hover logic: Controller ray-ээр товчлуурыг онож буйг бодит цаг хугацаанд шалгах 
-            // (хэрэглэгч яг дарж болох үгүйгээ мэдэхэд тусална)
+            hotspotMeshes.forEach((h) => h.lookAt(camera.position));
+
             if (vrUiGroup.visible && controllers.length > 0) {
                 let hoveredObj = null;
                 scene.updateMatrixWorld(true);
@@ -363,24 +461,17 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                     tempMatrix.identity().extractRotation(c.matrixWorld);
                     raycaster.ray.origin.setFromMatrixPosition(c.matrixWorld);
                     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-                    const hits = raycaster.intersectObjects(uiTargets, false);
-                    if (hits.length > 0) {
-                        hoveredObj = hits[0].object;
-                        break; 
-                    }
+                    const hits = raycaster.intersectObjects(uiTargets.concat(hotspotMeshes), false);
+                    if (hits.length > 0) { hoveredObj = hits[0].object; break; }
                 }
-                
-                uiTargets.forEach(btn => {
-                    // Хэрэв дарж байгаа буюу animateClick ажиллаж scale 0.8 болсон бол hover-ийг түр алгасна
-                    if (btn.scale.x < 0.9) return; 
-
-                    if (btn === hoveredObj) {
-                        btn.scale.setScalar(1.15); // оносон үед томрох
-                        btn.material.color.setHex(0xffffff); // тодрох
-                    } else {
-                        btn.scale.setScalar(1.0); // хэвийн
-                        btn.material.color.setHex(0xb0b0b0); // бүдгэрэх
-                    }
+                uiTargets.forEach((btn) => {
+                    if (btn.scale.x < 0.9) return;
+                    if (btn === hoveredObj) { btn.scale.setScalar(1.15); btn.material.color.setHex(0xffffff); }
+                    else { btn.scale.setScalar(1.0); btn.material.color.setHex(0xb0b0b0); }
+                });
+                hotspotMeshes.forEach((h) => {
+                    if (h === hoveredObj) h.scale.setScalar(1.15);
+                    else h.scale.setScalar(1.0);
                 });
             }
 
@@ -400,15 +491,18 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         });
         resizeObserver.observe(container);
 
-        sceneStateRef.current = { loadTexture, fadeTo, updateInfoPanelText };
+        sceneStateRef.current = { loadTexture, fadeTo, updateInfoPanelText, buildHotspots };
 
         return () => {
             isCancelled = true;
             renderer.domElement.removeEventListener('wheel', onWheel);
+            renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+            renderer.domElement.removeEventListener('pointerup', onPointerUp);
             renderer.xr.removeEventListener('sessionstart', onSessionStart);
             renderer.xr.removeEventListener('sessionend', onSessionEnd);
             resizeObserver.disconnect();
             renderer.setAnimationLoop(null);
+            clearHotspots();
             renderer.dispose();
             controls.dispose();
             if (material.map) material.map.dispose();
@@ -421,11 +515,9 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [scenes]);
 
-    // Дурсгал солигдоход: fade out → texture солих → fade in
     useEffect(() => {
         if (isFirstRun.current) {
             isFirstRun.current = false;
-            // Анхны 3D текст мэдээллийг шинэчлэх
             if (sceneStateRef.current?.updateInfoPanelText) {
                 sceneStateRef.current.updateInfoPanelText(scenes[currentIndex]?.name, scenes[currentIndex]?.description);
             }
@@ -438,12 +530,13 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         state.fadeTo(1, 250);
         const timer = setTimeout(() => {
             state.loadTexture(scenes[currentIndex].url, false);
+            state.buildHotspots?.(currentIndex);
             if (state.updateInfoPanelText) {
                 state.updateInfoPanelText(scenes[currentIndex]?.name, scenes[currentIndex]?.description);
             }
             state.fadeTo(0, 300);
         }, 260);
-        
+
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentIndex]);
@@ -457,7 +550,6 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 </div>
             )}
 
-            {/* Толгой/хулгана чирж тойрч харах боломжтойг сануулах, эхний хүрэлцээний дараа алга болно */}
             {!loading && showDragHint && !isPresenting && (
                 <div style={{ position: 'absolute', top: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '999px', fontSize: '12px', zIndex: 60, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-solid fa-arrows-up-down-left-right" style={{ fontSize: '11px' }}></i>
@@ -465,8 +557,6 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 </div>
             )}
 
-            {/* WebXR дэмжигдэхгүй орчинд (жишээ нь энгийн desktop browser) three.js-ийн
-                default "VR NOT SUPPORTED" харагдацын оронд зөөлөн тайлбар харуулна */}
             {xrSupported === false && !isPresenting && (
                 <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-solid fa-circle-info"></i>
@@ -474,8 +564,6 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 </div>
             )}
 
-            {/* Flat (2D browser) preview-д зориулсан HTML nav — VR session идэвхтэй үед автоматаар нуугдана,
-                учир нь энэ overlay headset дотор ажиглагдахгүй бөгөөд ХОЁР дахин удирдлага болохоос сэргийлнэ */}
             {!isPresenting && scenes.length > 1 && (
                 <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', zIndex: 50, pointerEvents: 'none' }}>
                     <button

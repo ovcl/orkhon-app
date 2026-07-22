@@ -41,7 +41,7 @@ export default function ToursPage() {
         setIsTourActive(true);
     };
 
-    const vrSites = sitesData.filter(site => site.panoramaUrl);
+    const vrSites = sitesData.filter(site => site.panoramaUrl || (site.panoramaTour && site.panoramaTour.length > 0));
 
     const closeTour = () => {
         setIsTourActive(false);

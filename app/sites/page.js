@@ -170,7 +170,7 @@ export default function SitesPage() {
                         >
                             {filteredSites.map(site => {
                                 const catStyle = getCat(site.category);
-                                const hasVR = !!site.panoramaUrl;
+                                const hasVR = !!site.panoramaUrl || !!(site.panoramaTour && site.panoramaTour.length > 0);
                                 const imgSrc = site.images && site.images.length > 0
                                     ? site.images[0]
                                     : (typeof getPlaceHolder === 'function' ? getPlaceHolder(site.id) : '');

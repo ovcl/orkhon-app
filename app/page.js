@@ -46,7 +46,7 @@ export default function Home() {
         localStorage.setItem('language', newLang);
     };
 
-    const vrSitesCount = sitesData.filter(s => s.panoramaUrl).length;
+    const vrSitesCount = sitesData.filter(s => s.panoramaUrl || (s.panoramaTour && s.panoramaTour.length > 0)).length;
 
     const popularSites = [
         { img: "https://res.cloudinary.com/dsyqxmmxi/image/upload/f_auto,q_auto,w_400/v1775462133/images/16.jpg", title: t.kharakhorum, type: language === 'mn' ? 'Эртний хот' : 'Ancient City', id: 16 },

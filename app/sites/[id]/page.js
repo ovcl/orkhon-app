@@ -69,7 +69,7 @@ export default function SiteDetail({ params }) {
                     <i className="fa-solid fa-arrow-left text-sm"></i>
                 </Link>
                 <div className="flex items-center gap-2 pointer-events-auto">
-                    {site.panoramaUrl && (
+                    {(site.panoramaUrl || (site.panoramaTour && site.panoramaTour.length > 0)) && (
                         <Link href="/tours"
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors"
                             style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>

@@ -21,19 +21,42 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
     const siteDescription = language === 'en' && currentSite?.descriptionEn ? currentSite.descriptionEn : currentSite?.description;
     const siteCategory = t[currentSite?.category] || currentSite?.category;
 
-    // panoramaUrl-тэй БҮХ дурсгалыг нэг "scenes" жагсаалт болгож PanoramaViewer рүү дамжуулна.
-    // Ингэснээр VR session-с гарахгүйгээр headset дотроос шууд дараагийн панорама руу шилжих боломжтой болно.
-    const panoramaScenes = useMemo(
-        () => sites
-            .filter((s) => s.panoramaUrl)
-            .map((s) => ({
-                url: s.panoramaUrl,
-                name: language === 'en' && s.nameEn ? s.nameEn : s.name,
-                description: language === 'en' && s.descriptionEn ? s.descriptionEn : s.description,
-                siteId: s.id,
-            })),
-        [sites, language]
-    );
+    // panoramaUrl-тэй БҮХ дурсгалыг, мөн panoramaTour (олон node-той, hotspot
+    // навигацитай тур)-той дурсгалуудыг НЭГ "scenes" flat жагсаалт болгож
+    // PanoramaViewer рүү дамжуулна. panoramaTour-тэй site тус бүрийн node-уудыг
+    // дараалалтайгаар нэмж, тэдгээрийн hotspot.targetIndex-ийг локал (тухайн
+    // site-ийн tour доторх) индексээс ГЛОБАЛ (flat scenes array доторх) индекс
+    // рүү хөрвүүлнэ — ингэснээр PanoramaViewer доторх hotspot дарахад яг зөв
+    // node руу шилждэг.
+    const panoramaScenes = useMemo(() => {
+        const flat = [];
+        sites.forEach((s) => {
+            if (s.panoramaTour && s.panoramaTour.length > 0) {
+                const offset = flat.length;
+                s.panoramaTour.forEach((node) => {
+                    flat.push({
+                        url: node.url,
+                        name: language === 'en' && node.nameEn ? node.nameEn : node.name,
+                        description: language === 'en' && node.descriptionEn ? node.descriptionEn : node.description,
+                        siteId: s.id,
+                        hotspots: (node.hotspots || []).map((h) => ({
+                            ...h,
+                            targetIndex: offset + h.targetIndex, // локал -> глобал индекс
+                        })),
+                    });
+                });
+            } else if (s.panoramaUrl) {
+                flat.push({
+                    url: s.panoramaUrl,
+                    name: language === 'en' && s.nameEn ? s.nameEn : s.name,
+                    description: language === 'en' && s.descriptionEn ? s.descriptionEn : s.description,
+                    siteId: s.id,
+                    hotspots: [],
+                });
+            }
+        });
+        return flat;
+    }, [sites, language]);
 
     const currentPanoramaIndex = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
 
