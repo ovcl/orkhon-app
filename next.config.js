@@ -37,7 +37,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'orkhon-images',
                 expiration: {
                     maxEntries: 100,
-                    maxAgeSeconds: 60 * 60 * 24 * 30,
+                    maxAgeSeconds: 60 * 60 * 24 * 180, // 30 → 180 хоног
                 },
             },
         },
