@@ -323,9 +323,22 @@ export const sitesData = [
         "description": "Хархорум хотыг Чингис хаан 1220 онд Монголын эзэнт гүрний нийслэл болгон байгуулах зарлиг буулгаж түүний III хүү Өгөдэй хаан 1235 он гэхэд орд харш, засаг захиргааны байшин барилгууд, олон шашны сүм дугана, эд эрдэнэс, хөрөнгө зоорийн агуулах савтай, гар үйлдвэр, худалдааны талбай, байшин сууц бүхий дөрвөн талдаа асар хаалгатай хэрмээр хүрээлэгдсэн хотыг байгуулжээ.\n\nХархорум нь тухайн үеийн Монгол орны улс төр, эдийн засаг, соёл, засаг захиргаа, олон улсын харилцааны чухал төв болж байсан. Мөнх хааны үе буюу 1251-1259 онд хотын төв хэсэгт Хятад загварын хороолол буюу гар урчуудын дүүрэг, баруун хойно гэр хороолол, зүүн хойно Ислам шашинтны хороолол болон дэлхийн өнцөг булан бүрээс ирсэн улс үндэстний элч төлөөлөгчид, түүний дотор нангиад, түвэд, уйгур, перс, энэтхэгчүүд, франц, герман, мажар, орос зэрэг олон үндэстэн ястны 10 000- 15 000 орчим хүн төвлөрөн сууж байжээ.\n\nЮНЕСКО-гоос 1995–1996 онд зохион байгуулсан Монгол–Японы хамтарсан шинжилгээний анги тус хотын бүрэн хэмжээний топографийн зураг үйлдэж, Монгол Улсын Засгийн Газрын 1997 оны 241 дүгээр тогтоолоор хотын туурийн хамгаалалтын бүсийг тогтоосон. Тус туурийн хойд талд чулуун яст мэлхий байрладаг.",
         "descriptionEn": "The capital of the Mongol Empire, founded in 1220 by Genghis Khan and fully established by Ogedei Khan in 1235. It served as the empire's administrative, political, and cultural hub for decades. The city was remarkably cosmopolitan, featuring craft quarters, markets, and temples representing various major world religions. Archaeological mapping by joint Mongol-Japanese expeditions in the 1990s confirmed the city's complex layout, including distinct residential districts for diverse nationalities ranging from French to Indian and Russian. A significant stone turtle is located to the north of the ruins.",
         "panoramaTour": [
-            { "name": "Хархорум хотын туурь", "url": "/images/panoramas/pano-16.jpg" },
-            { "name": "Цогт гэр эхийн сүм", "url": "/images/panoramas/pano-16-Цогт_гэр_эхийн_сүм.jpg" },
-            { "name": "Мэлхий чулуу", "url": "/images/panoramas/pano-16-1_1_.jpg" }
+            {
+                "name": "Хархорум хотын туурь", "url": "/images/panoramas/pano-16.jpg", "hotspots": [
+                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                ]
+            },
+            {
+                "name": "Цогт гэр эхийн сүм", "url": "/images/panoramas/pano-16-Цогт_гэр_эхийн_сүм.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Туурь руу буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Мэлхий чулуу руу" }
+                ]
+            },
+            {
+                "name": "Мэлхий чулуу", "url": "/images/panoramas/pano-16-1_1_.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" }
+                ]
+            }
         ],
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462573/images/16.jpg"
@@ -464,12 +477,40 @@ export const sitesData = [
         "description": "Монгол оронд Бурханы шашин гурвантаа дэлгэрсэний хожуу үеийн дэлгэрэлтийн халх, зүүн Монголын анхны хийд нь Эрдэнэ Зуу бөгөөд Автай сайн хаан 1586 онд байгуулжээ. Тэрээр 1581-1583 онд өөрийн элч зарж, Түвдийн зарим ламыг урьж, 1586 онд 3-р Далай ламтай биечлэн уулзаж, Очирай сайн хан цол, тамгаар шагнагдаж, Бурханы шашныг Халхад дэлгэрүүлэхээр хэлэлцэн тохироод Эрдэнэ Зуу хийдийг байгуулах ажлаа эхлүүлжээ.\n\nМонголын буддын анхны энэхүү хийд 1792 онд 62 сүм, 500 барилгатай байсан бөгөөд эдүгээ 18 сүм дуган үлдсэн ба 1944 онд улсын хамгаалалтад авчээ. Эрдэнэ Зуу хийд нь монголын уламжлалт хот байгуулалтын дагуу баригдсан цорын ганц хийд юм.",
         "descriptionEn": "The oldest surviving Buddhist monastery in Mongolia, established in 1586 by Abtai Sain Khan following his meeting with the 3rd Dalai Lama. Built near the ruins of ancient Karakorum, it often utilized stone materials from the former capital. At its peak in 1792, the monastery contained 62 temples and over 500 buildings within a massive square enclosure topped with 108 stupas. Today, 18 temples remain as part of an active museum and functional monastery complex.",
         "panoramaTour": [
-            { "name": "Эрдэнэ Зуу хийд", "url": "/images/panoramas/pano-24-Эрдэнэзуу.jpg" },
-            { "name": "Автай сайн хааны гэрийн буурь", "url": "/images/panoramas/pano-24-Автай_сан_хааны_гэрийн_буурь.jpg" },
-            { "name": "Алтан суварга", "url": "/images/panoramas/pano-24-Алтан_суварга.jpg" },
-            { "name": "Гол гурван зуу", "url": "/images/panoramas/pano-24-Гол_гурван_зуу.jpg" },
-            { "name": "Лаврин", "url": "/images/panoramas/pano-24-Лаврин.jpg" },
-            { "name": "Хөх сүм", "url": "/images/panoramas/pano-24-Хөх_сүм.jpg" }
+            {
+                "name": "Эрдэнэ Зуу хийд", "url": "/images/panoramas/pano-24-Эрдэнэзуу.jpg", "hotspots": [
+                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Автай сайн хааны буурь руу" }
+                ]
+            },
+            {
+                "name": "Автай сайн хааны гэрийн буурь", "url": "/images/panoramas/pano-24-Автай_сан_хааны_гэрийн_буурь.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Эрдэнэ Зуу хийд рүү буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Гол гурван зуу руу" }
+                ]
+            },
+            {
+                "name": "Гол гурван зуу", "url": "/images/panoramas/pano-24-Гол_гурван_зуу.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 3, "label": "Алтан суврага руу" }
+                ]
+            },
+            {
+                "name": "Алтан суварга", "url": "/images/panoramas/pano-24-Алтан_суварга.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 2, "label": "Буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 4, "label": "Хөх сүм рүү" }
+                ]
+            },
+            {
+                "name": "Хөх сүм", "url": "/images/panoramas/pano-24-Хөх_сүм.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 3, "label": "Буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 5, "label": "Лаврин руу" }
+                ]
+            },
+            {
+                "name": "Лаврин", "url": "/images/panoramas/pano-24-Лаврин.jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 4, "label": "Буцах" }
+                ]
+            }
         ],
         "images": [
             "https://res.cloudinary.com/dsyqxmmxi/image/upload/v1775462669/images/24.jpg",

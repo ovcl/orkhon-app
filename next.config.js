@@ -22,8 +22,8 @@ const withPWA = require('next-pwa')({
             options: {
                 cacheName: 'cloudinary-images',
                 expiration: {
-                    maxEntries: 100,
-                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                    maxEntries: 300, // олон зураг/панорама багтаамжтай байхаар нэмэгдүүлэв
+                    maxAgeSeconds: 60 * 60 * 24 * 180, // 30 → 180 хоног: SIM дата удаан тасрахад ч кэш дуусахгүй
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -80,8 +80,8 @@ const withPWA = require('next-pwa')({
             options: {
                 cacheName: 'next-images',
                 expiration: {
-                    maxEntries: 50,
-                    maxAgeSeconds: 60 * 60 * 24 * 30,
+                    maxEntries: 300,
+                    maxAgeSeconds: 60 * 60 * 24 * 180, // 30 → 180 хоног
                 },
             },
         },
@@ -91,8 +91,8 @@ const withPWA = require('next-pwa')({
             options: {
                 cacheName: 'static-images',
                 expiration: {
-                    maxEntries: 50,
-                    maxAgeSeconds: 60 * 60 * 24 * 30,
+                    maxEntries: 300,
+                    maxAgeSeconds: 60 * 60 * 24 * 180, // 30 → 180 хоног — панорама зургууд үүнд орно
                 },
             },
         },

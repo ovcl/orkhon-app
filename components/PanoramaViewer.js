@@ -39,6 +39,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [showDragHint, setShowDragHint] = useState(true);
     const [xrSupported, setXrSupported] = useState(null);
+    const [showFlatInfo, setShowFlatInfo] = useState(false);
 
     const currentIndexRef = useRef(initialIndex);
     const sceneStateRef = useRef({});
@@ -238,41 +239,69 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         // camera-ийн хүүхэд биш, world space дотор тогтмол байрлалтай.
         // -----------------------------------------------------------------
         const makeHotspotMesh = (label) => {
+            // Хамгийн бага зайг эзэлдэг, бараг үл үзэгдэх "glass ring" загвар —
+            // хайрцаг, дэвсгэр фон огтхон ч байхгүй, зөвхөн нимгэн тойрог + сум +
+            // жижиг тунгалаг pill шошго. Панорама зургийг халхлахгүй байхаар зорьсон.
             const canvas = document.createElement('canvas');
-            canvas.width = 320; canvas.height = 200;
+            canvas.width = 200; canvas.height = 160;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = 'rgba(10,10,14,0.55)';
+            const cx = 100, cy = 68, radius = 34;
+
+            // Маш зөөлөн, бараг мэдрэгдэхгүй glow (дэвсгэр фон биш)
+            const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 1.3);
+            glow.addColorStop(0, 'rgba(255,255,255,0.10)');
+            glow.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = glow;
             ctx.beginPath();
-            ctx.roundRect(10, 10, 300, 180, 24);
+            ctx.arc(cx, cy, radius * 1.3, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(245,158,11,0.95)';
-            ctx.lineWidth = 5;
+
+            // Маш нимгэн ганц тойрог зураас (2 давхар зураас биш)
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.roundRect(10, 10, 300, 180, 24);
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.stroke();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 12;
+
+            // Цорын ганц нимгэн дээш сум (өмнөхөөс нимгэн, жижиг)
+            ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+            ctx.lineWidth = 4;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.beginPath();
-            ctx.moveTo(120, 95); ctx.lineTo(160, 55); ctx.lineTo(200, 95);
+            ctx.moveTo(cx - 12, cy + 7); ctx.lineTo(cx, cy - 9); ctx.lineTo(cx + 12, cy + 7);
             ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(120, 125); ctx.lineTo(160, 85); ctx.lineTo(200, 125);
-            ctx.globalAlpha = 0.5;
-            ctx.stroke();
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 26px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(label || '', 160, 160);
+
+            // Шошго — маш жижиг, зөвхөн текстийн өргөнтэй тунгалаг pill (том хайрцаг биш)
+            if (label) {
+                ctx.font = '400 15px sans-serif';
+                const textWidth = ctx.measureText(label).width;
+                const pillY = cy + radius + 20;
+                const pillW = textWidth + 20;
+                const pillH = 22;
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                ctx.beginPath();
+                if (ctx.roundRect) {
+                    ctx.roundRect(cx - pillW / 2, pillY - pillH / 2, pillW, pillH, 11);
+                } else {
+                    ctx.rect(cx - pillW / 2, pillY - pillH / 2, pillW, pillH);
+                }
+                ctx.fill();
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.fillText(label, cx, pillY + 1);
+            }
 
             const tex = new THREE.CanvasTexture(canvas);
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide });
-            const geom = new THREE.PlaneGeometry(16, 10);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.85 });
+            // Дэлгэц дээрх бодит хэмжээ багасгав (9x9 → 5x4) — зөвхөн чиглэл заах,
+            // үзэгдэлд саад болохгүй жижиг тэмдэг байхаар
+            const geom = new THREE.PlaneGeometry(5, 4);
             const meshObj = new THREE.Mesh(geom, mat);
             meshObj.renderOrder = 998;
+            meshObj.userData.baseScale = 1;
+            meshObj.userData.pulsePhase = Math.random() * Math.PI * 2;
             return meshObj;
         };
 
@@ -452,7 +481,13 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             if (isCancelled) return;
             if (controls.enabled) controls.update();
 
-            hotspotMeshes.forEach((h) => h.lookAt(camera.position));
+            const pulseTime = performance.now() / 1000;
+            hotspotMeshes.forEach((h) => {
+                h.lookAt(camera.position);
+                // Зөөлөн "амьсгалах" эффект — 0.94–1.06 хооронд удаан хэлбэлзэнэ, анхаарал татах ч төвөгтэй биш
+                const s = 1 + 0.06 * Math.sin(pulseTime * 1.4 + (h.userData.pulsePhase || 0));
+                h.scale.set(s, s, s);
+            });
 
             if (vrUiGroup.visible && controllers.length > 0) {
                 let hoveredObj = null;
@@ -561,6 +596,25 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-solid fa-circle-info"></i>
                     VR-ээр үзэхийн тулд Meta Quest Browser-аар нээнэ үү
+                </div>
+            )}
+
+            {/* "i" мэдээллийн товч — VR-ийн 3D товчны flat (browser/утас) хувилбар,
+                таны хавсаргасан жишээ загвартай адил зүүн доод буланд */}
+            {!isPresenting && (
+                <button
+                    onClick={() => setShowFlatInfo((v) => !v)}
+                    aria-label="Мэдээлэл"
+                    style={{ position: 'absolute', bottom: scenes.length > 1 ? '80px' : '20px', left: '20px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(10,10,14,0.65)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                >
+                    <i className="fa-solid fa-info"></i>
+                </button>
+            )}
+
+            {!isPresenting && showFlatInfo && (
+                <div style={{ position: 'absolute', bottom: scenes.length > 1 ? '130px' : '70px', left: '20px', maxWidth: '280px', background: 'rgba(10,10,14,0.85)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '12px', padding: '14px 16px', zIndex: 60, color: '#fff' }}>
+                    <p style={{ margin: '0 0 6px', fontWeight: 'bold', fontSize: '14px' }}>{scenes[currentIndex]?.name}</p>
+                    <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>{scenes[currentIndex]?.description}</p>
                 </div>
             )}
 

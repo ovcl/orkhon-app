@@ -141,7 +141,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
             </div>
 
             <div className={styles.imageContainer}>
-                {currentSite.panoramaUrl ? (
+                {(currentSite.panoramaUrl || (currentSite.panoramaTour && currentSite.panoramaTour.length > 0)) ? (
                     <div className={styles.panoramaWrapper}>
                         <PanoramaViewer
                             scenes={panoramaScenes}
@@ -153,7 +153,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                     <img src={currentImage} alt={siteName} className={styles.mainImage} />
                 )}
 
-                {!currentSite.panoramaUrl && currentSite.images && currentSite.images.length > 1 && (
+                {!currentSite.panoramaUrl && !(currentSite.panoramaTour && currentSite.panoramaTour.length > 0) && currentSite.images && currentSite.images.length > 1 && (
                     <>
                         <button
                             className={`${styles.imageNav} ${styles.imagePrev}`}
