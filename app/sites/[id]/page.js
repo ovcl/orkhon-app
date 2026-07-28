@@ -7,6 +7,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { motion } from "framer-motion";
 import BottomNav from '../../../components/BottomNav';
+import Model3DViewer from '../../../components/Model3DViewer';
 
 export default function SiteDetail({ params }) {
     const [language, setLanguage] = useState('mn');
@@ -100,7 +101,7 @@ export default function SiteDetail({ params }) {
 
                 {/* Bottom Overlay - Thumbnail strip & Title */}
                 <div className="absolute bottom-0 left-0 right-0 p-5 pt-12 bg-gradient-to-t from-[#070b14] via-[#070b14]/80 to-transparent flex flex-col justify-end">
-                    
+
                     {/* Thumbnail strip */}
                     {images.length > 1 && (
                         <div className="flex gap-2 w-full overflow-x-auto no-scrollbar mb-4 mask-fade-right">
@@ -175,6 +176,21 @@ export default function SiteDetail({ params }) {
                         {siteDescription}
                     </div>
                 </motion.div>
+
+                {/* 3D загвар — зөвхөн model3d талбартай дурсгалд харагдана */}
+                {site.model3d && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-7">
+                        <h3 className="font-heading text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <span className="w-1 h-5 bg-purple-500 rounded-full block"></span>
+                            3D загвар
+                        </h3>
+                        <Model3DViewer
+                            src={site.model3d}
+                            alt={siteName}
+                            poster={heroImage}
+                        />
+                    </motion.div>
+                )}
 
                 {/* Gallery grid — show all images as tappable grid */}
                 {images.length > 1 && (
