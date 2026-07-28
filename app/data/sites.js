@@ -56,6 +56,7 @@ export const sitesData = [
     {
         "id": 3,
         "name": "Гүмбийн дэнжийн буган чулуун хөшөө, булш хиргисүүрийн цогцолбор дурсгал",
+        "model3d": "/models/gumbiin_denj_bugan_chuluun_hushuu_1.glb",
         "protectionStatus": "Улсын хамгаалалтад",
         "location": {
             "lat": 47.140556,
@@ -93,6 +94,7 @@ export const sitesData = [
     {
         "id": 5,
         "name": "Тэмээн чулууны амны буган чулуун хөшөө, дөрвөлжин булш",
+        "model3d": "/models/temeen_chuluunii_bugan_chuluun_hushuu_3.glb",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "location": {
             "lat": 46.880389,
@@ -113,6 +115,7 @@ export const sitesData = [
     {
         "id": 6,
         "name": "Ширээт уулын буган чулуун хөшөө, булш хиргисүүрийн цогцолбор дурсгал",
+        "model3d": "/models/shireet_uuliin_bugan_chuluun_hushuu_2.glb",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "location": {
             "lat": 46.970019,
@@ -560,6 +563,7 @@ export const sitesData = [
     {
         "id": 27,
         "name": "Бага элстэйн чулуун яст мэлхий дурсгал",
+        "model3d": "/models/baga_elstein_melhvv_chuluu_4.glb",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "nameEn": "Baga Elstei Stone Turtle",
         "category": "Хөшөө дурсгал",
@@ -577,6 +581,7 @@ export const sitesData = [
     {
         "id": 28,
         "name": "Хархорум хотын туурь дах чулуун яст мэлхий",
+        "model3d": "/models/kharkhorum_hotiin_tuuri_dahi_melhi_Chuluu_1.glb",
         "nameEn": "Karakorum Museum Stone Turtle",
         "category": "Хөшөө дурсгал",
         "location": {
@@ -592,6 +597,7 @@ export const sitesData = [
     {
         "id": 29,
         "name": "Мэлхийт толгой дээрх чулуун яст мэлхий",
+        "model3d": "/models/melhiit_tolgoin_ordnii_tuuri_dahi_melhvv_chuluu_3.glb",
         "nameEn": "Melkhiit Tolgoi Stone Turtle",
         "category": "Хөшөө дурсгал",
         "location": {
@@ -607,6 +613,7 @@ export const sitesData = [
     {
         "id": 30,
         "name": "Тариан талбайд орших чулуун яст мэлхий",
+        "model3d": "/models/tarian_talbai_dahi_melhvv_chuluu_2.glb",
         "nameEn": "Granary Field Stone Turtle",
         "category": "Хөшөө дурсгал",
         "location": {

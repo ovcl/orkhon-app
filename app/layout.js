@@ -1,4 +1,5 @@
 import "./globals.css";
+import AmbientBackground from "../components/AmbientBackground";
 
 export const metadata = {
     title: "Orkhon Valley | Орхоны хөндий",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
                 <meta name="apple-mobile-web-app-capable" content="yes" />
             </head>
             <body className="antialiased">
+                <AmbientBackground />
                 <div className="container">
                     {children}
                 </div>
