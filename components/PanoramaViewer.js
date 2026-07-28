@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /**
  * PanoramaViewer — VR-native 360° харагч + HOTSPOT NAVIGATION
@@ -344,6 +345,171 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             });
         };
 
+        // ---------- 3D загвар (.glb) — TRIGGER-BASED арга ----------
+        // Панорама зурган дээрх яг байршилд "наах" (fixed-position) оронд,
+        // hotspot шиг жижиг "3D үзэх" товч харуулж, дарахад загвар камерын
+        // урд (толгой хаашаа ч эргэсэн үргэлж нэг газарт) гарч ирнэ.
+        // Давуу тал: байршил/хэмжээ таамаглах шаардлагагүй — bounding-box
+        // ашиглан хэмжээг автоматаар camera-той тохируулна.
+        // TODO(апп бүрэн болмогц): Хэрэв ирээдүйд объектыг панорама зурган дээрх
+        // БОДИТ байршилд нь "наах" (жишээ нь хэрэглэгч зурган дээрх мэлхий чулуу
+        // дээгүүр толгойгоо чиглүүлэхэд шууд гарч ирэх) хүсвэл, hotspotPosition-ийг
+        // ашиглан world-space байрлал руу шилжүүлж, yaw/pitch/scale-ийг бодит
+        // зурган дээр visually тааруулах "polish" ажил хийх шаардлагатай.
+        const gltfLoader = new GLTFLoader();
+        const modelCache = new Map(); // url -> THREE.Group (дахин ачаалахгүйн тулд)
+        let modelTriggerMeshes = [];
+        let active3dModel = null; // одоо камерт наасан, харагдаж буй загвар (эсвэл null)
+        let active3dCloseBtn = null;
+        let loadingIndicator = null;
+
+        const makeModelTriggerMesh = (label) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 200; canvas.height = 160;
+            const ctx = canvas.getContext('2d');
+            const cx = 100, cy = 68, radius = 34;
+            const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 1.3);
+            glow.addColorStop(0, 'rgba(168,85,247,0.16)'); // ягаан (purple) — навигацийн amber-с ялгах
+            glow.addColorStop(1, 'rgba(168,85,247,0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath(); ctx.arc(cx, cy, radius * 1.3, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.stroke();
+            // "3D куб" тэмдэг
+            ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 14); ctx.lineTo(cx + 12, cy - 7); ctx.lineTo(cx + 12, cy + 7);
+            ctx.lineTo(cx, cy + 14); ctx.lineTo(cx - 12, cy + 7); ctx.lineTo(cx - 12, cy - 7); ctx.closePath();
+            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, cy - 14); ctx.lineTo(cx, cy); ctx.moveTo(cx, cy); ctx.lineTo(cx + 12, cy - 7);
+            ctx.moveTo(cx, cy); ctx.lineTo(cx - 12, cy - 7); ctx.stroke();
+            if (label) {
+                ctx.font = '400 15px sans-serif';
+                const textWidth = ctx.measureText(label).width;
+                const pillY = cy + radius + 20, pillW = textWidth + 20, pillH = 22;
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(cx - pillW / 2, pillY - pillH / 2, pillW, pillH, 11);
+                else ctx.rect(cx - pillW / 2, pillY - pillH / 2, pillW, pillH);
+                ctx.fill();
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.fillText(label, cx, pillY + 1);
+            }
+            const tex = new THREE.CanvasTexture(canvas);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.85 });
+            const meshObj = new THREE.Mesh(new THREE.PlaneGeometry(5, 4), mat);
+            meshObj.renderOrder = 998;
+            meshObj.userData.pulsePhase = Math.random() * Math.PI * 2;
+            return meshObj;
+        };
+
+        const makeTextSprite = (text, color = '#ffffff') => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 96;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(0, 20, 512, 56, 16); ctx.fill(); }
+            ctx.font = '32px sans-serif';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(text, 256, 48);
+            const tex = new THREE.CanvasTexture(canvas);
+            const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(mat);
+            sprite.scale.set(1.6, 0.3, 1);
+            sprite.renderOrder = 1001;
+            return sprite;
+        };
+
+        const removeActive3dModel = () => {
+            if (active3dModel) { camera.remove(active3dModel); active3dModel = null; }
+            if (active3dCloseBtn) { camera.remove(active3dCloseBtn); active3dCloseBtn = null; }
+        };
+
+        const showModelInFrontOfCamera = (url) => {
+            // Хэрэв аль хэдийн нээлттэй байвал — товчийг дахин дарахад хаана (toggle)
+            if (active3dModel && active3dModel.userData.url === url) {
+                removeActive3dModel();
+                return;
+            }
+            removeActive3dModel();
+
+            const dockObject = (srcObj) => {
+                const obj = srcObj.clone(true);
+                // Bounding box-оор дунджийг олж төвлөрүүлэх, хэмжээг camera-д тохирох болгож
+                // автоматаар масштаблах — файл бүрийн жинхэнэ хэмжээ өөр өөр байсан ч
+                // үргэлж ижил, тохиромжтой хэмжээгээр харагдана (таамаглах шаардлагагүй)
+                const box = new THREE.Box3().setFromObject(obj);
+                const size = new THREE.Vector3(); box.getSize(size);
+                const center = new THREE.Vector3(); box.getCenter(center);
+                const maxDim = Math.max(size.x, size.y, size.z) || 1;
+                const targetSize = 1.6; // camera-ийн орон зайд ойролцоогоор ямар том харагдахыг тохируулна
+                const scale = targetSize / maxDim;
+                obj.position.sub(center.multiplyScalar(scale));
+                obj.scale.setScalar(scale);
+                obj.position.z += -3.2; // камерын урд, тогтмол зайд
+                obj.position.y += -0.35;
+                obj.userData.autoRotate = true;
+                obj.userData.url = url;
+                camera.add(obj);
+                active3dModel = obj;
+
+                const closeBtn = makeModelTriggerMesh('Хаах ✕');
+                closeBtn.position.set(0, -0.35 - targetSize * 0.62, -3.2);
+                closeBtn.userData.action = () => removeActive3dModel();
+                camera.add(closeBtn);
+                active3dCloseBtn = closeBtn;
+            };
+
+            if (modelCache.has(url)) {
+                dockObject(modelCache.get(url));
+                return;
+            }
+
+            if (loadingIndicator) camera.remove(loadingIndicator);
+            loadingIndicator = makeTextSprite('3D загвар ачаалж байна...');
+            loadingIndicator.position.set(0, -0.3, -3.2);
+            camera.add(loadingIndicator);
+
+            gltfLoader.load(url, (gltf) => {
+                if (loadingIndicator) { camera.remove(loadingIndicator); loadingIndicator = null; }
+                if (isCancelled) return;
+                modelCache.set(url, gltf.scene);
+                dockObject(gltf.scene);
+            }, undefined, (err) => {
+                if (loadingIndicator) { camera.remove(loadingIndicator); loadingIndicator = null; }
+                console.warn('3D загвар ачаалахад алдаа гарлаа:', url, err);
+            });
+        };
+
+        const clearModelTriggers = () => {
+            modelTriggerMeshes.forEach((m) => {
+                scene.remove(m);
+                m.geometry.dispose(); m.material.map?.dispose(); m.material.dispose();
+            });
+            modelTriggerMeshes = [];
+        };
+
+        const buildModels3d = (index) => {
+            clearModelTriggers();
+            removeActive3dModel(); // scene солиход өмнөх нээлттэй загварыг хаана
+            const models = scenes[index]?.models3d;
+            if (!models || models.length === 0) return;
+            models.forEach((m) => {
+                const trigger = makeModelTriggerMesh(m.label || '3D үзэх');
+                // Trigger товчны байрлал бол зөвхөн "анзаарагдах цэг" тул нарийн
+                // тааруулах шаардлагагүй — өгөгдөлд заагаагүй бол анхны утга ашиглана
+                trigger.position.copy(hotspotPosition(m.triggerYaw ?? 0, m.triggerPitch ?? -8, 30));
+                trigger.userData.action = () => showModelInFrontOfCamera(m.url);
+                scene.add(trigger);
+                modelTriggerMeshes.push(trigger);
+            });
+        };
+
         const vrUiGroup = new THREE.Group();
         vrUiGroup.visible = false;
 
@@ -395,7 +561,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 tempMatrix.identity().extractRotation(controller.matrixWorld);
                 raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
                 raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-                const allTargets = uiTargets.concat(hotspotMeshes);
+                const allTargets = uiTargets.concat(hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
                 const hits = raycaster.intersectObjects(allTargets, false);
                 if (hits.length > 0) hits[0].object.userData.action?.();
             });
@@ -428,13 +594,15 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             const moved = Math.sqrt(dx * dx + dy * dy);
             const elapsed = performance.now() - pointerDownTime;
             pointerDownPos = null;
-            if (moved > 8 || elapsed > 500 || hotspotMeshes.length === 0 || isPresentingRef.current) return;
+            if (moved > 8 || elapsed > 500 || isPresentingRef.current) return;
+            const clickTargets = hotspotMeshes.concat(modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
+            if (clickTargets.length === 0) return;
 
             const rect = renderer.domElement.getBoundingClientRect();
             pointerNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
             pointerNdc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
             raycaster.setFromCamera(pointerNdc, camera);
-            const hits = raycaster.intersectObjects(hotspotMeshes, false);
+            const hits = raycaster.intersectObjects(clickTargets, false);
             if (hits.length > 0) hits[0].object.userData.action?.();
         };
         renderer.domElement.addEventListener('pointerdown', onPointerDown);
@@ -476,6 +644,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         }
 
         buildHotspots(currentIndexRef.current);
+        buildModels3d(currentIndexRef.current);
 
         renderer.setAnimationLoop(() => {
             if (isCancelled) return;
@@ -489,14 +658,25 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 h.scale.set(s, s, s);
             });
 
+            // Идэвхтэй нээлттэй 3D загварыг аажим эргүүлж, "амьд" мэдрэмж өгнө
+            if (active3dModel && active3dModel.userData.autoRotate) {
+                active3dModel.rotation.y += 0.006;
+            }
+            modelTriggerMeshes.forEach((h) => {
+                h.lookAt(camera.position);
+                const s = 1 + 0.06 * Math.sin(pulseTime * 1.4 + (h.userData.pulsePhase || 0)) + (h.userData.hoverBoost || 0);
+                h.scale.set(s, s, s);
+            });
+
             if (vrUiGroup.visible && controllers.length > 0) {
                 let hoveredObj = null;
                 scene.updateMatrixWorld(true);
+                const hoverTargets = uiTargets.concat(hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
                 for (let c of controllers) {
                     tempMatrix.identity().extractRotation(c.matrixWorld);
                     raycaster.ray.origin.setFromMatrixPosition(c.matrixWorld);
                     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-                    const hits = raycaster.intersectObjects(uiTargets.concat(hotspotMeshes), false);
+                    const hits = raycaster.intersectObjects(hoverTargets, false);
                     if (hits.length > 0) { hoveredObj = hits[0].object; break; }
                 }
                 uiTargets.forEach((btn) => {
@@ -508,6 +688,13 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                     if (h === hoveredObj) h.scale.setScalar(1.15);
                     else h.scale.setScalar(1.0);
                 });
+                modelTriggerMeshes.forEach((h) => {
+                    if (h !== hoveredObj) h.userData.hoverBoost = 0;
+                    else h.userData.hoverBoost = 0.15;
+                });
+                if (active3dCloseBtn) {
+                    active3dCloseBtn.scale.setScalar(active3dCloseBtn === hoveredObj ? 1.15 : 1.0);
+                }
             }
 
             renderer.render(scene, camera);
@@ -526,7 +713,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         });
         resizeObserver.observe(container);
 
-        sceneStateRef.current = { loadTexture, fadeTo, updateInfoPanelText, buildHotspots };
+        sceneStateRef.current = { loadTexture, fadeTo, updateInfoPanelText, buildHotspots, buildModels3d };
 
         return () => {
             isCancelled = true;
@@ -538,6 +725,8 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             resizeObserver.disconnect();
             renderer.setAnimationLoop(null);
             clearHotspots();
+            clearModelTriggers();
+            removeActive3dModel();
             renderer.dispose();
             controls.dispose();
             if (material.map) material.map.dispose();
@@ -566,6 +755,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         const timer = setTimeout(() => {
             state.loadTexture(scenes[currentIndex].url, false);
             state.buildHotspots?.(currentIndex);
+            state.buildModels3d?.(currentIndex);
             if (state.updateInfoPanelText) {
                 state.updateInfoPanelText(scenes[currentIndex]?.name, scenes[currentIndex]?.description);
             }

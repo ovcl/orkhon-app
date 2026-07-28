@@ -329,6 +329,9 @@ export const sitesData = [
             {
                 "name": "Хархорум хотын туурь", "url": "/images/panoramas/pano-16.jpg", "hotspots": [
                     { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                ],
+                "models3d": [
+                    { "url": "/models/kharkhorum_hotiin_tuuri_dahi_melhi_Chuluu_1.glb", "label": "Мэлхий чулуу 3D", "triggerYaw": 120, "triggerPitch": -8 }
                 ]
             },
             {
