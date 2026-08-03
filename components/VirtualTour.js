@@ -60,6 +60,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
     }, [sites, language]);
 
     const isPanorama = !!(currentSite?.panoramaUrl || (currentSite?.panoramaTour && currentSite?.panoramaTour.length > 0));
+    const currentPanoramaIndex = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
 
     // PanoramaViewer дотор VR controller-оор эсвэл hotspot-оор шилжихэд
     const handlePanoramaIndexChange = (newPanoramaIndex) => {
