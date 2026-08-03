@@ -90,6 +90,15 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
 
+        // .glb 3D загварууд ихэвчлэн PBR material (MeshStandardMaterial) ашигладаг тул
+        // гэрэлгүй бол бүрэн хар харагдана. Панорама/hotspot (MeshBasicMaterial) эдгээрт
+        // нөлөөлдөггүй тул шинэ асуудал үүсгэхгүй.
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x2a2a3a, 1.2);
+        scene.add(hemiLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+        dirLight.position.set(2, 3, 2);
+        scene.add(dirLight);
+
         const textureLoader = new THREE.TextureLoader();
         textureLoader.crossOrigin = 'Anonymous';
 
@@ -102,6 +111,13 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         fadeMesh.renderOrder = 999;
         camera.add(fadeMesh);
         scene.add(camera);
+
+        // Camera-д "наасан" 3D загвар (showModelInFrontOfCamera) толгой хаашаа ч эргэсэн
+        // тогтмол гэрэлтэй харагдахын тулд, дэлхийн гэрэл (dirLight)-с гадна
+        // camera-д наасан жижиг гэрэл нэмнэ
+        const modelLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        modelLight.position.set(1, 1.5, 1);
+        camera.add(modelLight);
 
         renderer.outputColorSpace = THREE.SRGBColorSpace;
 

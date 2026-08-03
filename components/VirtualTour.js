@@ -39,6 +39,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                         name: language === 'en' && node.nameEn ? node.nameEn : node.name,
                         description: language === 'en' && node.descriptionEn ? node.descriptionEn : node.description,
                         siteId: s.id,
+                        models3d: node.models3d || [],
                         hotspots: (node.hotspots || []).map((h) => ({
                             ...h,
                             targetIndex: offset + h.targetIndex, // локал -> глобал индекс
