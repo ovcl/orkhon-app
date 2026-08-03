@@ -144,19 +144,19 @@ export default function Home() {
                             <motion.div
                                 variants={scaleIn}
                                 whileTap={{ scale: 0.97 }}
-                                className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-gradient-to-br ${item.gradient} border border-white/6 transition-all duration-300 group-hover:border-white/12 group-hover:shadow-lg relative overflow-hidden`}
-                                style={{ backdropFilter: 'blur(10px)' }}
+                                className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-[#101830]/90 bg-gradient-to-br ${item.gradient} border border-white/10 transition-all duration-300 group-hover:border-white/20 group-hover:shadow-lg relative overflow-hidden`}
+                                style={{ backdropFilter: 'blur(12px)' }}
                             >
-                                <div className={`absolute -top-6 -right-6 w-16 h-16 ${item.accentColor} rounded-full opacity-[0.06] blur-xl`}></div>
+                                <div className={`absolute -top-6 -right-6 w-16 h-16 ${item.accentColor} rounded-full opacity-[0.08] blur-xl`}></div>
                                 <div className={`w-9 h-9 rounded-xl ${item.iconBg} flex items-center justify-center ${item.iconColor} transition-transform duration-300 group-hover:scale-110`}>
                                     <i className={`${item.icon} text-base`}></i>
                                 </div>
                                 <div className="flex items-center justify-between w-full">
                                     <div>
-                                        <span className="text-[13px] font-semibold text-slate-200 group-hover:text-white transition-colors block leading-tight">{item.title}</span>
-                                        <span className="text-[10px] text-slate-500 font-medium">{item.desc}</span>
+                                        <span className="text-[13px] font-semibold text-white group-hover:text-amber-300 transition-colors block leading-tight">{item.title}</span>
+                                        <span className="text-[10px] text-slate-300 font-medium">{item.desc}</span>
                                     </div>
-                                    <i className="fa-solid fa-arrow-right text-[9px] text-white/0 group-hover:text-white/50 transition-all duration-300 -translate-x-2 group-hover:translate-x-0"></i>
+                                    <i className="fa-solid fa-arrow-right text-[9px] text-white/40 group-hover:text-white transition-all duration-300 -translate-x-2 group-hover:translate-x-0"></i>
                                 </div>
                             </motion.div>
                         </Link>

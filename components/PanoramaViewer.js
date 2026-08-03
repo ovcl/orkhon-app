@@ -33,7 +33,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
  * - initialIndex: эхлэх индекс (default 0)
  * - onIndexChange: (index) => void
  */
-export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange }) {
+export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange, showControls = true }) {
     const containerRef = useRef(null);
     const [loading, setLoading] = useState(true);
     const [isPresenting, setIsPresenting] = useState(false);
@@ -792,22 +792,20 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             )}
 
             {!loading && showDragHint && !isPresenting && (
-                <div style={{ position: 'absolute', top: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '999px', fontSize: '12px', zIndex: 60, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ position: 'absolute', top: '68px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '999px', fontSize: '12px', zIndex: 60, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-solid fa-arrows-up-down-left-right" style={{ fontSize: '11px' }}></i>
                     Чирж тойрч хараарай
                 </div>
             )}
 
-            {xrSupported === false && !isPresenting && (
+            {showControls && xrSupported === false && !isPresenting && (
                 <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-solid fa-circle-info"></i>
                     VR-ээр үзэхийн тулд Meta Quest Browser-аар нээнэ үү
                 </div>
             )}
 
-            {/* "i" мэдээллийн товч — VR-ийн 3D товчны flat (browser/утас) хувилбар,
-                таны хавсаргасан жишээ загвартай адил зүүн доод буланд */}
-            {!isPresenting && (
+            {showControls && !isPresenting && (
                 <button
                     onClick={() => setShowFlatInfo((v) => !v)}
                     aria-label="Мэдээлэл"
@@ -817,14 +815,14 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 </button>
             )}
 
-            {!isPresenting && showFlatInfo && (
+            {showControls && !isPresenting && showFlatInfo && (
                 <div style={{ position: 'absolute', bottom: scenes.length > 1 ? '130px' : '70px', left: '20px', maxWidth: '280px', background: 'rgba(10,10,14,0.85)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '12px', padding: '14px 16px', zIndex: 60, color: '#fff' }}>
                     <p style={{ margin: '0 0 6px', fontWeight: 'bold', fontSize: '14px' }}>{scenes[currentIndex]?.name}</p>
                     <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>{scenes[currentIndex]?.description}</p>
                 </div>
             )}
 
-            {!isPresenting && scenes.length > 1 && (
+            {showControls && !isPresenting && scenes.length > 1 && (
                 <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', zIndex: 50, pointerEvents: 'none' }}>
                     <button
                         onClick={() => goTo(-1)}

@@ -59,10 +59,9 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
         return flat;
     }, [sites, language]);
 
-    const currentPanoramaIndex = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
+    const isPanorama = !!(currentSite?.panoramaUrl || (currentSite?.panoramaTour && currentSite?.panoramaTour.length > 0));
 
-    // PanoramaViewer дотор VR controller-оор "Дараах/Өмнөх" дарахад,
-    // 2D info overlay-г мөн синхрон шинэчлэхийн тулд site index рүү буцаан хөрвүүлнэ
+    // PanoramaViewer дотор VR controller-оор эсвэл hotspot-оор шилжихэд
     const handlePanoramaIndexChange = (newPanoramaIndex) => {
         const targetSiteId = panoramaScenes[newPanoramaIndex]?.siteId;
         const targetSiteIndex = sites.findIndex((s) => s.id === targetSiteId);
@@ -110,9 +109,13 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentIndex, isInfoVisible]);
 
-    const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+    // Панорама үзэж байх үед 360° эргүүлж чирэх тул чирэх свайпыг СӨРӨГ НӨЛӨӨ үзүүлэхгүй болгож (isPanorama бол) идэвхгүй болгоно.
+    const handleTouchStart = (e) => {
+        if (isPanorama) return;
+        touchStartX.current = e.touches[0].clientX;
+    };
     const handleTouchEnd = (e) => {
-        if (touchStartX.current === null) return;
+        if (isPanorama || touchStartX.current === null) return;
         const deltaX = touchStartX.current - e.changedTouches[0].clientX;
         if (Math.abs(deltaX) > 50) {
             if (deltaX > 0) goToNext(); else goToPrevious();
@@ -142,19 +145,20 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
             </div>
 
             <div className={styles.imageContainer}>
-                {(currentSite.panoramaUrl || (currentSite.panoramaTour && currentSite.panoramaTour.length > 0)) ? (
+                {isPanorama ? (
                     <div className={styles.panoramaWrapper}>
                         <PanoramaViewer
                             scenes={panoramaScenes}
                             initialIndex={currentPanoramaIndex >= 0 ? currentPanoramaIndex : 0}
                             onIndexChange={handlePanoramaIndexChange}
+                            showControls={false}
                         />
                     </div>
                 ) : (
                     <img src={currentImage} alt={siteName} className={styles.mainImage} />
                 )}
 
-                {!currentSite.panoramaUrl && !(currentSite.panoramaTour && currentSite.panoramaTour.length > 0) && currentSite.images && currentSite.images.length > 1 && (
+                {!isPanorama && currentSite.images && currentSite.images.length > 1 && (
                     <>
                         <button
                             className={`${styles.imageNav} ${styles.imagePrev}`}
@@ -185,7 +189,6 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                         <span className={styles.category}>{siteCategory}</span>
                         <h2 className={styles.siteName}>{siteName}</h2>
                         <p className={styles.description}>{siteDescription}</p>
-                        <div className={styles.counter}>{currentIndex + 1} / {sites.length}</div>
                     </div>
                 </div>
             )}
@@ -203,6 +206,9 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                     <i className="fa-solid fa-chevron-left"></i>
                     <span>{t.tourPrevious}</span>
                 </button>
+                <span className={styles.navCounter}>
+                    {currentIndex + 1} / {sites.length}
+                </span>
                 <button className={styles.navBtn} onClick={goToNext} disabled={currentIndex === sites.length - 1} aria-label={t.tourNext}>
                     <span>{t.tourNext}</span>
                     <i className="fa-solid fa-chevron-right"></i>
