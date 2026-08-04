@@ -427,3 +427,14 @@ a:focus-visible {
     filter: blur(20px);
     opacity: 0.15;
 }
+
+/* ── MapLibre GL — global overrides ── */
+.maplibregl-canvas {
+    /* filter арилгасан — brightness/contrast тохируулга газрын зургийг
+       харагдахгүй болгодог байсан тул filter ашиглахгүй */
+}
+
+.maplibregl-map {
+    width: 100% !important;
+    height: 100% !important;
+}

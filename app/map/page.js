@@ -10,15 +10,15 @@ import BottomNav from "../../components/BottomNav";
 
 /* ── Category colours (shared with sites page) ── */
 const categoryMeta = {
-    'Чулуун зэвсэг':  { color: '#f59e0b', icon: '🪨' },
-    'Хөшөө дурсгал':  { color: '#a855f7', icon: '🗿' },
-    'Булш хиргисүүр':  { color: '#06b6d4', icon: '⛏️' },
-    'Хот суурин':      { color: '#22c55e', icon: '🏛️' },
-    'Эртний хот':      { color: '#22c55e', icon: '🏰' },
-    'Сүм хийд':        { color: '#f97316', icon: '🛕' },
-    'Хадны зураг':     { color: '#ef4444', icon: '🎨' },
-    'Тахилгат газар':  { color: '#ec4899', icon: '⛩️' },
-    'Түрэгийн үе':    { color: '#6366f1', icon: '🏹' },
+    'Чулуун зэвсэг': { color: '#f59e0b', icon: '🪨' },
+    'Хөшөө дурсгал': { color: '#a855f7', icon: '🗿' },
+    'Булш хиргисүүр': { color: '#06b6d4', icon: '⛏️' },
+    'Хот суурин': { color: '#22c55e', icon: '🏛️' },
+    'Эртний хот': { color: '#22c55e', icon: '🏰' },
+    'Сүм хийд': { color: '#f97316', icon: '🛕' },
+    'Хадны зураг': { color: '#ef4444', icon: '🎨' },
+    'Тахилгат газар': { color: '#ec4899', icon: '⛩️' },
+    'Түрэгийн үе': { color: '#6366f1', icon: '🏹' },
 };
 function meta(cat) {
     return categoryMeta[cat] || { color: '#64748b', icon: '📍' };
@@ -57,8 +57,12 @@ export default function MapPage() {
 
     /* ── Initialise MapLibre ── */
     useEffect(() => {
-        let map;
+        let mapInstance = null;
         let cancelled = false;
+
+        // mapLoaded-г reset хийх (дахин navigation хийхэд шаардлагатай)
+        setMapLoaded(false);
+        markersRef.current = [];
 
         async function init() {
             const maplibregl = (await import("maplibre-gl")).default;
@@ -66,7 +70,13 @@ export default function MapPage() {
 
             if (cancelled || !mapContainer.current) return;
 
-            map = new maplibregl.Map({
+            // Хэрэв хуучин map байвал устга
+            if (mapRef.current) {
+                mapRef.current.remove();
+                mapRef.current = null;
+            }
+
+            mapInstance = new maplibregl.Map({
                 container: mapContainer.current,
                 style: {
                     version: 8,
@@ -89,13 +99,13 @@ export default function MapPage() {
                 minZoom: 6,
             });
 
-            map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+            mapInstance.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
 
-            map.on("load", () => {
-                if (!cancelled) {
-                    mapRef.current = map;
-                    setMapLoaded(true);
-                }
+            mapInstance.on("load", () => {
+                if (cancelled) return;
+                mapInstance.resize(); // container хэмжээг дахин тооцно
+                mapRef.current = mapInstance;
+                setMapLoaded(true);
             });
         }
 
@@ -103,7 +113,14 @@ export default function MapPage() {
 
         return () => {
             cancelled = true;
-            if (map) map.remove();
+            setMapLoaded(false);
+            markersRef.current.forEach((m) => m.remove());
+            markersRef.current = [];
+            if (mapInstance) {
+                mapInstance.remove();
+                mapInstance = null;
+            }
+            mapRef.current = null;
         };
     }, []);
 
@@ -378,7 +395,7 @@ export default function MapPage() {
             <BottomNav t={t} />
 
             {/* ── Map dark-mode CSS injection ── */}
-            <style jsx global>{`
+            <style>{`
                 .orkhon-marker { cursor: pointer; }
                 .maplibregl-ctrl-attrib {
                     font-size: 9px !important;
@@ -407,9 +424,6 @@ export default function MapPage() {
                 }
                 .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
                     filter: invert(0.7);
-                }
-                .maplibregl-canvas {
-                    filter: saturate(0.85) brightness(0.35) contrast(1.15);
                 }
             `}</style>
         </div>
