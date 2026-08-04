@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { sitesData } from "../data/sites";
 import { translations } from "../data/translations";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 import BottomNav from "../../components/BottomNav";
 
-/* ── Category colours (shared with sites page) ── */
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+
+/* ── Category colours ── */
 const categoryMeta = {
     'Чулуун зэвсэг': { color: '#f59e0b', icon: '🪨' },
     'Хөшөө дурсгал': { color: '#a855f7', icon: '🗿' },
@@ -20,11 +23,11 @@ const categoryMeta = {
     'Тахилгат газар': { color: '#ec4899', icon: '⛩️' },
     'Түрэгийн үе': { color: '#6366f1', icon: '🏹' },
 };
+
 function meta(cat) {
     return categoryMeta[cat] || { color: '#64748b', icon: '📍' };
 }
 
-/* ── Orkhon Valley centre & bounds ── */
 const DEFAULT_CENTER = { lng: 102.55, lat: 47.15 };
 const DEFAULT_ZOOM = 8.2;
 
@@ -33,10 +36,10 @@ export default function MapPage() {
     const [filter, setFilter] = useState("All");
     const [selected, setSelected] = useState(null);
     const [mapLoaded, setMapLoaded] = useState(false);
+
     const mapContainer = useRef(null);
     const mapRef = useRef(null);
     const markersRef = useRef([]);
-    const popupRef = useRef(null);
 
     useEffect(() => {
         const savedLang = localStorage.getItem("language");
@@ -49,141 +52,153 @@ export default function MapPage() {
         localStorage.setItem("language", newLang);
     };
 
-    const t = translations[language];
+    const t = translations[language] || {};
     const categories = ["All", ...new Set(sitesData.map((s) => s.category))];
 
     const filteredSites =
         filter === "All" ? sitesData : sitesData.filter((s) => s.category === filter);
 
-    /* ── Initialise MapLibre ── */
+    /* ── WebGL initialization with DOM Ready Guard ── */
     useEffect(() => {
-        let mapInstance = null;
-        let cancelled = false;
+        let animationFrameId = null;
+        let isMounted = true;
 
-        // mapLoaded-г reset хийх (дахин navigation хийхэд шаардлагатай)
-        setMapLoaded(false);
-        markersRef.current = [];
+        const container = mapContainer.current;
+        if (!container) return;
 
-        async function init() {
-            const maplibregl = (await import("maplibre-gl")).default;
-            await import("maplibre-gl/dist/maplibre-gl.css");
+        // Контейнер DOM дээр бодитоор хэмжээтэй болохыг хүлээх функц
+        const initMapWhenReady = () => {
+            if (!isMounted || !mapContainer.current) return;
 
-            if (cancelled || !mapContainer.current) return;
+            const { clientWidth, clientHeight } = mapContainer.current;
 
-            // Хэрэв хуучин map байвал устга
-            if (mapRef.current) {
-                mapRef.current.remove();
-                mapRef.current = null;
+            // Хэрэв DOM хэмжээ 0px байвал дараагийн frame хүртэл хүлээнэ
+            if (clientWidth === 0 || clientHeight === 0) {
+                animationFrameId = requestAnimationFrame(initMapWhenReady);
+                return;
             }
 
-            mapInstance = new maplibregl.Map({
+            // Хуучин Map instance болон HTML үлдэгдлийг бүрэн цэвэрлэх
+            if (mapRef.current) {
+                try {
+                    mapRef.current.remove();
+                } catch (e) { }
+                mapRef.current = null;
+            }
+            mapContainer.current.innerHTML = "";
+
+            // Шинэ MapLibre үүсгэх
+            const map = new maplibregl.Map({
                 container: mapContainer.current,
                 style: {
                     version: 8,
                     sources: {
-                        osm: {
-                            type: "raster",
+                        'carto-dark': {
+                            type: 'raster',
                             tiles: [
-                                "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                                "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                                'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                                'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                                'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                                'https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
                             ],
                             tileSize: 256,
-                            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                        },
+                            attribution: '&copy; OpenStreetMap &copy; CARTO'
+                        }
                     },
-                    layers: [{ id: "osm", type: "raster", source: "osm" }],
+                    layers: [
+                        {
+                            id: 'carto-dark-layer',
+                            type: 'raster',
+                            source: 'carto-dark',
+                            minzoom: 0,
+                            maxzoom: 22
+                        }
+                    ]
                 },
                 center: [DEFAULT_CENTER.lng, DEFAULT_CENTER.lat],
                 zoom: DEFAULT_ZOOM,
                 maxZoom: 16,
                 minZoom: 6,
+                fadeDuration: 0, // Зураг уусаж харагдах үеийн хар дэлгэцийг арилгана
+                trackResize: true,
+                preserveDrawingBuffer: true,
             });
 
-            mapInstance.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+            mapRef.current = map;
 
-            mapInstance.on("load", () => {
-                if (cancelled) return;
-                mapInstance.resize(); // container хэмжээг дахин тооцно
-                mapRef.current = mapInstance;
-                setMapLoaded(true);
+            map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+
+            map.on("load", () => {
+                if (isMounted) {
+                    setMapLoaded(true);
+                    map.resize();
+                }
             });
-        }
+        };
 
-        init();
+        // Жижиг сааталтайгаар залан эхлүүлнэ
+        animationFrameId = requestAnimationFrame(initMapWhenReady);
 
         return () => {
-            cancelled = true;
-            setMapLoaded(false);
-            markersRef.current.forEach((m) => m.remove());
-            markersRef.current = [];
-            if (mapInstance) {
-                mapInstance.remove();
-                mapInstance = null;
+            isMounted = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (mapRef.current) {
+                try {
+                    mapRef.current.remove();
+                } catch (e) { }
+                mapRef.current = null;
             }
-            mapRef.current = null;
+            setMapLoaded(false);
         };
     }, []);
 
-    /* ── Create / update markers whenever filter changes ── */
+    /* ── Render Markers ── */
     useEffect(() => {
         if (!mapLoaded || !mapRef.current) return;
 
-        // Clear old markers
-        markersRef.current.forEach((m) => m.remove());
+        markersRef.current.forEach((m) => {
+            try { m.remove(); } catch (e) { }
+        });
         markersRef.current = [];
 
-        async function addMarkers() {
-            const maplibregl = (await import("maplibre-gl")).default;
+        filteredSites.forEach((site) => {
+            if (!site.location) return;
+            const { color, icon } = meta(site.category);
 
-            filteredSites.forEach((site) => {
-                if (!site.location) return;
-                const { color, icon } = meta(site.category);
+            const el = document.createElement("div");
+            el.className = "orkhon-marker";
+            el.style.cursor = "pointer";
+            el.innerHTML = `
+                <div style="
+                    width:36px; height:36px;
+                    background:${color};
+                    border-radius:50%;
+                    display:flex; align-items:center; justify-content:center;
+                    font-size:16px;
+                    box-shadow: 0 2px 12px ${color}66, 0 0 0 3px rgba(255,255,255,0.25);
+                    transition: transform 0.2s ease;
+                    border: 2px solid rgba(255,255,255,0.4);
+                ">${icon}</div>
+            `;
 
-                // Custom marker element
-                const el = document.createElement("div");
-                el.className = "orkhon-marker";
-                el.innerHTML = `
-                    <div style="
-                        width:36px; height:36px;
-                        background:${color};
-                        border-radius:50%;
-                        display:flex; align-items:center; justify-content:center;
-                        font-size:16px;
-                        box-shadow: 0 2px 12px ${color}66, 0 0 0 3px rgba(255,255,255,0.25);
-                        cursor:pointer;
-                        transition: transform 0.2s ease, box-shadow 0.2s ease;
-                        border: 2px solid rgba(255,255,255,0.4);
-                    ">${icon}</div>
-                `;
-
-                el.addEventListener("mouseenter", () => {
-                    el.querySelector("div").style.transform = "scale(1.2)";
-                    el.querySelector("div").style.boxShadow = `0 4px 20px ${color}99, 0 0 0 4px rgba(255,255,255,0.4)`;
-                });
-                el.addEventListener("mouseleave", () => {
-                    el.querySelector("div").style.transform = "scale(1)";
-                    el.querySelector("div").style.boxShadow = `0 2px 12px ${color}66, 0 0 0 3px rgba(255,255,255,0.25)`;
-                });
-
-                el.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    setSelected(site);
+            el.addEventListener("click", (e) => {
+                e.stopPropagation();
+                setSelected(site);
+                if (mapRef.current) {
                     mapRef.current.flyTo({
                         center: [site.location.lng, site.location.lat],
                         zoom: Math.max(mapRef.current.getZoom(), 11),
                         duration: 800,
                     });
-                });
-
-                const marker = new maplibregl.Marker({ element: el })
-                    .setLngLat([site.location.lng, site.location.lat])
-                    .addTo(mapRef.current);
-
-                markersRef.current.push(marker);
+                }
             });
-        }
 
-        addMarkers();
+            const marker = new maplibregl.Marker({ element: el })
+                .setLngLat([site.location.lng, site.location.lat])
+                .addTo(mapRef.current);
+
+            markersRef.current.push(marker);
+        });
     }, [mapLoaded, filteredSites]);
 
     /* ── Close popup on map click ── */
@@ -196,25 +211,11 @@ export default function MapPage() {
         };
     }, [mapLoaded]);
 
-    /* ── Fly to selected ── */
-    const flyTo = useCallback(
-        (site) => {
-            if (!mapRef.current || !site.location) return;
-            setSelected(site);
-            mapRef.current.flyTo({
-                center: [site.location.lng, site.location.lat],
-                zoom: 13,
-                duration: 1000,
-            });
-        },
-        []
-    );
-
     return (
         <div className="min-h-screen relative" style={{ background: "#070b14" }}>
-            {/* ── Header ── */}
+            {/* Header */}
             <header
-                className="fixed top-0 left-0 right-0 z-50 px-5 py-3 flex justify-between items-center max-w-[480px] mx-auto w-full border-b border-white/5"
+                className="fixed top-0 left-1/2 -translate-x-1/2 z-50 px-5 py-3 flex justify-between items-center max-w-[480px] w-full border-b border-white/5"
                 style={{
                     background: "rgba(7,11,20,0.92)",
                     backdropFilter: "blur(20px)",
@@ -231,7 +232,7 @@ export default function MapPage() {
                     </Link>
                     <div>
                         <h1 className="font-heading font-bold text-base text-white leading-tight">
-                            {t.navMap}
+                            {t.navMap || "Газрын зураг"}
                         </h1>
                         <p className="text-slate-500 text-[10px] font-medium">
                             {filteredSites.length} {language === "mn" ? "дурсгал" : "sites"}
@@ -246,9 +247,9 @@ export default function MapPage() {
                 </button>
             </header>
 
-            {/* ── Category pills (scrollable) ── */}
+            {/* Category pills */}
             <div
-                className="fixed top-[56px] left-0 right-0 z-40 max-w-[480px] mx-auto border-b border-white/5"
+                className="fixed top-[56px] left-1/2 -translate-x-1/2 z-40 max-w-[480px] w-full border-b border-white/5"
                 style={{
                     background: "rgba(7,11,20,0.92)",
                     backdropFilter: "blur(20px)",
@@ -276,9 +277,7 @@ export default function MapPage() {
                                 {cat !== "All" && (
                                     <span
                                         className="w-1.5 h-1.5 rounded-full"
-                                        style={{
-                                            background: isActive ? "#0f172a" : m.color,
-                                        }}
+                                        style={{ background: isActive ? "#0f172a" : m.color }}
                                     ></span>
                                 )}
                                 {cat === "All" ? (t.all || "Бүгд") : (t[cat] || cat)}
@@ -288,29 +287,35 @@ export default function MapPage() {
                 </div>
             </div>
 
-            {/* ── Map container ── */}
+            {/* Map Container */}
             <div
                 ref={mapContainer}
-                className="fixed inset-0 z-0"
-                style={{ top: "96px", bottom: "90px" }}
+                className="fixed left-1/2 -translate-x-1/2 w-full max-w-[480px]"
+                style={{
+                    top: "96px",
+                    bottom: "80px",
+                    height: "calc(100vh - 176px)",
+                    zIndex: 1,
+                    backgroundColor: "#070b14", // Canvas ачаалж байх үед хар биш арын дэвсгэртэй адил өнгө харуулна
+                }}
             />
 
-            {/* ── Loading overlay ── */}
+            {/* Loading Overlay */}
             <AnimatePresence>
                 {!mapLoaded && (
                     <motion.div
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-10 flex flex-col items-center justify-center"
-                        style={{ top: "96px", bottom: "90px", background: "#070b14" }}
+                        className="fixed left-1/2 -translate-x-1/2 w-full max-w-[480px] z-10 flex flex-col items-center justify-center"
+                        style={{ top: "96px", bottom: "80px", background: "#070b14" }}
                     >
                         <div className="w-10 h-10 rounded-full border-2 border-amber-500/30 border-t-amber-500 animate-spin mb-4"></div>
-                        <p className="text-slate-400 text-sm">{t.loading}</p>
+                        <p className="text-slate-400 text-sm">{t.loading || "Ачаалж байна..."}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* ── Selected site popup card ── */}
+            {/* Selected Site Card */}
             <AnimatePresence>
                 {selected && (
                     <motion.div
@@ -319,8 +324,8 @@ export default function MapPage() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 60 }}
                         transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                        className="fixed left-4 right-4 z-30 max-w-[480px] mx-auto"
-                        style={{ bottom: "110px" }}
+                        className="fixed left-1/2 -translate-x-1/2 px-4 z-30 max-w-[480px] w-full"
+                        style={{ bottom: "100px" }}
                     >
                         <div
                             className="rounded-2xl overflow-hidden border border-white/10"
@@ -331,7 +336,6 @@ export default function MapPage() {
                             }}
                         >
                             <div className="flex">
-                                {/* Image */}
                                 <div className="relative w-[110px] min-h-[100px] flex-shrink-0 overflow-hidden">
                                     {selected.images && selected.images[0] ? (
                                         <img
@@ -347,7 +351,6 @@ export default function MapPage() {
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0e1a]/60"></div>
                                 </div>
 
-                                {/* Info */}
                                 <div className="flex-1 p-3.5 flex flex-col justify-between min-w-0">
                                     <div>
                                         <div
@@ -394,9 +397,9 @@ export default function MapPage() {
 
             <BottomNav t={t} />
 
-            {/* ── Map dark-mode CSS injection ── */}
-            <style>{`
+            <style jsx global>{`
                 .orkhon-marker { cursor: pointer; }
+                .maplibregl-canvas { outline: none; }
                 .maplibregl-ctrl-attrib {
                     font-size: 9px !important;
                     background: rgba(7,11,20,0.7) !important;
@@ -404,9 +407,7 @@ export default function MapPage() {
                     border-radius: 6px !important;
                     padding: 2px 6px !important;
                 }
-                .maplibregl-ctrl-attrib a {
-                    color: #94a3b8 !important;
-                }
+                .maplibregl-ctrl-attrib a { color: #94a3b8 !important; }
                 .maplibregl-ctrl-group {
                     background: rgba(10,14,26,0.9) !important;
                     border: 1px solid rgba(255,255,255,0.08) !important;
