@@ -202,7 +202,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                 <i className={`fa-solid fa-${isInfoVisible ? 'eye-slash' : 'eye'}`}></i>
             </button>
 
-            <div className={styles.navigation}>
+            <div className={styles.navigation} style={isPanorama ? { bottom: 'auto', top: '120px' } : undefined}>
                 <button className={styles.navBtn} onClick={goToPrevious} disabled={currentIndex === 0} aria-label={t.tourPrevious}>
                     <i className="fa-solid fa-chevron-left"></i>
                     <span>{t.tourPrevious}</span>

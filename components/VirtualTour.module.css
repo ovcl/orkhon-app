@@ -36,7 +36,7 @@
 .langBtn {
     position: absolute;
     top: 20px;
-    right: 80px;
+    right: 76px;
     padding: 0 12px;
     height: 44px;
     border-radius: 22px;
@@ -218,10 +218,24 @@
     color: #d4d0c8;
     line-height: 1.65;
     margin-bottom: 15px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    max-height: 4.9em;
+    /* ойролцоогоор 3 мөрийн өндөр — үүнээс дээш гүйлгэнэ */
+    overflow-y: auto;
+    padding-right: 6px;
+    /* scrollbar текстэнд наалдахгүй байхаар зай авав */
+}
+
+.description::-webkit-scrollbar {
+    width: 4px;
+}
+
+.description::-webkit-scrollbar-thumb {
+    background: rgba(245, 158, 11, 0.5);
+    border-radius: 4px;
+}
+
+.description::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .navCounter {
