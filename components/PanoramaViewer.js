@@ -639,24 +639,27 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         renderer.xr.addEventListener('sessionstart', onSessionStart);
         renderer.xr.addEventListener('sessionend', onSessionEnd);
 
+        let vrButtonElement = null;
         if (navigator.xr) {
             navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
                 if (isCancelled) return;
                 setXrSupported(supported);
+                // ЗӨВХӨН бодитоор дэмжигдэх үед three.js-ийн VR товчийг үүсгэнэ —
+                // үгүй бол three.js өөрийн "VR NOT SUPPORTED" мессежийг харуулж,
+                // миний доод талын зөөлөн tooltip-тэй давхцаж, эмх замбараагүй
+                // харагддаг байсныг арилгав.
+                if (supported && !isCancelled) {
+                    vrButtonElement = VRButton.createButton(renderer);
+                    vrButtonElement.style.position = 'absolute';
+                    vrButtonElement.style.bottom = '20px';
+                    vrButtonElement.style.left = '50%';
+                    vrButtonElement.style.transform = 'translateX(-50%)';
+                    vrButtonElement.style.zIndex = '100';
+                    container.appendChild(vrButtonElement);
+                }
             }).catch(() => { if (!isCancelled) setXrSupported(false); });
         } else {
             setXrSupported(false);
-        }
-
-        let vrButtonElement = null;
-        if (navigator.xr) {
-            vrButtonElement = VRButton.createButton(renderer);
-            vrButtonElement.style.position = 'absolute';
-            vrButtonElement.style.bottom = '20px';
-            vrButtonElement.style.left = '50%';
-            vrButtonElement.style.transform = 'translateX(-50%)';
-            vrButtonElement.style.zIndex = '100';
-            container.appendChild(vrButtonElement);
         }
 
         buildHotspots(currentIndexRef.current);
@@ -799,7 +802,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             )}
 
             {showControls && xrSupported === false && !isPresenting && (
-                <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ position: 'absolute', bottom: scenes.length > 1 ? '75px' : '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-solid fa-circle-info"></i>
                     VR-ээр үзэхийн тулд Meta Quest Browser-аар нээнэ үү
                 </div>
