@@ -1,71 +1,33 @@
 "use client";
 
-import Link from "next/link";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { sitesData } from "../data/sites";
-import { translations } from "../data/translations";
-import { motion, AnimatePresence } from "framer-motion";
-import clsx from "clsx";
+import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import BottomNav from "../../components/BottomNav";
 
-// CSS-ийг энд шууд import хийнэ
-import "maplibre-gl/dist/maplibre-gl.css";
+// Map component нь browser-д л ажилладаг (WebGL) тул SSR-г унтраана
+const MapView = dynamic(() => import("../../components/Map"), { ssr: false });
 
-// ... [Бусад categoryMeta болон тогтмол утгууд хэвээрээ] ...
+function MapContent() {
+    const searchParams = useSearchParams();
+    const lang = searchParams.get("lang") || "mn";
+
+    return (
+        <div className="relative w-full" style={{ height: "100dvh" }}>
+            <MapView language={lang} />
+            <BottomNav />
+        </div>
+    );
+}
 
 export default function MapPage() {
-    // ... State-үүд хэвээрээ ...
-
-    useEffect(() => {
-        let map;
-        let cancelled = false;
-
-        async function init() {
-            const maplibregl = (await import("maplibre-gl")).default;
-
-            if (cancelled || !mapContainer.current) return;
-
-            map = new maplibregl.Map({
-                container: mapContainer.current,
-                style: {
-                    version: 8,
-                    sources: {
-                        cartoDark: {
-                            type: "raster",
-                            tiles: [
-                                "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-                                "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-                                "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-                            ],
-                            tileSize: 256,
-                            attribution: '&copy; OpenStreetMap &copy; CARTO',
-                        },
-                    },
-                    layers: [{ id: "cartoDark-layer", type: "raster", source: "cartoDark" }],
-                },
-                center: [DEFAULT_CENTER.lng, DEFAULT_CENTER.lat],
-                zoom: DEFAULT_ZOOM,
-                maxZoom: 16,
-                minZoom: 6,
-            });
-
-            map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
-
-            map.on("load", () => {
-                if (!cancelled) {
-                    mapRef.current = map;
-                    map.resize();
-                    setMapLoaded(true);
-                }
-            });
-        }
-
-        init();
-
-        return () => {
-            cancelled = true;
-            if (map) map.remove();
-        };
-    }, []);
-
-// ... [Бусад useEffect болон JSX хэсгүүд хэвээрээ] ...
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen bg-[#070b14]">
+                <div className="w-10 h-10 rounded-full border-2 border-amber-500/30 border-t-amber-500 animate-spin"></div>
+            </div>
+        }>
+            <MapContent />
+        </Suspense>
+    );
+}
