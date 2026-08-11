@@ -49,9 +49,9 @@ export default function Home() {
     const vrSitesCount = sitesData.filter(s => s.panoramaUrl || (s.panoramaTour && s.panoramaTour.length > 0)).length;
 
     const popularSites = [
-        { img: "https://res.cloudinary.com/dsyqxmmxi/image/upload/f_auto,q_auto,w_400/v1775462133/images/16.jpg", title: t.kharakhorum, type: language === 'mn' ? 'Эртний хот' : 'Ancient City', id: 16 },
-        { img: "https://res.cloudinary.com/dsyqxmmxi/image/upload/f_auto,q_auto,w_400/v1775462133/images/24.jpg", title: t.erdeneZuu, type: language === 'mn' ? 'Сүм хийд' : 'Monastery', id: 24 },
-        { img: "https://res.cloudinary.com/dsyqxmmxi/image/upload/f_auto,q_auto,w_400/v1775462133/images/31.jpg", title: t.ulaanTsutgalan, type: language === 'mn' ? 'Байгаль' : 'Nature', id: 31 },
+        { img: "/images/sites/16.jpg", title: t.kharakhorum, type: language === 'mn' ? 'Эртний хот' : 'Ancient City', id: 16 },
+        { img: "/images/sites/24.jpg", title: t.erdeneZuu, type: language === 'mn' ? 'Сүм хийд' : 'Monastery', id: 24 },
+        { img: "/images/sites/31.jpg", title: t.ulaanTsutgalan, type: language === 'mn' ? 'Байгаль' : 'Nature', id: 31 },
     ];
 
     const navCards = [
