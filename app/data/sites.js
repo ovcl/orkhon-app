@@ -1,6 +1,13 @@
 export const sitesData = [
     {
         "id": 1,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-1-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Мойлтын амны хуучин чулуун зэвсгийн дурсгалт газар",
         "protectionStatus": "Улсын хамгаалалтад",
         "location": {
@@ -12,7 +19,7 @@ export const sitesData = [
         "category": "Чулуун зэвсэг",
         "description": "Дурсгалт газар нь Өвөрхангай аймгийн Хархорин сумын нутаг Хангай хайрхан уулын өвөр Мойлтын амны рашааны зүүн дэнжид оршдог. Дурсгал нь палеолитын дээд үеэс мезолит, неолитын эхэн үед хамаардаг. Дурсгалт газрыг анх 1949 онд археологич А.П Окладинковын удирдсан Монгол–Зөвлөлтийн чулуун зэвсгийн дурсгал судлах анги илрүүлэн судалгааны эргэлтэнд оруулжээ. А.П.Окладников, Д. Дорж нарын удирдсан \"Монголын чулуун зэвсгийн дурсгал судлах анги\" 1960, 1961, 1963-1964 онд дурсгалт газарт малтлага судалгаа хийж суурингын соёлт давхрагын зузаан нь 1,5-2 метр бөгөөд малтлагын явцад дээд палеолитын түрүү үеэс мезолит, неолитын эхэн үехийг хамарсан дөрвөн соёлт давхрага байгааг тогтоосон нь Төв, Умард, Дорнод Азийн хэмжээнд нэн ховор дурсгал болохыг тодорхойлсон байна.\n\nМөн 1996-1997 онд Монгол-Францын хамтарсан судалгааны анги дурсгалт газарт ажиллаж хөрсний давхаргыг судлан гурван хурдсаас бүрэлдэх 5 давхарга байгааг тодорхойлон археологийн олдвор хадгалсан 4 давхаргад хийсэн он цаг тогтоох шинжилгээгээр 240+-300 жилиийн өмнө болохыг тогтоожээ. 2018, 2019 онд Монгол-Орос-Америкийн хамтарсан \"Умард монголын чулуун зэвсгийн үе\" төслийн хүрээнд дурсгалын он цаг тогтоох, хөрсний дээж авах судалгааг хийсэн.",
         "descriptionEn": "Located on the eastern terrace of Moiltyn Am valley at the southern foot of Khangai Khairkhan mountain. This site contains 4 cultural layers ranging from the Upper Paleolithic to the Early Neolithic. First discovered in 1949 by the Mongol-Soviet archaeological expedition led by A.P. Okladnikov, subsequent research has shown the cultural layers reach a thickness of 1.5-2 meters. It is considered one of the rarest Paleolithic sites in Central, North, and East Asia, with carbon dating from joint Mongol-French expeditions placing the findings around 24,000 years ago.",
-        "panoramaUrl": "/images/panoramas/1.JPG",
+
         "images": [
             "/images/sites/1.jpg",
             "/images/sites/1-1.jpg",
@@ -21,8 +28,15 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaUrl": "/images/panoramas/2.JPG",
+
         "id": 2,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-2-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Орхон-7 хуучин чулуун зэвсгийн дурсгалт газар",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "location": {
@@ -42,19 +56,34 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/3 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/3 (2).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 3,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-3-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-3-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Гүмбийн дэнжийн буган чулуун хөшөө, булш хиргисүүрийн цогцолбор дурсгал",
         "model3d": "/models/gumbiin_denj_bugan_chuluun_hushuu_1.glb",
         "protectionStatus": "Улсын хамгаалалтад",
@@ -74,19 +103,34 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/4 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/4 (2).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 4,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-4-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-4-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Нарийны амы булш, хиргисүүрүүд",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "location": {
@@ -104,24 +148,52 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/5 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/5 (2).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 3",
-                            "url": "/images/panoramas/5 (3).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 5,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-5-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-5-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-5-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Тэмээн чулууны амны буган чулуун хөшөө, дөрвөлжин булш",
         "model3d": "/models/temeen_chuluunii_bugan_chuluun_hushuu_3.glb",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
@@ -142,24 +214,52 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/6 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/6 (2).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 3",
-                            "url": "/images/panoramas/6 (3).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 6,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-6-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-6-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-6-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Ширээт уулын буган чулуун хөшөө, булш хиргисүүрийн цогцолбор дурсгал",
         "model3d": "/models/shireet_uuliin_bugan_chuluun_hushuu_2.glb",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
@@ -180,29 +280,70 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/7 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/7 (2).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 3",
-                            "url": "/images/panoramas/7 (3).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 4",
-                            "url": "/images/panoramas/7 (4).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 7,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-7-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-7-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-7-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 4",
+                "url": "/images/panoramas/pano-7-4.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Орхоны хөндийн xиpгисүүрүүд",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "location": {
@@ -221,29 +362,70 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/8.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/8 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Буган чулуун хөшөө",
-                            "url": "/images/panoramas/8 (2)буган чулууг хөшөө.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хүн чулуун хөшөө",
-                            "url": "/images/panoramas/8 (3)хүг чулуун хөшөө.JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 8,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-8-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-8-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "буган чулуут хөшөө",
+                "url": "/images/panoramas/pano-8-буган_чулуут_хөшөө.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "хүг чулуун хөшөө",
+                "url": "/images/panoramas/pano-8-хүг_чулуун_хөшөө.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Ар бөөргийн эртний булш",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "location": {
@@ -264,19 +446,34 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/9 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/9 (2).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 9,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-9-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-9-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Бэрхийн булангийн булш хиргисүүрийн цогцолбор дурсгал",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "location": {
@@ -296,29 +493,70 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/10 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/10 (2).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 3",
-                            "url": "/images/panoramas/10 (3).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 4",
-                            "url": "/images/panoramas/10 (4).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 10,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-10-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-10-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-10-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 4",
+                "url": "/images/panoramas/pano-10-4.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Шунхлай уулын булш хиргисүүрийн цогцолбор дурсгал",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "location": {
@@ -338,24 +576,52 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/11 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/11 (2).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 3",
-                            "url": "/images/panoramas/11 (3).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 11,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-11-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-11-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-11-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Майхан толгойн булш хиргисүүрийн цогцолбор дурсгал",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "location": {
@@ -376,6 +642,32 @@ export const sitesData = [
     },
     {
         "id": 12,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-12-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-12-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Хутаг уулын эртний булш",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "location": {
@@ -416,6 +708,140 @@ export const sitesData = [
     },
     {
         "id": 14,
+        "panoramaTour": [
+            {
+                "name": "билгэ хааны хөшөө (1)",
+                "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(1).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "билгэ хааны хөшөө (2)",
+                "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "билгэ хааны хөшөө (3)",
+                "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(3).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "гол гурван зуу дотор (1)",
+                "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(1).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 4,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "гол гурван зуу дотор (2)",
+                "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(2).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 5,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "гол гурван зуу дотор (3)",
+                "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(3).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 6,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 4,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "културген жанжины хөшөө (1)",
+                "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 7,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 5,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "културген жанжины хөшөө (2)",
+                "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(2).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 6,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Хөшөө Цайдамын цогцолбор дурсгал",
         "protectionStatus": "Улсын хамгаалалтад",
         "location": {
@@ -433,6 +859,68 @@ export const sitesData = [
     },
     {
         "id": 15,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-15-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-15-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-15-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 4",
+                "url": "/images/panoramas/pano-15-4.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Харбалгас хотын туурь",
         "protectionStatus": "Улсын хамгаалалтад",
         "location": {
@@ -492,6 +980,32 @@ export const sitesData = [
     },
     {
         "id": 17,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-17-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-17-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Баянголын амны эртний хотын туурь",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "location": {
@@ -510,6 +1024,13 @@ export const sitesData = [
     },
     {
         "id": 18,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-18-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Мэлхийт толгойн ордны туурь",
         "protectionStatus": "Улсын хамгаалалтад",
         "location": {
@@ -528,6 +1049,86 @@ export const sitesData = [
     },
     {
         "id": 19,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-19-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-19-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-19-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 4",
+                "url": "/images/panoramas/pano-19-4.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 4,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 5",
+                "url": "/images/panoramas/pano-19-5.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Дойт толгойн эртний хотын туурь",
         "nameEn": "Doit Tolgoi Ancient City Ruins",
         "category": "Хот суурин",
@@ -544,6 +1145,68 @@ export const sitesData = [
     },
     {
         "id": 20,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-20-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-20-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-20-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 4",
+                "url": "/images/panoramas/pano-20-4.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Захын булаг эртний хотын туурь",
         "nameEn": "Zakhyn Bulag Ancient City Ruins",
         "category": "Хот суурин",
@@ -559,8 +1222,15 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaUrl": "/images/panoramas/21.JPG",
+
         "id": 21,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-21-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Хужиртын амны эртний хотын туурь",
         "nameEn": "Khujirtiin Am Ancient City Ruins",
         "category": "Хот суурин",
@@ -578,6 +1248,13 @@ export const sitesData = [
     },
     {
         "id": 22,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-22-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Хар бондгорын эртний хотын туурь",
         "protectionStatus": "Сум, дүүргийн хамгаалалтад",
         "nameEn": "Khar Bondgor Ancient City Ruins",
@@ -665,24 +1342,52 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Үүд",
-                            "url": "/images/panoramas/25-үүд.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хашаан дотор",
-                            "url": "/images/panoramas/25-хашаан дотор.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Дуган дотор",
-                            "url": "/images/panoramas/25-дуган дотор.JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 25,
+        "panoramaTour": [
+            {
+                "name": "дуган дотор",
+                "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "үүд",
+                "url": "/images/panoramas/pano-25-үүд.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "хашаан дотор",
+                "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Шанхын хийд (Баруун хүрээ)",
         "nameEn": "Shankh Monastery (Baruun Khuree)",
         "category": "Сүм хийд",
@@ -700,59 +1405,178 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/26 .JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/26  (2).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 3",
-                            "url": "/images/panoramas/26  (3).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хурлын дуган",
-                            "url": "/images/panoramas/26  (4)Хурлын дуган.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Сэмчин дуган",
-                            "url": "/images/panoramas/26  (5)Сэмчин дуган.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хурлын дуган дотор",
-                            "url": "/images/panoramas/26  (6)Хурлын дуган дотор.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хийморийн овоо",
-                            "url": "/images/panoramas/26  (7)хийморийн овоо.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хийморийн овоо 2",
-                            "url": "/images/panoramas/26  (8)хийморийн овоо.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Умай хад",
-                            "url": "/images/panoramas/26  (9)Умай хад.JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 10",
-                            "url": "/images/panoramas/26  (10).jpg",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 26,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-26-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-26-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 3",
+                "url": "/images/panoramas/pano-26-3.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Хурлын дуган",
+                "url": "/images/panoramas/pano-26-Хурлын_дуган.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 4,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Сэмчин дуган",
+                "url": "/images/panoramas/pano-26-Сэмчин_дуган.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 5,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 3,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Хурлын дуган дотор",
+                "url": "/images/panoramas/pano-26-Хурлын_дуган_дотор.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 6,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 4,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "хийморийн овоо",
+                "url": "/images/panoramas/pano-26-хийморийн_овоо.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 7,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 5,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "хийморийн овоо 2",
+                "url": "/images/panoramas/pano-26-хийморийн_овоо_2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 8,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 6,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Умай хад",
+                "url": "/images/panoramas/pano-26-Умай_хад.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 9,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 7,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 10",
+                "url": "/images/panoramas/pano-26-10.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 8,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Төвхөн хийд",
         "nameEn": "Tuvkhun Monastery",
         "category": "Сүм хийд",
@@ -769,19 +1593,34 @@ export const sitesData = [
         ]
     },
     {
-        "panoramaTour": [
-                  {
-                            "name": "Хэсэг 1",
-                            "url": "/images/panoramas/27 (1).JPG",
-                            "hotspots": []
-                  },
-                  {
-                            "name": "Хэсэг 2",
-                            "url": "/images/panoramas/27 (2).JPG",
-                            "hotspots": []
-                  }
-        ],
+
         "id": 27,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-27-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-27-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Бага элстэйн чулуун яст мэлхий дурсгал",
         "protectionStatus": "Аймаг, нийслэлийн хамгаалалтад",
         "nameEn": "Baga Elstei Stone Turtle",
@@ -829,6 +1668,32 @@ export const sitesData = [
     },
     {
         "id": 30,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-30-1.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 0,
+                        "pitch": -8,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Node 2",
+                "url": "/images/panoramas/pano-30-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
+            }
+        ],
         "name": "Тариан талбайд орших чулуун яст мэлхий",
         "nameEn": "Granary Field Stone Turtle",
         "category": "Хөшөө дурсгал",
@@ -844,6 +1709,13 @@ export const sitesData = [
     },
     {
         "id": 31,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-31-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Хангай овоот тахилгат уул",
         "nameEn": "Khangai Ovoo Sacred Mountain",
         "category": "Тахилгат газар",
@@ -861,6 +1733,13 @@ export const sitesData = [
     },
     {
         "id": 32,
+        "panoramaTour": [
+            {
+                "name": "Node 1",
+                "url": "/images/panoramas/pano-32-1.jpg",
+                "hotspots": []
+            }
+        ],
         "name": "Үндэр сантын тахилгат хайрхан",
         "nameEn": "Undur Sant Sacred Mountain",
         "category": "Тахилгат газар",
