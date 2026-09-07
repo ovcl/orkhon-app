@@ -397,7 +397,7 @@ export const sitesData = [
             },
             {
                 "name": "буган чулуут хөшөө",
-                "url": "/images/panoramas/pano-8-буган_чулуут_хөшөө.jpg",
+                "url": "/images/panoramas/pano-8-4-буган_чулууг_хөшөө.jpg",
                 "hotspots": [
                     {
                         "yaw": 0,
@@ -415,7 +415,7 @@ export const sitesData = [
             },
             {
                 "name": "хүг чулуун хөшөө",
-                "url": "/images/panoramas/pano-8-хүг_чулуун_хөшөө.jpg",
+                "url": "/images/panoramas/pano-8-3-хүн_чулуун_хөшөө.jpg",
                 "hotspots": [
                     {
                         "yaw": 180,
