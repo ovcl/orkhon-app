@@ -44,3 +44,4 @@ next-env.d.ts
 /public/workbox-*.js
 /public/fallback-*.js
 image-backup-original/
+image-backup-original/
