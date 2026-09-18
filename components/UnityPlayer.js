@@ -45,12 +45,12 @@ export default function UnityPlayer({ onReady, onError }) {
     // Listen for messages from Unity
     useEffect(() => {
         const handleSiteSelected = (siteId) => {
-            console.log('Unity: Site selected', siteId);
+            // Unity дурсгал сонгогдлоо
             // You can handle site selection here
         };
 
         const handleAIRequest = (siteId) => {
-            console.log('Unity: AI request for site', siteId);
+            // Unity AI хүсэлт илгээгдлээ
             // Fetch AI description and send back to Unity
             fetchAIDescription(siteId);
         };

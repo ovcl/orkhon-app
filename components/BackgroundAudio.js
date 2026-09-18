@@ -22,7 +22,7 @@ export default function BackgroundAudio() {
                     document.removeEventListener('pointerdown', tryPlay);
                     document.removeEventListener('keydown', tryPlay);
                 }).catch((err) => {
-                    console.log('Autoplay blocked until user interacts:', err);
+                    // Browser autoplay хориглосон, хэрэглэгч дарахыг хүлээнэ
                 });
             }
         };

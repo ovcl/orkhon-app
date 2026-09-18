@@ -1,11 +1,23 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import Image from 'next/image';
 import styles from './VirtualTour.module.css';
 import { getPlaceHolder } from '../app/data/sites';
 import { translations } from '../app/data/translations';
 import BackgroundAudio from './BackgroundAudio';
-import PanoramaViewer from './PanoramaViewer';
+import dynamic from 'next/dynamic';
+
+// Three.js (VR/3D) том bundle тул зөвхөн панорама ЗААВАЛ хэрэгтэй үед ачаална —
+// энгийн зурган галерей үзэж буй хэрэглэгчид Three.js татагдахгүй
+const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
+    ssr: false,
+    loading: () => (
+        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.5)' }}>
+            <i className="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+        </div>
+    ),
+});
 
 export default function VirtualTour({ sites, onClose, language = 'mn', onToggleLanguage }) {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -156,7 +168,9 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                         />
                     </div>
                 ) : (
-                    <img src={currentImage} alt={siteName} className={styles.mainImage} />
+                    <div className={styles.mainImage} style={{ position: 'relative', width: '90%', height: '90%' }}>
+                        <Image src={currentImage} alt={siteName} fill sizes="90vw" style={{ objectFit: 'contain' }} />
+                    </div>
                 )}
 
                 {!isPanorama && currentSite.images && currentSite.images.length > 1 && (

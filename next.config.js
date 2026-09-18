@@ -115,6 +115,12 @@ const withPWA = require('next-pwa')({
 });
 
 const nextConfig = {
+    images: {
+        remotePatterns: [
+            { protocol: 'https', hostname: 'res.cloudinary.com' },
+            { protocol: 'https', hostname: 'images.unsplash.com' },
+        ],
+    },
     // ngrok tunnel-ээр Quest 2/утаснаас dev server руу хандахад
     // Next.js "Cross origin request detected" гэж blocked хийдгийг зөвшөөрнө.
     // Анхаар: ngrok-ийн URL солигдох бүрт (static domain биш л бол) энд шинэчлэх хэрэгтэй.
