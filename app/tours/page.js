@@ -50,7 +50,7 @@ export default function ToursPage() {
 
     const handleUnityReady = ({ sendMessage }) => {
         setUnityReady(true);
-        console.log('Unity is ready!');
+        // Unity WebGL ачаалагдаж дууслаа
     };
 
     return (

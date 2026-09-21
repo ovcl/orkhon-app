@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { translations } from './data/translations';
@@ -74,7 +75,7 @@ export default function Home() {
             )}>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg bg-white">
-                        <img src="/logo.png" className="w-6 h-6 object-contain" alt="Logo" />
+                        <Image src="/logo.png" width={24} height={24} className="w-6 h-6 object-contain" alt="Orkhon Valley Cultural Landscape logo" />
                     </div>
                     <h1 className={clsx(
                         "font-heading font-bold text-lg tracking-wide text-white transition-all duration-500",
@@ -96,7 +97,7 @@ export default function Home() {
                 {/* Hero */}
                 <div className="relative h-[62vh] flex items-end p-6 overflow-hidden">
                     <div className="absolute inset-0 z-0">
-                        <img src="/hero.jpg" className="w-full h-full object-cover scale-105" alt="Orkhon Valley" />
+                        <Image src="/hero.jpg" fill priority className="object-cover scale-105" alt="Orkhon Valley" />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-[#070b14]/50 to-transparent"></div>
                         <div className="absolute inset-0 bg-gradient-to-r from-[#070b14]/30 to-transparent"></div>
                         <div className="absolute bottom-0 left-1/4 w-56 h-56 bg-amber-500/8 rounded-full blur-[100px] animate-pulse"></div>
@@ -187,7 +188,7 @@ export default function Home() {
                                         boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
                                     }}
                                 >
-                                    <img src={item.img} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    <Image src={item.img} alt={item.title} fill sizes="200px" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent p-4 flex flex-col justify-end">
                                         <span className="text-[10px] font-bold text-amber-400/90 uppercase tracking-[0.15em] mb-1">{item.type}</span>
                                         <span className="text-white font-heading font-semibold text-[17px] leading-tight">{item.title}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { sitesData, getPlaceHolder } from "../data/sites";
 import { translations } from "../data/translations";
@@ -184,7 +185,7 @@ export default function SitesPage() {
                                                 <div className="rounded-2xl overflow-hidden border border-white/6 transition-all duration-300 group-hover:border-white/14"
                                                     style={{ background: 'rgba(16,24,48,0.7)' }}>
                                                     <div className="relative h-[130px] overflow-hidden">
-                                                        <img src={imgSrc} alt={name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108" />
+                                                        <Image src={imgSrc} alt={name} fill sizes="(max-width: 768px) 50vw, 300px" className="object-cover transition-transform duration-500 group-hover:scale-108" />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-[#101830] via-transparent to-transparent opacity-60"></div>
                                                         {hasVR && (
                                                             <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-amber-500/90 text-[8px] font-bold text-slate-900 flex items-center gap-0.5">
@@ -213,7 +214,7 @@ export default function SitesPage() {
                                                 style={{ background: 'rgba(16,24,48,0.6)' }}>
                                                 {/* Thumb */}
                                                 <div className="relative w-[108px] min-h-[96px] flex-shrink-0 overflow-hidden">
-                                                    <img src={imgSrc} alt={name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                                    <Image src={imgSrc} alt={name} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                                                     {hasVR && (
                                                         <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-amber-500/90 text-[7px] font-bold text-slate-900 flex items-center gap-0.5">
                                                             <i className="fa-solid fa-vr-cardboard text-[6px]"></i> VR

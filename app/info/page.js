@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import clsx from 'clsx';
@@ -313,7 +314,7 @@ export default function InfoPage() {
                     {/* App info */}
                     <motion.section variants={itemVariants} className="pb-4 text-center">
                         <div className="inline-flex w-12 h-12 mb-3 bg-white rounded-2xl p-2 shadow-lg items-center justify-center">
-                            <img src="/logo.png" className="w-full h-full object-contain" alt="Logo" />
+                            <Image src="/logo.png" width={48} height={48} className="w-full h-full object-contain" alt="ОВЦЛ Orkhon Valley Cultural Landscape logo" />
                         </div>
                         <h3 className="text-sm font-bold text-slate-400 mb-1">{t.app.title}</h3>
                         <p className="text-xs text-slate-600 mb-5">{t.app.version}</p>

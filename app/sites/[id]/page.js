@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { sitesData, getPlaceHolder } from "../../data/sites";
 import { translations } from "../../data/translations";
 import Link from 'next/link';
@@ -88,7 +89,7 @@ export default function SiteDetail({ params }) {
 
             {/* Hero image with thumbnail strip */}
             <div className="relative h-[420px]">
-                <img src={heroImage} alt={siteName} className="w-full h-full object-cover transition-all duration-500" />
+                <Image src={heroImage} alt={siteName} fill priority sizes="100vw" className="object-cover transition-all duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-[#070b14]/30 to-transparent"></div>
 
                 {/* Image counter */}
@@ -108,10 +109,10 @@ export default function SiteDetail({ params }) {
                             {images.map((img, i) => (
                                 <button key={i} onClick={() => setActiveImg(i)}
                                     className={clsx(
-                                        "flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-200",
+                                        "relative flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-200",
                                         activeImg === i ? "border-amber-400 scale-105" : "border-white/20 opacity-60 hover:opacity-90"
                                     )}>
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                    <Image src={img} alt={`${siteName} — зураг ${i + 1}`} fill sizes="56px" className="object-cover" />
                                 </button>
                             ))}
                         </div>
@@ -208,7 +209,7 @@ export default function SiteDetail({ params }) {
                                         i === 0 ? "col-span-2 row-span-2 h-48" : "h-[90px]",
                                         activeImg === i ? "border-amber-400" : "border-transparent opacity-80 hover:opacity-100"
                                     )}>
-                                    <img src={img} alt={`${siteName} ${i + 1}`} className="w-full h-full object-cover" />
+                                    <Image src={img} alt={`${siteName} ${i + 1}`} fill sizes="(max-width: 768px) 33vw, 200px" className="object-cover" />
                                     {activeImg === i && (
                                         <div className="absolute inset-0 bg-amber-500/10 flex items-center justify-center">
                                             <i className="fa-solid fa-check text-amber-400 text-sm drop-shadow"></i>
