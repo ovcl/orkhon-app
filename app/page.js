@@ -31,8 +31,10 @@ const scaleIn = {
 export default function Home() {
     const [language, setLanguage] = useState('mn');
     const [scrolled, setScrolled] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const savedLang = localStorage.getItem('language');
         if (savedLang) setLanguage(savedLang);
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -107,7 +109,7 @@ export default function Home() {
                     {/* FIX: initial="hidden" — анимейшн зөв ажиллана */}
                     <motion.div
                         className="relative z-10 w-full mb-8"
-                        initial="hidden"
+                        initial={mounted ? "hidden" : "visible"}
                         animate="visible"
                         variants={staggerContainer}
                     >
@@ -136,7 +138,7 @@ export default function Home() {
                 {/* Nav Grid */}
                 <motion.div
                     className="grid grid-cols-2 gap-3 px-5 -mt-8 relative z-20"
-                    initial="hidden"
+                    initial={mounted ? "hidden" : "visible"}
                     animate="visible"
                     variants={staggerContainer}
                 >

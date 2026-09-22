@@ -366,7 +366,7 @@ export const sitesData = [
         "id": 8,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Ар бөөрөгийн дэнж (Ерөнхий харагдац)",
                 "url": "/images/panoramas/pano-8-1.jpg",
                 "hotspots": [
                     {
@@ -378,7 +378,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Хиргисүүр ба дагуул байгууламж",
                 "url": "/images/panoramas/pano-8-2.jpg",
                 "hotspots": [
                     {
@@ -396,7 +396,9 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "буган чулуут хөшөө",
+                "name": "Буган чулуун хөшөө",
+                "description": "Эртний нүүдэлчдийн шүтлэг, урлагийн гайхамшигт өв болох буган чулуун хөшөө. Энэхүү хөшөө нь хүрэл ба төмрийн түрүү үед хамаарна.",
+                "descriptionEn": "A magnificent heritage of ancient nomadic beliefs and art. This deer stone dates back to the Bronze and early Iron Ages.",
                 "url": "/images/panoramas/pano-8-4-буган_чулууг_хөшөө.jpg",
                 "hotspots": [
                     {
@@ -414,7 +416,9 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хүг чулуун хөшөө",
+                "name": "Хүн чулуун хөшөө (Балбал)",
+                "description": "Түрэгийн үед хамаарах хүн чулуун хөшөө. Шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Өндөр нь 0.60 орчим метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
+                "descriptionEn": "A Turkic-era balbal (anthropomorphic stone statue). This 0.6m yellow-granite statue exhibits a smoothed surface with a stylized head and torso but without facial features, placed against a small square slab enclosure.",
                 "url": "/images/panoramas/pano-8-3-хүн_чулуун_хөшөө.jpg",
                 "hotspots": [
                     {
@@ -435,8 +439,8 @@ export const sitesData = [
         "altitude": "1574м",
         "nameEn": "Ar Boorog Ancient Burials",
         "category": "Булш хиргисүүр",
-        "description": "Өвөрхангай аймгийн Хужирт сумын нутаг Ар бөөрөгийн зүүн хөндий Таван булгийн дэнжид өвөрмөц хэлбэрийн дагуул байгууламж бүхий 1 том хиргисүүр, зүүн урд хөндийд Түрэгийн үеийн тахилын онгон, хүн чулуун хөшөө, буган чулуун хөшөө зэрэг дурсгалууд оршдог.\n\nХүн чулуун хөшөө\nДурсгалыг шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Түүний өндөр газрын хөрснөөс дээш 0.60 орчим метр, мөрний өргөн 0.29 метр, зузаан нь 0.20–0.22 метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
-        "descriptionEn": "Situated in the Ar Boorog valley. The site features a large khirigsuur with unique satellite structures. Additionally, the southeastern valley houses Turkic-era sacrificial sites, balbals (anthropomorphic stone statues), and deer stones. One notable 0.6m granite balbal exhibits a smoothed surface with a stylized head and torso but without facial features, placed against a small square slab enclosure.",
+        "description": "Өвөрхангай аймгийн Хужирт сумын нутаг Ар бөөрөгийн зүүн хөндий Таван булгийн дэнжид өвөрмөц хэлбэрийн дагуул байгууламж бүхий 1 том хиргисүүр, зүүн урд хөндийд Түрэгийн үеийн тахилын онгон, хүн чулуун хөшөө, буган чулуун хөшөө зэрэг дурсгалууд оршдог.",
+        "descriptionEn": "Situated in the Ar Boorog valley. The site features a large khirigsuur with unique satellite structures. Additionally, the southeastern valley houses Turkic-era sacrificial sites, balbals (anthropomorphic stone statues), and deer stones.",
         "images": [
             "/images/sites/8.jpg",
             "/images/sites/8-1.jpg",
@@ -710,7 +714,8 @@ export const sitesData = [
         "id": 14,
         "panoramaTour": [
             {
-                "name": "билгэ хааны хөшөө (1)",
+                "name": "Билгэ хааны хөшөө (Хэсэг 1)",
+                "description": "Билгэ хаанд зориулан босгосон гэрэлт хөшөө. Түрэг болон нангиад бичээстэй.",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(1).jpg",
                 "hotspots": [
                     {
@@ -722,7 +727,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "билгэ хааны хөшөө (2)",
+                "name": "Билгэ хааны хөшөө (Хэсэг 2)",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
                 "hotspots": [
                     {
@@ -740,7 +745,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "билгэ хааны хөшөө (3)",
+                "name": "Билгэ хааны хөшөө (Хэсэг 3)",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(3).jpg",
                 "hotspots": [
                     {
@@ -758,7 +763,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "гол гурван зуу дотор (1)",
+                "name": "Малтлагын хэсэг (1)",
                 "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(1).jpg",
                 "hotspots": [
                     {
@@ -776,7 +781,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "гол гурван зуу дотор (2)",
+                "name": "Малтлагын хэсэг (2)",
                 "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(2).jpg",
                 "hotspots": [
                     {
@@ -794,7 +799,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "гол гурван зуу дотор (3)",
+                "name": "Малтлагын хэсэг (3)",
                 "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(3).jpg",
                 "hotspots": [
                     {
@@ -812,7 +817,8 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "културген жанжины хөшөө (1)",
+                "name": "Күль-Тегин жанжны хөшөө (Хэсэг 1)",
+                "description": "Түрэг улсын алдарт цэргийн жанжин Күль-Тегинд зориулан босгосон хөшөө. Дээр нь Түрэгийн алдарт баатарлаг туульсыг сийлсэн байдаг.",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
                 "hotspots": [
                     {
@@ -830,7 +836,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "културген жанжины хөшөө (2)",
+                "name": "Күль-Тегин жанжны хөшөө (Хэсэг 2)",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(2).jpg",
                 "hotspots": [
                     {
@@ -955,7 +961,7 @@ export const sitesData = [
         "descriptionEn": "The capital of the Mongol Empire, founded in 1220 by Genghis Khan and fully established by Ogedei Khan in 1235. It served as the empire's administrative, political, and cultural hub for decades. The city was remarkably cosmopolitan, featuring craft quarters, markets, and temples representing various major world religions. Archaeological mapping by joint Mongol-Japanese expeditions in the 1990s confirmed the city's complex layout, including distinct residential districts for diverse nationalities ranging from French to Indian and Russian. A significant stone turtle is located to the north of the ruins.",
         "panoramaTour": [
             {
-                "name": "Хархорум хотын туурь", "url": "/images/panoramas/16.JPG", "hotspots": [
+                "name": "Хархорум хотын туурь (Ерөнхий)", "url": "/images/panoramas/16.JPG", "hotspots": [
                     { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
                 ],
                 "models3d": [
@@ -963,13 +969,19 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
+                "name": "Цогт гэр эхийн сүм", 
+                "description": "Энэхүү сүм нь 16-р зуунд баригдсан байж болзошгүй хэмээн үздэг бөгөөд Хархорум хотын малтлагын үеэр олдсон чухал дурсгалын нэг юм.",
+                "descriptionEn": "This temple ruins, possibly dating back to the 16th century, is one of the important archaeological finds within the ancient capital city limits.",
+                "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Туурь руу буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Мэлхий чулуу руу" }
                 ]
             },
             {
-                "name": "Мэлхий чулуу", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
+                "name": "Чулуун яст мэлхий", 
+                "description": "Эртний хотыг хамгаалж дөрвөн зүгт нь байрлуулж байсан чулуун яст мэлхийн нэг. Яст мэлхий нь мөнх, бат бөх байдлын бэлгэдэл бөгөөд нуруун дээрээ гэрэлт хөшөө тээж байсан ортой.",
+                "descriptionEn": "One of the stone turtles that guarded the ancient city at its cardinal points. A symbol of longevity and steadfastness, it originally supported a commemorative stele on its back.",
+                "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
@@ -1298,36 +1310,50 @@ export const sitesData = [
         "descriptionEn": "The oldest surviving Buddhist monastery in Mongolia, established in 1586 by Abtai Sain Khan following his meeting with the 3rd Dalai Lama. Built near the ruins of ancient Karakorum, it often utilized stone materials from the former capital. At its peak in 1792, the monastery contained 62 temples and over 500 buildings within a massive square enclosure topped with 108 stupas. Today, 18 temples remain as part of an active museum and functional monastery complex.",
         "panoramaTour": [
             {
-                "name": "Эрдэнэзуу хийд", "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
+                "name": "Эрдэнэ Зуу хийд (Ерөнхий харагдац)", 
+                "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
                     { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
                     { "yaw": 90, "pitch": -8, "targetIndex": 5, "label": "Лаврин рүү" }
                 ]
             },
             {
-                "name": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
+                "name": "Гол гурван зуу", 
+                "description": "Хийдийн хамгийн анхны бөгөөд гол сүм болох Гол гурван зуу. 16-р зуунд баригдсан энэхүү цогцолборт Бурхан багшийн гурван үеийн дүр болон бусад шүтээнүүд хадгалагддаг.",
+                "descriptionEn": "The Three Zuu Temples are the oldest and most important structures of the monastery, dating back to the 16th century, housing statues of the Buddha in his past, present, and future forms.",
+                "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Алтан суварга руу" }
                 ]
             },
             {
-                "name": "Алтан суварга", "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
+                "name": "Алтан суварга", 
+                "description": "1799 онд 4-р Богдын дурсгалд зориулан бүтээгдсэн Алтан суварга буюу Бодь суварга. Энэ нь хийдийн доторх хамгийн том суварга юм.",
+                "descriptionEn": "The Golden Stupa (Bodhi Stupa), built in 1799 in memory of the 4th Bogd. It is the largest stupa inside the monastery complex.",
+                "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 3, "label": "Хөх сүм рүү" }
                 ]
             },
             {
-                "name": "Хөх сүм", "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
+                "name": "Хөх сүм", 
+                "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 2, "label": "Буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 4, "label": "Автай сан хааны гэрийн буурь руу" }
                 ]
             },
             {
-                "name": "Автай сан хааны гэрийн буурь", "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
+                "name": "Автай сайн хааны гэрийн буурь", 
+                "description": "Эрдэнэ Зуу хийдийг үндэслэгч Автай сайн хааны 45 ханатай аварга том гэр байрлаж байсан чулуун буурь. Энэхүү гэрт 300 гаруй хүн багтдаг байжээ.",
+                "descriptionEn": "The stone foundation of the massive 45-wall yurt of Abtai Sain Khan, the founder of the monastery. The yurt was said to accommodate over 300 people.",
+                "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 3, "label": "Буцах" }
                 ]
             },
             {
-                "name": "Лаврин", "url": "/images/panoramas/24-Лаврин.JPG", "hotspots": [
+                "name": "Лаврин сүм", 
+                "description": "1780-аад онд баригдсан Төвд маягийн хийцтэй Лаврин сүм. Энэхүү сүмд одоо ч өдөр тутмын хурал номын үйл ажиллагаа явагддаг.",
+                "descriptionEn": "The Lavrin Temple, built in the 1780s in a Tibetan architectural style. It remains an active site for daily religious chanting and ceremonies.",
+                "url": "/images/panoramas/24-Лаврин.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" }
                 ]
             }
@@ -1409,7 +1435,7 @@ export const sitesData = [
         "id": 26,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Төвхөн хийд (Ерөнхий харагдац 1)",
                 "url": "/images/panoramas/pano-26-1.jpg",
                 "hotspots": [
                     {
@@ -1421,7 +1447,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Төвхөн хийд (Ерөнхий харагдац 2)",
                 "url": "/images/panoramas/pano-26-2.jpg",
                 "hotspots": [
                     {
@@ -1439,7 +1465,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Төвхөн хийд (Ерөнхий харагдац 3)",
                 "url": "/images/panoramas/pano-26-3.jpg",
                 "hotspots": [
                     {
@@ -1493,7 +1519,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хурлын дуган дотор",
+                "name": "Хурлын дуган (Дотор)",
                 "url": "/images/panoramas/pano-26-Хурлын_дуган_дотор.jpg",
                 "hotspots": [
                     {
@@ -1511,7 +1537,9 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хийморийн овоо",
+                "name": "Хийморийн овоо (1)",
+                "description": "Төвхөн хийдийн хамгийн өндөрлөг хэсэгт орших овоо. Эндээс хангайн сайхан уулс, орчны байгаль маш тод харагддаг.",
+                "descriptionEn": "The highest spiritual ovoo (cairn) at Tuvkhun Monastery, offering a breathtaking panoramic view of the surrounding Khangai mountains.",
                 "url": "/images/panoramas/pano-26-хийморийн_овоо.jpg",
                 "hotspots": [
                     {
@@ -1529,7 +1557,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хийморийн овоо 2",
+                "name": "Хийморийн овоо (2)",
                 "url": "/images/panoramas/pano-26-хийморийн_овоо_2.jpg",
                 "hotspots": [
                     {
@@ -1548,6 +1576,8 @@ export const sitesData = [
             },
             {
                 "name": "Умай хад",
+                "description": "Эхийн умай хэмээн алдаршсан энэхүү хадны нүхэнд шургаж ороод эргэж гарснаар хүн дахин төрсөнтэй адил болж нүгэл арилна хэмээн сүсэглэдэг.",
+                "descriptionEn": "The 'Mother's Womb' rock cave. Devotees believe that crawling through this narrow rock formation cleanses one of worldly sins and symbolizes a spiritual rebirth.",
                 "url": "/images/panoramas/pano-26-Умай_хад.jpg",
                 "hotspots": [
                     {
@@ -1565,7 +1595,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 10",
+                "name": "Төвхөн хийд (Гал тогоо/Аж ахуй)",
                 "url": "/images/panoramas/pano-26-10.jpg",
                 "hotspots": [
                     {
