@@ -50,6 +50,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onToggleL
                         url: node.url,
                         name: language === 'en' && node.nameEn ? node.nameEn : node.name,
                         description: language === 'en' && node.descriptionEn ? node.descriptionEn : node.description,
+                        group: node.group || null, // premium grouped navigation-д ашиглана
                         siteId: s.id,
                         models3d: node.models3d || [],
                         hotspots: (node.hotspots || []).map((h) => ({

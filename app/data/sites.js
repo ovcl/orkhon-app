@@ -3,7 +3,7 @@ export const sitesData = [
         "id": 1,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Мойлтын амны хуучин — 1-р харагдац", "group": "Мойлтын амны хуучин",
                 "url": "/images/panoramas/pano-1-1.jpg",
                 "hotspots": []
             }
@@ -32,7 +32,7 @@ export const sitesData = [
         "id": 2,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Орхон-7 хуучин чулуун — 1-р харагдац", "group": "Орхон-7 хуучин чулуун",
                 "url": "/images/panoramas/pano-2-1.jpg",
                 "hotspots": []
             }
@@ -60,7 +60,7 @@ export const sitesData = [
         "id": 3,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Гүмбийн дэнжийн буган — 1-р харагдац", "group": "Гүмбийн дэнжийн буган",
                 "url": "/images/panoramas/pano-3-1.jpg",
                 "hotspots": [
                     {
@@ -72,7 +72,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Гүмбийн дэнжийн буган — 2-р харагдац", "group": "Гүмбийн дэнжийн буган",
                 "url": "/images/panoramas/pano-3-2.jpg",
                 "hotspots": [
                     {
@@ -107,7 +107,7 @@ export const sitesData = [
         "id": 4,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Нарийны амы булш, — 1-р харагдац", "group": "Нарийны амы булш,",
                 "url": "/images/panoramas/pano-4-1.jpg",
                 "hotspots": [
                     {
@@ -119,7 +119,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Нарийны амы булш, — 2-р харагдац", "group": "Нарийны амы булш,",
                 "url": "/images/panoramas/pano-4-2.jpg",
                 "hotspots": [
                     {
@@ -152,7 +152,7 @@ export const sitesData = [
         "id": 5,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Тэмээн чулууны амны — 1-р харагдац", "group": "Тэмээн чулууны амны",
                 "url": "/images/panoramas/pano-5-1.jpg",
                 "hotspots": [
                     {
@@ -164,7 +164,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Тэмээн чулууны амны — 2-р харагдац", "group": "Тэмээн чулууны амны",
                 "url": "/images/panoramas/pano-5-2.jpg",
                 "hotspots": [
                     {
@@ -182,7 +182,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Тэмээн чулууны амны — 3-р харагдац", "group": "Тэмээн чулууны амны",
                 "url": "/images/panoramas/pano-5-3.jpg",
                 "hotspots": [
                     {
@@ -218,7 +218,7 @@ export const sitesData = [
         "id": 6,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Ширээт уулын буган — 1-р харагдац", "group": "Ширээт уулын буган",
                 "url": "/images/panoramas/pano-6-1.jpg",
                 "hotspots": [
                     {
@@ -230,7 +230,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Ширээт уулын буган — 2-р харагдац", "group": "Ширээт уулын буган",
                 "url": "/images/panoramas/pano-6-2.jpg",
                 "hotspots": [
                     {
@@ -248,7 +248,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Ширээт уулын буган — 3-р харагдац", "group": "Ширээт уулын буган",
                 "url": "/images/panoramas/pano-6-3.jpg",
                 "hotspots": [
                     {
@@ -284,7 +284,7 @@ export const sitesData = [
         "id": 7,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Орхоны хөндийн xиpгисүүрүүд — 1-р харагдац", "group": "Орхоны хөндийн xиpгисүүрүүд",
                 "url": "/images/panoramas/pano-7-1.jpg",
                 "hotspots": [
                     {
@@ -296,7 +296,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Орхоны хөндийн xиpгисүүрүүд — 2-р харагдац", "group": "Орхоны хөндийн xиpгисүүрүүд",
                 "url": "/images/panoramas/pano-7-2.jpg",
                 "hotspots": [
                     {
@@ -314,7 +314,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Орхоны хөндийн xиpгисүүрүүд — 3-р харагдац", "group": "Орхоны хөндийн xиpгисүүрүүд",
                 "url": "/images/panoramas/pano-7-3.jpg",
                 "hotspots": [
                     {
@@ -332,7 +332,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 4",
+                "name": "Орхоны хөндийн xиpгисүүрүүд — 4-р харагдац", "group": "Орхоны хөндийн xиpгисүүрүүд",
                 "url": "/images/panoramas/pano-7-4.jpg",
                 "hotspots": [
                     {
@@ -366,7 +366,7 @@ export const sitesData = [
         "id": 8,
         "panoramaTour": [
             {
-                "name": "Ар бөөрөгийн дэнж (Ерөнхий харагдац)",
+                "name": "Ар бөөрөг — гадна үзэмж 1", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-8-1.jpg",
                 "hotspots": [
                     {
@@ -378,7 +378,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хиргисүүр ба дагуул байгууламж",
+                "name": "Ар бөөрөг — гадна үзэмж 2", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-8-2.jpg",
                 "hotspots": [
                     {
@@ -396,9 +396,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Буган чулуун хөшөө",
-                "description": "Эртний нүүдэлчдийн шүтлэг, урлагийн гайхамшигт өв болох буган чулуун хөшөө. Энэхүү хөшөө нь хүрэл ба төмрийн түрүү үед хамаарна.",
-                "descriptionEn": "A magnificent heritage of ancient nomadic beliefs and art. This deer stone dates back to the Bronze and early Iron Ages.",
+                "name": "Буган чулуун хөшөө", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-8-4-буган_чулууг_хөшөө.jpg",
                 "hotspots": [
                     {
@@ -416,9 +414,8 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хүн чулуун хөшөө (Балбал)",
-                "description": "Түрэгийн үед хамаарах хүн чулуун хөшөө. Шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Өндөр нь 0.60 орчим метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
-                "descriptionEn": "A Turkic-era balbal (anthropomorphic stone statue). This 0.6m yellow-granite statue exhibits a smoothed surface with a stylized head and torso but without facial features, placed against a small square slab enclosure.",
+                "name": "Хүн чулуун хөшөө", "group": "Ар бөөрөг",
+                "description": "Дурсгалыг шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Түүний өндөр газрын хөрснөөс дээш 0.60 орчим метр, мөрний өргөн 0.29 метр, зузаан нь 0.20–0.22 метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
                 "url": "/images/panoramas/pano-8-3-хүн_чулуун_хөшөө.jpg",
                 "hotspots": [
                     {
@@ -439,8 +436,8 @@ export const sitesData = [
         "altitude": "1574м",
         "nameEn": "Ar Boorog Ancient Burials",
         "category": "Булш хиргисүүр",
-        "description": "Өвөрхангай аймгийн Хужирт сумын нутаг Ар бөөрөгийн зүүн хөндий Таван булгийн дэнжид өвөрмөц хэлбэрийн дагуул байгууламж бүхий 1 том хиргисүүр, зүүн урд хөндийд Түрэгийн үеийн тахилын онгон, хүн чулуун хөшөө, буган чулуун хөшөө зэрэг дурсгалууд оршдог.",
-        "descriptionEn": "Situated in the Ar Boorog valley. The site features a large khirigsuur with unique satellite structures. Additionally, the southeastern valley houses Turkic-era sacrificial sites, balbals (anthropomorphic stone statues), and deer stones.",
+        "description": "Өвөрхангай аймгийн Хужирт сумын нутаг Ар бөөрөгийн зүүн хөндий Таван булгийн дэнжид өвөрмөц хэлбэрийн дагуул байгууламж бүхий 1 том хиргисүүр, зүүн урд хөндийд Түрэгийн үеийн тахилын онгон, хүн чулуун хөшөө, буган чулуун хөшөө зэрэг дурсгалууд оршдог.\n\nХүн чулуун хөшөө\nДурсгалыг шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Түүний өндөр газрын хөрснөөс дээш 0.60 орчим метр, мөрний өргөн 0.29 метр, зузаан нь 0.20–0.22 метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
+        "descriptionEn": "Situated in the Ar Boorog valley. The site features a large khirigsuur with unique satellite structures. Additionally, the southeastern valley houses Turkic-era sacrificial sites, balbals (anthropomorphic stone statues), and deer stones. One notable 0.6m granite balbal exhibits a smoothed surface with a stylized head and torso but without facial features, placed against a small square slab enclosure.",
         "images": [
             "/images/sites/8.jpg",
             "/images/sites/8-1.jpg",
@@ -454,7 +451,7 @@ export const sitesData = [
         "id": 9,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Бэрхийн булангийн булш — 1-р харагдац", "group": "Бэрхийн булангийн булш",
                 "url": "/images/panoramas/pano-9-1.jpg",
                 "hotspots": [
                     {
@@ -466,7 +463,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Бэрхийн булангийн булш — 2-р харагдац", "group": "Бэрхийн булангийн булш",
                 "url": "/images/panoramas/pano-9-2.jpg",
                 "hotspots": [
                     {
@@ -501,7 +498,7 @@ export const sitesData = [
         "id": 10,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Шунхлай уулын булш — 1-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-1.jpg",
                 "hotspots": [
                     {
@@ -513,7 +510,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Шунхлай уулын булш — 2-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-2.jpg",
                 "hotspots": [
                     {
@@ -531,7 +528,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Шунхлай уулын булш — 3-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-3.jpg",
                 "hotspots": [
                     {
@@ -549,7 +546,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 4",
+                "name": "Шунхлай уулын булш — 4-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-4.jpg",
                 "hotspots": [
                     {
@@ -584,7 +581,7 @@ export const sitesData = [
         "id": 11,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Майхан толгойн булш — 1-р харагдац", "group": "Майхан толгойн булш",
                 "url": "/images/panoramas/pano-11-1.jpg",
                 "hotspots": [
                     {
@@ -596,7 +593,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Майхан толгойн булш — 2-р харагдац", "group": "Майхан толгойн булш",
                 "url": "/images/panoramas/pano-11-2.jpg",
                 "hotspots": [
                     {
@@ -614,7 +611,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Майхан толгойн булш — 3-р харагдац", "group": "Майхан толгойн булш",
                 "url": "/images/panoramas/pano-11-3.jpg",
                 "hotspots": [
                     {
@@ -648,7 +645,7 @@ export const sitesData = [
         "id": 12,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Хутаг уулын эртний — 1-р харагдац", "group": "Хутаг уулын эртний",
                 "url": "/images/panoramas/pano-12-1.jpg",
                 "hotspots": [
                     {
@@ -660,7 +657,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Хутаг уулын эртний — 2-р харагдац", "group": "Хутаг уулын эртний",
                 "url": "/images/panoramas/pano-12-2.jpg",
                 "hotspots": [
                     {
@@ -714,8 +711,7 @@ export const sitesData = [
         "id": 14,
         "panoramaTour": [
             {
-                "name": "Билгэ хааны хөшөө (Хэсэг 1)",
-                "description": "Билгэ хаанд зориулан босгосон гэрэлт хөшөө. Түрэг болон нангиад бичээстэй.",
+                "name": "билгэ хааны хөшөө (1)", "group": "билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(1).jpg",
                 "hotspots": [
                     {
@@ -727,7 +723,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Билгэ хааны хөшөө (Хэсэг 2)",
+                "name": "билгэ хааны хөшөө (2)", "group": "билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
                 "hotspots": [
                     {
@@ -745,7 +741,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Билгэ хааны хөшөө (Хэсэг 3)",
+                "name": "билгэ хааны хөшөө (3)", "group": "билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(3).jpg",
                 "hotspots": [
                     {
@@ -763,7 +759,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Малтлагын хэсэг (1)",
+                "name": "гол гурван зуу дотор (1)", "group": "гол гурван зуу дотор",
                 "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(1).jpg",
                 "hotspots": [
                     {
@@ -781,7 +777,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Малтлагын хэсэг (2)",
+                "name": "гол гурван зуу дотор (2)", "group": "гол гурван зуу дотор",
                 "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(2).jpg",
                 "hotspots": [
                     {
@@ -799,7 +795,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Малтлагын хэсэг (3)",
+                "name": "гол гурван зуу дотор (3)", "group": "гол гурван зуу дотор",
                 "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(3).jpg",
                 "hotspots": [
                     {
@@ -817,8 +813,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Күль-Тегин жанжны хөшөө (Хэсэг 1)",
-                "description": "Түрэг улсын алдарт цэргийн жанжин Күль-Тегинд зориулан босгосон хөшөө. Дээр нь Түрэгийн алдарт баатарлаг туульсыг сийлсэн байдаг.",
+                "name": "културген жанжины хөшөө (1)", "group": "културген жанжины хөшөө",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
                 "hotspots": [
                     {
@@ -836,7 +831,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Күль-Тегин жанжны хөшөө (Хэсэг 2)",
+                "name": "културген жанжины хөшөө (2)", "group": "културген жанжины хөшөө",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(2).jpg",
                 "hotspots": [
                     {
@@ -867,7 +862,7 @@ export const sitesData = [
         "id": 15,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Харбалгас хотын туурь — 1-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-1.jpg",
                 "hotspots": [
                     {
@@ -879,7 +874,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Харбалгас хотын туурь — 2-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-2.jpg",
                 "hotspots": [
                     {
@@ -897,7 +892,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Харбалгас хотын туурь — 3-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-3.jpg",
                 "hotspots": [
                     {
@@ -915,7 +910,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 4",
+                "name": "Харбалгас хотын туурь — 4-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-4.jpg",
                 "hotspots": [
                     {
@@ -961,7 +956,7 @@ export const sitesData = [
         "descriptionEn": "The capital of the Mongol Empire, founded in 1220 by Genghis Khan and fully established by Ogedei Khan in 1235. It served as the empire's administrative, political, and cultural hub for decades. The city was remarkably cosmopolitan, featuring craft quarters, markets, and temples representing various major world religions. Archaeological mapping by joint Mongol-Japanese expeditions in the 1990s confirmed the city's complex layout, including distinct residential districts for diverse nationalities ranging from French to Indian and Russian. A significant stone turtle is located to the north of the ruins.",
         "panoramaTour": [
             {
-                "name": "Хархорум хотын туурь (Ерөнхий)", "url": "/images/panoramas/16.JPG", "hotspots": [
+                "name": "Хархорум хотын туурь", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16.JPG", "hotspots": [
                     { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
                 ],
                 "models3d": [
@@ -969,19 +964,13 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Цогт гэр эхийн сүм", 
-                "description": "Энэхүү сүм нь 16-р зуунд баригдсан байж болзошгүй хэмээн үздэг бөгөөд Хархорум хотын малтлагын үеэр олдсон чухал дурсгалын нэг юм.",
-                "descriptionEn": "This temple ruins, possibly dating back to the 16th century, is one of the important archaeological finds within the ancient capital city limits.",
-                "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
+                "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Туурь руу буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Мэлхий чулуу руу" }
                 ]
             },
             {
-                "name": "Чулуун яст мэлхий", 
-                "description": "Эртний хотыг хамгаалж дөрвөн зүгт нь байрлуулж байсан чулуун яст мэлхийн нэг. Яст мэлхий нь мөнх, бат бөх байдлын бэлгэдэл бөгөөд нуруун дээрээ гэрэлт хөшөө тээж байсан ортой.",
-                "descriptionEn": "One of the stone turtles that guarded the ancient city at its cardinal points. A symbol of longevity and steadfastness, it originally supported a commemorative stele on its back.",
-                "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
+                "name": "Мэлхий чулуу", "group": "Мэлхий чулуу", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
@@ -994,7 +983,7 @@ export const sitesData = [
         "id": 17,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Баянголын амны эртний — 1-р харагдац", "group": "Баянголын амны эртний",
                 "url": "/images/panoramas/pano-17-1.jpg",
                 "hotspots": [
                     {
@@ -1006,7 +995,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Баянголын амны эртний — 2-р харагдац", "group": "Баянголын амны эртний",
                 "url": "/images/panoramas/pano-17-2.jpg",
                 "hotspots": [
                     {
@@ -1038,7 +1027,7 @@ export const sitesData = [
         "id": 18,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Мэлхийт толгойн ордны — 1-р харагдац", "group": "Мэлхийт толгойн ордны",
                 "url": "/images/panoramas/pano-18-1.jpg",
                 "hotspots": []
             }
@@ -1063,7 +1052,7 @@ export const sitesData = [
         "id": 19,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Дойт толгойн эртний — 1-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-1.jpg",
                 "hotspots": [
                     {
@@ -1075,7 +1064,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Дойт толгойн эртний — 2-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-2.jpg",
                 "hotspots": [
                     {
@@ -1093,7 +1082,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Дойт толгойн эртний — 3-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-3.jpg",
                 "hotspots": [
                     {
@@ -1111,7 +1100,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 4",
+                "name": "Дойт толгойн эртний — 4-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-4.jpg",
                 "hotspots": [
                     {
@@ -1129,7 +1118,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 5",
+                "name": "Дойт толгойн эртний — 5-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-5.jpg",
                 "hotspots": [
                     {
@@ -1159,7 +1148,7 @@ export const sitesData = [
         "id": 20,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Захын булаг эртний — 1-р харагдац", "group": "Захын булаг эртний",
                 "url": "/images/panoramas/pano-20-1.jpg",
                 "hotspots": [
                     {
@@ -1171,7 +1160,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Захын булаг эртний — 2-р харагдац", "group": "Захын булаг эртний",
                 "url": "/images/panoramas/pano-20-2.jpg",
                 "hotspots": [
                     {
@@ -1189,7 +1178,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 3",
+                "name": "Захын булаг эртний — 3-р харагдац", "group": "Захын булаг эртний",
                 "url": "/images/panoramas/pano-20-3.jpg",
                 "hotspots": [
                     {
@@ -1207,7 +1196,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 4",
+                "name": "Захын булаг эртний — 4-р харагдац", "group": "Захын булаг эртний",
                 "url": "/images/panoramas/pano-20-4.jpg",
                 "hotspots": [
                     {
@@ -1238,7 +1227,7 @@ export const sitesData = [
         "id": 21,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Хужиртын амны эртний — 1-р харагдац", "group": "Хужиртын амны эртний",
                 "url": "/images/panoramas/pano-21-1.jpg",
                 "hotspots": []
             }
@@ -1262,7 +1251,7 @@ export const sitesData = [
         "id": 22,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Хар бондгорын эртний — 1-р харагдац", "group": "Хар бондгорын эртний",
                 "url": "/images/panoramas/pano-22-1.jpg",
                 "hotspots": []
             }
@@ -1310,50 +1299,36 @@ export const sitesData = [
         "descriptionEn": "The oldest surviving Buddhist monastery in Mongolia, established in 1586 by Abtai Sain Khan following his meeting with the 3rd Dalai Lama. Built near the ruins of ancient Karakorum, it often utilized stone materials from the former capital. At its peak in 1792, the monastery contained 62 temples and over 500 buildings within a massive square enclosure topped with 108 stupas. Today, 18 temples remain as part of an active museum and functional monastery complex.",
         "panoramaTour": [
             {
-                "name": "Эрдэнэ Зуу хийд (Ерөнхий харагдац)", 
-                "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
+                "name": "Эрдэнэзуу хийд", "group": "Эрдэнэзуу хийд", "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
                     { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
                     { "yaw": 90, "pitch": -8, "targetIndex": 5, "label": "Лаврин рүү" }
                 ]
             },
             {
-                "name": "Гол гурван зуу", 
-                "description": "Хийдийн хамгийн анхны бөгөөд гол сүм болох Гол гурван зуу. 16-р зуунд баригдсан энэхүү цогцолборт Бурхан багшийн гурван үеийн дүр болон бусад шүтээнүүд хадгалагддаг.",
-                "descriptionEn": "The Three Zuu Temples are the oldest and most important structures of the monastery, dating back to the 16th century, housing statues of the Buddha in his past, present, and future forms.",
-                "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
+                "name": "Гол гурван зуу", "group": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Алтан суварга руу" }
                 ]
             },
             {
-                "name": "Алтан суварга", 
-                "description": "1799 онд 4-р Богдын дурсгалд зориулан бүтээгдсэн Алтан суварга буюу Бодь суварга. Энэ нь хийдийн доторх хамгийн том суварга юм.",
-                "descriptionEn": "The Golden Stupa (Bodhi Stupa), built in 1799 in memory of the 4th Bogd. It is the largest stupa inside the monastery complex.",
-                "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
+                "name": "Алтан суварга", "group": "Алтан суварга", "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 3, "label": "Хөх сүм рүү" }
                 ]
             },
             {
-                "name": "Хөх сүм", 
-                "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
+                "name": "Хөх сүм", "group": "Хөх сүм", "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 2, "label": "Буцах" },
                     { "yaw": 0, "pitch": -8, "targetIndex": 4, "label": "Автай сан хааны гэрийн буурь руу" }
                 ]
             },
             {
-                "name": "Автай сайн хааны гэрийн буурь", 
-                "description": "Эрдэнэ Зуу хийдийг үндэслэгч Автай сайн хааны 45 ханатай аварга том гэр байрлаж байсан чулуун буурь. Энэхүү гэрт 300 гаруй хүн багтдаг байжээ.",
-                "descriptionEn": "The stone foundation of the massive 45-wall yurt of Abtai Sain Khan, the founder of the monastery. The yurt was said to accommodate over 300 people.",
-                "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
+                "name": "Автай сан хааны гэрийн буурь", "group": "Автай сан хааны гэрийн буурь", "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 3, "label": "Буцах" }
                 ]
             },
             {
-                "name": "Лаврин сүм", 
-                "description": "1780-аад онд баригдсан Төвд маягийн хийцтэй Лаврин сүм. Энэхүү сүмд одоо ч өдөр тутмын хурал номын үйл ажиллагаа явагддаг.",
-                "descriptionEn": "The Lavrin Temple, built in the 1780s in a Tibetan architectural style. It remains an active site for daily religious chanting and ceremonies.",
-                "url": "/images/panoramas/24-Лаврин.JPG", "hotspots": [
+                "name": "Лаврин", "group": "Лаврин", "url": "/images/panoramas/24-Лаврин.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" }
                 ]
             }
@@ -1372,7 +1347,7 @@ export const sitesData = [
         "id": 25,
         "panoramaTour": [
             {
-                "name": "дуган дотор",
+                "name": "дуган дотор", "group": "дуган дотор",
                 "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
                 "hotspots": [
                     {
@@ -1384,7 +1359,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "үүд",
+                "name": "үүд", "group": "үүд",
                 "url": "/images/panoramas/pano-25-үүд.jpg",
                 "hotspots": [
                     {
@@ -1402,7 +1377,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хашаан дотор",
+                "name": "хашаан дотор", "group": "хашаан дотор",
                 "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
                 "hotspots": [
                     {
@@ -1435,7 +1410,7 @@ export const sitesData = [
         "id": 26,
         "panoramaTour": [
             {
-                "name": "Төвхөн хийд (Ерөнхий харагдац 1)",
+                "name": "Ар бөөрөг — гадна үзэмж 1", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-26-1.jpg",
                 "hotspots": [
                     {
@@ -1447,7 +1422,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Төвхөн хийд (Ерөнхий харагдац 2)",
+                "name": "Ар бөөрөг — гадна үзэмж 2", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-26-2.jpg",
                 "hotspots": [
                     {
@@ -1465,7 +1440,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Төвхөн хийд (Ерөнхий харагдац 3)",
+                "name": "Төвхөн хийд — гадна үзэмж 3", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-3.jpg",
                 "hotspots": [
                     {
@@ -1483,7 +1458,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хурлын дуган",
+                "name": "Хурлын дуган", "group": "Хурлын дуган",
                 "url": "/images/panoramas/pano-26-Хурлын_дуган.jpg",
                 "hotspots": [
                     {
@@ -1501,7 +1476,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Сэмчин дуган",
+                "name": "Сэмчин дуган", "group": "Сэмчин дуган",
                 "url": "/images/panoramas/pano-26-Сэмчин_дуган.jpg",
                 "hotspots": [
                     {
@@ -1519,7 +1494,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хурлын дуган (Дотор)",
+                "name": "Хурлын дуган дотор", "group": "Хурлын дуган дотор",
                 "url": "/images/panoramas/pano-26-Хурлын_дуган_дотор.jpg",
                 "hotspots": [
                     {
@@ -1537,9 +1512,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хийморийн овоо (1)",
-                "description": "Төвхөн хийдийн хамгийн өндөрлөг хэсэгт орших овоо. Эндээс хангайн сайхан уулс, орчны байгаль маш тод харагддаг.",
-                "descriptionEn": "The highest spiritual ovoo (cairn) at Tuvkhun Monastery, offering a breathtaking panoramic view of the surrounding Khangai mountains.",
+                "name": "Хийморийн овоо (1)", "group": "Хийморийн овоо",
                 "url": "/images/panoramas/pano-26-хийморийн_овоо.jpg",
                 "hotspots": [
                     {
@@ -1557,7 +1530,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хийморийн овоо (2)",
+                "name": "хийморийн овоо 2", "group": "хийморийн овоо 2",
                 "url": "/images/panoramas/pano-26-хийморийн_овоо_2.jpg",
                 "hotspots": [
                     {
@@ -1575,9 +1548,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Умай хад",
-                "description": "Эхийн умай хэмээн алдаршсан энэхүү хадны нүхэнд шургаж ороод эргэж гарснаар хүн дахин төрсөнтэй адил болж нүгэл арилна хэмээн сүсэглэдэг.",
-                "descriptionEn": "The 'Mother's Womb' rock cave. Devotees believe that crawling through this narrow rock formation cleanses one of worldly sins and symbolizes a spiritual rebirth.",
+                "name": "Умай хад", "group": "Умай хад",
                 "url": "/images/panoramas/pano-26-Умай_хад.jpg",
                 "hotspots": [
                     {
@@ -1595,7 +1566,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Төвхөн хийд (Гал тогоо/Аж ахуй)",
+                "name": "Төвхөн хийд — гадна үзэмж 10", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-10.jpg",
                 "hotspots": [
                     {
@@ -1627,7 +1598,7 @@ export const sitesData = [
         "id": 27,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Бага элстэйн чулуун — 1-р харагдац", "group": "Бага элстэйн чулуун",
                 "url": "/images/panoramas/pano-27-1.jpg",
                 "hotspots": [
                     {
@@ -1639,7 +1610,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Бага элстэйн чулуун — 2-р харагдац", "group": "Бага элстэйн чулуун",
                 "url": "/images/panoramas/pano-27-2.jpg",
                 "hotspots": [
                     {
@@ -1700,7 +1671,7 @@ export const sitesData = [
         "id": 30,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Тариан талбайд орших — 1-р харагдац", "group": "Тариан талбайд орших",
                 "url": "/images/panoramas/pano-30-1.jpg",
                 "hotspots": [
                     {
@@ -1712,7 +1683,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Node 2",
+                "name": "Тариан талбайд орших — 2-р харагдац", "group": "Тариан талбайд орших",
                 "url": "/images/panoramas/pano-30-2.jpg",
                 "hotspots": [
                     {
@@ -1741,7 +1712,7 @@ export const sitesData = [
         "id": 31,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Хангай овоот тахилгат — 1-р харагдац", "group": "Хангай овоот тахилгат",
                 "url": "/images/panoramas/pano-31-1.jpg",
                 "hotspots": []
             }
@@ -1765,7 +1736,7 @@ export const sitesData = [
         "id": 32,
         "panoramaTour": [
             {
-                "name": "Node 1",
+                "name": "Үндэр сантын тахилгат — 1-р харагдац", "group": "Үндэр сантын тахилгат",
                 "url": "/images/panoramas/pano-32-1.jpg",
                 "hotspots": []
             }

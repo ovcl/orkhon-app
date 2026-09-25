@@ -825,22 +825,87 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 </div>
             )}
 
+            {/* ───── PREMIUM тогтмол гарчиг + group tabs ───── */}
+            {showControls && !isPresenting && scenes.length > 1 && (() => {
+                const currentScene = scenes[currentIndex];
+                const siteScenes = scenes.filter((s) => s.siteId === currentScene.siteId);
+                const groupOrder = [];
+                siteScenes.forEach((s) => { if (s.group && !groupOrder.includes(s.group)) groupOrder.push(s.group); });
+                const hasGroups = groupOrder.length > 1;
+                const currentGroup = currentScene.group;
+
+                // Тухайн бүлэг доторх өнцгийн индекс (жишээ нь "2 / 3")
+                const groupScenes = currentGroup ? siteScenes.filter((s) => s.group === currentGroup) : [];
+                const angleIndex = groupScenes.findIndex((s) => s === currentScene);
+                const angleTotal = groupScenes.length;
+
+                const jumpToGroup = (g) => {
+                    const target = scenes.findIndex((s) => s.siteId === currentScene.siteId && s.group === g);
+                    if (target !== -1) navigateTo(target);
+                };
+
+                return (
+                    <div style={{ position: 'absolute', top: '68px', left: '50%', transform: 'translateX(-50%)', zIndex: 55, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', maxWidth: '92vw' }}>
+                        {/* Тогтмол харагдах гарчиг — museum brand-ийн Playfair Display фонт */}
+                        <div style={{ background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(10px)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '999px', padding: '8px 20px', textAlign: 'center' }}>
+                            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: '15px', color: '#fff' }}>
+                                {currentGroup && angleTotal > 1 ? currentGroup : currentScene.name}
+                            </span>
+                            {currentGroup && angleTotal > 1 && (
+                                <span style={{ marginLeft: '8px', fontSize: '11px', color: 'rgba(245,158,11,0.9)', fontFamily: "'Inter', sans-serif" }}>
+                                    {angleIndex + 1}/{angleTotal}
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Group tabs — олон дэд дурсгалтай цогцолборт л харагдана (жишээ нь Хөшөө Цайдам, Эрдэнэ Зуу) */}
+                        {hasGroups && (
+                            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', maxWidth: '92vw', padding: '2px' }}>
+                                {groupOrder.map((g) => (
+                                    <button
+                                        key={g}
+                                        onClick={() => jumpToGroup(g)}
+                                        style={{
+                                            flexShrink: 0,
+                                            background: g === currentGroup ? '#f59e0b' : 'rgba(10,10,14,0.6)',
+                                            color: g === currentGroup ? '#0f172a' : 'rgba(255,255,255,0.75)',
+                                            border: '1px solid ' + (g === currentGroup ? '#f59e0b' : 'rgba(255,255,255,0.15)'),
+                                            borderRadius: '999px',
+                                            padding: '5px 14px',
+                                            fontSize: '12px',
+                                            fontWeight: g === currentGroup ? 600 : 400,
+                                            whiteSpace: 'nowrap',
+                                            transition: 'all 0.2s ease',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        {g}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                );
+            })()}
+
             {showControls && !isPresenting && scenes.length > 1 && (
-                <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', zIndex: 50, pointerEvents: 'none' }}>
+                <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50, pointerEvents: 'none' }}>
                     <button
                         onClick={() => goTo(-1)}
                         disabled={currentIndex === 0}
-                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.6)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', padding: '10px 18px', opacity: currentIndex === 0 ? 0.3 : 1 }}
+                        aria-label="Өмнөх"
+                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: currentIndex === 0 ? 0.3 : 1, transition: 'transform 0.15s ease' }}
                     >
                         <i className="fa-solid fa-chevron-left"></i>
                     </button>
-                    <span style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.6)', color: '#fff', borderRadius: '999px', padding: '10px 18px', fontSize: '13px' }}>
+                    <span style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', color: 'rgba(255,255,255,0.85)', borderRadius: '999px', padding: '10px 18px', fontSize: '12px', fontFamily: "'Inter', sans-serif", letterSpacing: '0.3px' }}>
                         {currentIndex + 1} / {scenes.length}
                     </span>
                     <button
                         onClick={() => goTo(1)}
                         disabled={currentIndex === scenes.length - 1}
-                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.6)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', padding: '10px 18px', opacity: currentIndex === scenes.length - 1 ? 0.3 : 1 }}
+                        aria-label="Дараах"
+                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: currentIndex === scenes.length - 1 ? 0.3 : 1, transition: 'transform 0.15s ease' }}
                     >
                         <i className="fa-solid fa-chevron-right"></i>
                     </button>
