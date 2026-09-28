@@ -1250,8 +1250,8 @@ export const sitesData = [
             {
                 "name": "Гол гурван зуу", "group": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Сүм рүү орох" },
-                    { "yaw": 90, "pitch": -8, "targetIndex": 5, "label": "Алтан суварга руу" }
+                    { "yaw": 90, "pitch": -8, "targetIndex": 2, "label": "Сүм рүү орох" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 5, "label": "Алтан суварга руу" }
                 ]
             },
             {
