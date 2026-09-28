@@ -903,7 +903,7 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Хархорум хотын туурь", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16.JPG", "hotspots": [
-                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Сүм дотор орох" }
+                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
                 ]
             },
             {
@@ -1250,7 +1250,7 @@ export const sitesData = [
             {
                 "name": "Гол гурван зуу", "group": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Сүм дотор орох" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Сүм рүү орох" },
                     { "yaw": 90, "pitch": -8, "targetIndex": 5, "label": "Алтан суварга руу" }
                 ]
             },
