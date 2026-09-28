@@ -748,7 +748,7 @@ export const sitesData = [
                         "yaw": 0,
                         "pitch": -8,
                         "targetIndex": 3,
-                        "label": "Дараах"
+                        "label": "Күлтегин жанжины хөшөө рүү"
                     },
                     {
                         "yaw": 180,
@@ -759,8 +759,8 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "гол гурван зуу дотор (1)", "group": "гол гурван зуу дотор",
-                "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(1).jpg",
+                "name": "културген жанжины хөшөө (1)", "group": "културген жанжины хөшөө",
+                "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
                 "hotspots": [
                     {
                         "yaw": 0,
@@ -777,67 +777,13 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "гол гурван зуу дотор (2)", "group": "гол гурван зуу дотор",
-                "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(2).jpg",
-                "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 5,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 3,
-                        "label": "Буцах"
-                    }
-                ]
-            },
-            {
-                "name": "гол гурван зуу дотор (3)", "group": "гол гурван зуу дотор",
-                "url": "/images/panoramas/pano-14-гол_гурван_зуу_дотор_(3).jpg",
-                "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 6,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 4,
-                        "label": "Буцах"
-                    }
-                ]
-            },
-            {
-                "name": "културген жанжины хөшөө (1)", "group": "културген жанжины хөшөө",
-                "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
-                "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 7,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 5,
-                        "label": "Буцах"
-                    }
-                ]
-            },
-            {
                 "name": "културген жанжины хөшөө (2)", "group": "културген жанжины хөшөө",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(2).jpg",
                 "hotspots": [
                     {
                         "yaw": 180,
                         "pitch": -8,
-                        "targetIndex": 6,
+                        "targetIndex": 3,
                         "label": "Буцах"
                     }
                 ]
@@ -957,10 +903,7 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Хархорум хотын туурь", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16.JPG", "hotspots": [
-                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
-                ],
-                "models3d": [
-                    { "url": "/models/kharkhorum_hotiin_tuuri_dahi_melhi_Chuluu_1.glb", "label": "Мэлхий чулуу 3D", "triggerYaw": 120, "triggerPitch": -8 }
+                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Сүм дотор орох" }
                 ]
             },
             {
@@ -1301,30 +1244,49 @@ export const sitesData = [
             {
                 "name": "Эрдэнэзуу хийд", "group": "Эрдэнэзуу хийд", "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
                     { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
-                    { "yaw": 90, "pitch": -8, "targetIndex": 5, "label": "Лаврин рүү" }
+                    { "yaw": 90, "pitch": -8, "targetIndex": 8, "label": "Лаврин рүү" }
                 ]
             },
             {
                 "name": "Гол гурван зуу", "group": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Алтан суварга руу" }
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Сүм дотор орох" },
+                    { "yaw": 90, "pitch": -8, "targetIndex": 5, "label": "Алтан суварга руу" }
+                ]
+            },
+            {
+                "name": "Гол гурван зуу дотор (1)", "group": "Гол гурван зуу дотор", "url": "/images/panoramas/24-гол_гурван_зуу_дотор_(1).jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Сүмээс гарах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 3, "label": "Дараах" }
+                ]
+            },
+            {
+                "name": "Гол гурван зуу дотор (2)", "group": "Гол гурван зуу дотор", "url": "/images/panoramas/24-гол_гурван_зуу_дотор_(2).jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 2, "label": "Буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 4, "label": "Дараах" }
+                ]
+            },
+            {
+                "name": "Гол гурван зуу дотор (3)", "group": "Гол гурван зуу дотор", "url": "/images/panoramas/24-гол_гурван_зуу_дотор_(3).jpg", "hotspots": [
+                    { "yaw": 180, "pitch": -8, "targetIndex": 3, "label": "Буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Сүмээс гарах" }
                 ]
             },
             {
                 "name": "Алтан суварга", "group": "Алтан суварга", "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 3, "label": "Хөх сүм рүү" }
+                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Гол гурван зуу рүү буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 6, "label": "Хөх сүм рүү" }
                 ]
             },
             {
                 "name": "Хөх сүм", "group": "Хөх сүм", "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 2, "label": "Буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 4, "label": "Автай сан хааны гэрийн буурь руу" }
+                    { "yaw": 180, "pitch": -8, "targetIndex": 5, "label": "Буцах" },
+                    { "yaw": 0, "pitch": -8, "targetIndex": 7, "label": "Автай сан хааны гэрийн буурь руу" }
                 ]
             },
             {
                 "name": "Автай сан хааны гэрийн буурь", "group": "Автай сан хааны гэрийн буурь", "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 3, "label": "Буцах" }
+                    { "yaw": 180, "pitch": -8, "targetIndex": 6, "label": "Буцах" }
                 ]
             },
             {
