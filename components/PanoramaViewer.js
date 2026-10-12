@@ -134,8 +134,15 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 material.color.set(0xffffff);
                 material.needsUpdate = true;
                 setLoading(false);
-                if (fadeIn) fadeTo(0);
-            }, undefined, () => { if (!isCancelled) setLoading(false); });
+            }, undefined, (err) => {
+                if (!isCancelled) {
+                    console.error('Failed to load panorama image:', url, err);
+                    material.map = null;
+                    material.color.set(0x111111);
+                    material.needsUpdate = true;
+                    setLoading(false);
+                }
+            });
         };
 
         let fadeAnim = null;

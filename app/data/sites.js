@@ -153,7 +153,7 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Тэмээн чулууны амны — 1-р харагдац", "group": "Тэмээн чулууны амны",
-                "url": "/images/panoramas/pano-5-1.jpg",
+                "url": "/images/panoramas/pano-5-2.jpg",
                 "hotspots": [
                     {
                         "yaw": 0,
@@ -165,30 +165,12 @@ export const sitesData = [
             },
             {
                 "name": "Тэмээн чулууны амны — 2-р харагдац", "group": "Тэмээн чулууны амны",
-                "url": "/images/panoramas/pano-5-2.jpg",
-                "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
-                ]
-            },
-            {
-                "name": "Тэмээн чулууны амны — 3-р харагдац", "group": "Тэмээн чулууны амны",
                 "url": "/images/panoramas/pano-5-3.jpg",
                 "hotspots": [
                     {
                         "yaw": 180,
                         "pitch": -8,
-                        "targetIndex": 1,
+                        "targetIndex": 0,
                         "label": "Буцах"
                     }
                 ]
