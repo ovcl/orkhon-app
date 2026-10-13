@@ -11,4 +11,5 @@ public/sw.js
 public/sw.js.map
 public/swe-worker-*.js
 public/_img
+public/_pano
 public/maplibre

@@ -9,12 +9,14 @@ import { translations } from "../data/translations";
 import { motion } from "framer-motion";
 import clsx from 'clsx';
 import BottomNav from '../../components/BottomNav';
+import { useLanguage } from '../../lib/useLanguage';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 // Unity build (public/unity-build/) байхгүй үед AR товчийг нууна. Build нэмсний дараа true болго.
 const UNITY_ENABLED = false;
 
 export default function ToursPage() {
-    const [language, setLanguage] = useState('mn');
+    const [language, setLanguage] = useLanguage();
     const [isTourActive, setIsTourActive] = useState(false);
     const [useUnityMode, setUseUnityMode] = useState(false);
     const [unityReady, setUnityReady] = useState(false);
@@ -23,8 +25,6 @@ export default function ToursPage() {
     const [initialSiteId, setInitialSiteId] = useState(null);
 
     useEffect(() => {
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
 
         // /tours?site=ID — дурсгалын хуудаснаас шууд тухайн дурсгалын VR аялал руу
         const siteParam = Number(new URLSearchParams(window.location.search).get('site'));
@@ -40,11 +40,6 @@ export default function ToursPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     const t = translations[language];
 
@@ -84,12 +79,7 @@ export default function ToursPage() {
                         {t.tourTitle}
                     </h1>
                 </div>
-                <button
-                    onClick={toggleLanguage}
-                    className="glass-panel px-3 py-1.5 rounded-lg text-xs font-bold text-slate-200 hover:bg-white/10 transition-colors uppercase tracking-wider border border-white/5"
-                >
-                    {language === 'mn' ? 'EN' : 'MN'}
-                </button>
+                <LanguageSwitcher language={language} onChange={setLanguage} className="rounded-lg text-slate-200 border-white/5" />
             </header>
 
             <main className="pt-0">
@@ -120,7 +110,7 @@ export default function ToursPage() {
                             onClick={() => startTour(false)}
                         >
                             <i className="fa-solid fa-vr-cardboard"></i>
-                            {language === 'mn' ? 'VR 360 Аялал' : 'VR 360 Tour'}
+                            {t.vr360Tour}
                         </button>
 
                         {UNITY_ENABLED && (
@@ -168,7 +158,7 @@ export default function ToursPage() {
                                 { icon: "fa-solid fa-circle-info", text: t.tourFeatureDetail },
                                 { icon: "fa-solid fa-keyboard", text: t.tourFeatureShortcuts },
                                 { icon: "fa-solid fa-camera", text: t.tourFeatureGallery },
-                                { icon: "fa-solid fa-robot", text: language === 'mn' ? 'AI хөтөч (VR горим)' : 'AI Guide (VR mode)' }
+                                { icon: "fa-solid fa-robot", text: t.aiGuideVrMode }
                             ].map((feature, idx) => (
                                 <div key={idx} className="flex items-center gap-3 text-sm text-slate-300">
                                     <div className="w-6 h-6 rounded-full bg-slate-700/50 flex items-center justify-center text-amber-500/80 text-xs">
@@ -188,7 +178,7 @@ export default function ToursPage() {
                     sites={vrSites}
                     onClose={closeTour}
                     language={language}
-                    onToggleLanguage={toggleLanguage}
+                    onLanguageChange={setLanguage}
                     initialSiteId={initialSiteId}
                 />
             )}

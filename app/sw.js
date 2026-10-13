@@ -53,7 +53,8 @@ const runtimeCaching = [
     // Эх зураг, панорама (Three.js шууд ачаална) — офлайн контент, хугацаагүй
     {
         matcher: ({ sameOrigin, url }) =>
-            sameOrigin && (url.pathname.startsWith('/images/') || /^\/(hero\.jpg|logo\.png)$/.test(url.pathname)),
+            sameOrigin &&
+            (url.pathname.startsWith('/images/') || url.pathname.startsWith('/_pano/') || /^\/(hero\.jpg|logo\.png)$/.test(url.pathname)),
         handler: new CacheFirst({ cacheName: MEDIA_IMAGES, plugins: [ok], matchOptions: { ignoreSearch: true } }),
     },
     // 3D загвар (.glb)
@@ -66,14 +67,16 @@ const runtimeCaching = [
         matcher: ({ sameOrigin, url }) => sameOrigin && url.pathname.startsWith('/sounds/'),
         handler: new CacheFirst({ cacheName: 'media-audio', plugins: [ok, new RangeRequestsPlugin()] }),
     },
-    // Газрын зургийн суурь давхарга (CARTO) — үзсэн/татсан хэсэг офлайн ажиллана
+    // Газрын зураг (OpenFreeMap вектор, EOX хиймэл дагуул, AWS өндөршил) — үзсэн/татсан хэсэг офлайн ажиллана
     {
-        matcher: ({ url }) => /(^|\.)cartocdn\.com$/i.test(url.hostname),
+        matcher: ({ url }) =>
+            /(^|\.)(openfreemap\.org|maps\.eox\.at|cartocdn\.com)$/i.test(url.hostname) ||
+            url.href.startsWith('https://s3.amazonaws.com/elevation-tiles-prod/'),
         handler: new StaleWhileRevalidate({
             cacheName: 'map-tiles',
             plugins: [
                 new CacheableResponsePlugin({ statuses: [0, 200] }),
-                new ExpirationPlugin({ maxEntries: 4000, maxAgeSeconds: 60 * 60 * 24 * 60, purgeOnQuotaError: true }),
+                new ExpirationPlugin({ maxEntries: 8000, maxAgeSeconds: 60 * 60 * 24 * 60, purgeOnQuotaError: true }),
             ],
         }),
     },

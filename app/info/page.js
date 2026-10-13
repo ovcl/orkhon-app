@@ -8,6 +8,9 @@ import clsx from 'clsx';
 import BottomNav from '../../components/BottomNav';
 import OfflineManager from '../../components/OfflineManager';
 import { translations } from '../data/translations';
+import { infoContentIntl } from './content-intl';
+import { useLanguage } from '../../lib/useLanguage';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -20,22 +23,15 @@ const itemVariants = {
 };
 
 export default function InfoPage() {
-    const [language, setLanguage] = useState('mn');
+    const [language, setLanguage] = useLanguage();
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     const content = {
         mn: {
@@ -88,7 +84,7 @@ export default function InfoPage() {
                 privacyText: "Таны хувийн мэдээллийг хамгаалж, зөвхөн аппын үйл ажиллагаанд ашиглана."
             },
             seasonTitle: "Аялалын улирал",
-            seasonBestMonths: "Тохиромжтой саруud: 5–9-р сар"
+            seasonBestMonths: "Тохиромжтой сарууд: 5–9-р сар"
         },
         en: {
             title: "Information",
@@ -144,7 +140,7 @@ export default function InfoPage() {
         }
     };
 
-    const t = content[language];
+    const t = content[language] || infoContentIntl[language] || content.mn;
 
     const CARD = 'bg-surface/60 border border-white/[0.06]';
 
@@ -163,10 +159,7 @@ export default function InfoPage() {
                         {t.title}
                     </h1>
                 </div>
-                <button onClick={toggleLanguage}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/8">
-                    {language === 'mn' ? 'EN' : 'MN'}
-                </button>
+                <LanguageSwitcher language={language} onChange={setLanguage} className="rounded-lg text-slate-300 hover:text-white border-white/8" />
             </header>
 
             <main className="pt-20 px-5">
@@ -244,11 +237,11 @@ export default function InfoPage() {
                             <div className="flex items-center gap-4 mt-4 text-xs text-slate-400">
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-3 h-3 rounded bg-amber-500 inline-block"></span>
-                                    {language === 'mn' ? 'Тохиромжтой' : 'Best season'}
+                                    {translations[language].seasonGood}
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-3 h-3 rounded inline-block bg-white/[0.06]"></span>
-                                    {language === 'mn' ? 'Хязгаарлагдмал' : 'Limited'}
+                                    {translations[language].seasonLimited}
                                 </span>
                             </div>
                         </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sitesData } from '../../data/sites';
 import { rateLimit, clientIp } from '../../../lib/rate-limit';
+import { LANGUAGES, isLanguage, siteName, siteDescription } from '../../../lib/i18n';
 
 /**
  * AI хөтөч — дурсгалын тухай тайлбар, асуултад хариулна.
@@ -41,7 +42,7 @@ export async function POST(request) {
     }
 
     const siteId = Number.parseInt(body?.siteId, 10);
-    const language = body?.language === 'en' ? 'en' : 'mn';
+    const language = isLanguage(body?.language) ? body.language : 'mn';
     const question = typeof body?.question === 'string' ? body.question.trim() : '';
 
     if (!Number.isInteger(siteId)) {
@@ -85,14 +86,14 @@ export async function POST(request) {
 }
 
 function siteContext(site, language) {
-    const en = language === 'en';
     const lines = [
-        `Name: ${en ? site.nameEn || site.name : site.name}`,
-        site.nameEn && !en ? `English name: ${site.nameEn}` : null,
+        `Name: ${siteName(site, language)}`,
+        `Mongolian name: ${site.name}`,
+        site.nameEn ? `English name: ${site.nameEn}` : null,
         `Category: ${site.category}`,
         site.protectionStatus ? `Protection status: ${site.protectionStatus}` : null,
         site.location ? `Coordinates: ${site.location.lat}, ${site.location.lng}` : null,
-        `Description: ${en ? site.descriptionEn || site.description : site.description}`,
+        `Description: ${siteDescription(site, language)}`,
     ];
     const nodes = (site.panoramaTour || []).map((n) => n.name).filter(Boolean);
     if (nodes.length) lines.push(`Panorama viewpoints: ${nodes.join('; ')}`);
@@ -100,7 +101,7 @@ function siteContext(site, language) {
 }
 
 async function generate(site, question, language) {
-    const langName = language === 'en' ? 'English' : 'Mongolian (Cyrillic)';
+    const langName = LANGUAGES.find((l) => l.code === language)?.aiName || 'Mongolian (Cyrillic)';
     const system = [
         'You are the official virtual guide of the Orkhon Valley Cultural Landscape World Heritage property (UNESCO, inscribed 2004, criteria ii, iii, iv), managed by the Orkhon Valley Cultural Landscape administration in Kharkhorin, Mongolia.',
         'Ground every factual statement in the SITE DATA provided. You may add widely established general context about the Orkhon Valley, but never invent dates, measurements, inscriptions, names or legends.',

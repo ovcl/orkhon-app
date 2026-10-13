@@ -8,6 +8,8 @@ import { translations } from './data/translations';
 import { sitesData } from './data/sites';
 import clsx from 'clsx';
 import BottomNav from '../components/BottomNav';
+import { useLanguage } from '../lib/useLanguage';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 12 },
@@ -28,39 +30,32 @@ const scaleIn = {
 };
 
 export default function Home() {
-    const [language, setLanguage] = useState('mn');
+    const [language, setLanguage] = useLanguage();
     const [scrolled, setScrolled] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const t = translations[language];
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     const vrSitesCount = sitesData.filter(s => s.panoramaUrl || (s.panoramaTour && s.panoramaTour.length > 0)).length;
 
     const popularSites = [
-        { img: "/images/sites/16.jpg", title: t.kharakhorum, type: language === 'mn' ? 'Эртний хот' : 'Ancient City', id: 16 },
-        { img: "/images/sites/24.jpg", title: t.erdeneZuu, type: language === 'mn' ? 'Сүм хийд' : 'Monastery', id: 24 },
-        { img: "/images/sites/31.jpg", title: t.ulaanTsutgalan, type: language === 'mn' ? 'Байгаль' : 'Nature', id: 31 },
+        { img: "/images/sites/16.jpg", title: t.kharakhorum, type: t['Эртний хот'], id: 16 },
+        { img: "/images/sites/24.jpg", title: t.erdeneZuu, type: t['Сүм хийд'], id: 24 },
+        { img: "/images/sites/31.jpg", title: t.ulaanTsutgalan, type: t.nature, id: 31 },
     ];
 
     const navCards = [
-        { href: "/sites", icon: "fa-solid fa-landmark", title: t.navSites, desc: language === 'mn' ? `${sitesData.length} дурсгал` : `${sitesData.length} sites`, gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", accentColor: "bg-blue-500" },
-        { href: "/map", icon: "fa-solid fa-map-location-dot", title: t.navMap, desc: language === 'mn' ? 'Интерактив' : 'Interactive', gradient: "from-emerald-500/20 via-teal-500/10 to-transparent", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-400", accentColor: "bg-emerald-500" },
+        { href: "/sites", icon: "fa-solid fa-landmark", title: t.navSites, desc: `${sitesData.length} ${t.sitesUnit}`, gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", accentColor: "bg-blue-500" },
+        { href: "/map", icon: "fa-solid fa-map-location-dot", title: t.navMap, desc: t.interactive, gradient: "from-emerald-500/20 via-teal-500/10 to-transparent", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-400", accentColor: "bg-emerald-500" },
         { href: "/tours", icon: "fa-solid fa-vr-cardboard", title: t.navTours, desc: `${vrSitesCount} VR`, gradient: "from-orange-500/20 via-amber-500/10 to-transparent", iconBg: "bg-orange-500/15", iconColor: "text-orange-400", accentColor: "bg-orange-500" },
-        { href: "/info", icon: "fa-solid fa-circle-info", title: t.navInfo, desc: language === 'mn' ? 'Мэдээлэл' : 'Details', gradient: "from-purple-500/20 via-pink-500/10 to-transparent", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", accentColor: "bg-purple-500" }
+        { href: "/info", icon: "fa-solid fa-circle-info", title: t.navInfo, desc: t.details, gradient: "from-purple-500/20 via-pink-500/10 to-transparent", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", accentColor: "bg-purple-500" }
     ];
 
     return (
@@ -84,12 +79,7 @@ export default function Home() {
                         {t.appName}
                     </h1>
                 </div>
-                <button
-                    onClick={toggleLanguage}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/10 backdrop-blur"
-                >
-                    {language === 'mn' ? 'EN' : 'MN'}
-                </button>
+                <LanguageSwitcher language={language} onChange={setLanguage} className="rounded-lg text-slate-300 hover:text-white border-white/10" />
             </header>
 
             <main>

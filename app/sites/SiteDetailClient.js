@@ -12,15 +12,16 @@ import Model3DViewer from '../../components/Model3DViewer';
 import OfflineSaveButton from '../../components/OfflineSaveButton';
 import AIGuide from '../../components/AIGuide';
 import { imageVariant } from '../../lib/image-loader';
+import { useLanguage } from '../../lib/useLanguage';
+import { siteName as localizedName, siteDescription as localizedDescription, protectionName } from '../../lib/i18n';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 export default function SiteDetailClient({ siteId }) {
-    const [language, setLanguage] = useState('mn');
+    const [language, setLanguage] = useLanguage();
     const [activeImg, setActiveImg] = useState(0);
     const site = sitesData.find(s => s.id === siteId);
 
     useEffect(() => {
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
     }, []);
 
     // Auto-slide images
@@ -32,11 +33,6 @@ export default function SiteDetailClient({ siteId }) {
         return () => clearInterval(autoSlide);
     }, [site]);
 
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     if (!site) return (
         <div className="flex flex-col items-center justify-center min-h-screen text-slate-400 bg-ink">
@@ -51,8 +47,8 @@ export default function SiteDetailClient({ siteId }) {
     const t = translations[language];
     const images = site.images && site.images.length > 0 ? site.images : [getPlaceHolder(site.id)];
     const heroImage = images[activeImg];
-    const siteName = language === 'en' && site.nameEn ? site.nameEn : site.name;
-    const siteDescription = language === 'en' && site.descriptionEn ? site.descriptionEn : site.description;
+    const siteName = localizedName(site, language);
+    const siteDescription = localizedDescription(site, language);
     const catLabel = t[site.category] || site.category;
     const hasTour = Boolean(site.panoramaUrl || site.panoramaTour?.length);
 
@@ -70,7 +66,7 @@ export default function SiteDetailClient({ siteId }) {
             {/* Top controls */}
             <div className="fixed top-0 left-0 right-0 z-50 p-5 flex justify-between items-start pointer-events-none max-w-[480px] mx-auto w-full">
                 <Link href="/sites"
-                    aria-label={language === 'mn' ? 'Буцах' : 'Back'}
+                    aria-label={t.back}
                     className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15 bg-black/50 backdrop-blur-md">
                     <i className="fa-solid fa-arrow-left text-sm"></i>
                 </Link>
@@ -83,11 +79,7 @@ export default function SiteDetailClient({ siteId }) {
                             VR
                         </Link>
                     )}
-                    <button onClick={toggleLanguage}
-                        aria-label={language === 'mn' ? 'Switch to English' : 'Монгол хэл рүү шилжих'}
-                        className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-widest border border-white/15 transition-colors bg-black/50 backdrop-blur-md">
-                        {language === 'mn' ? 'EN' : 'MN'}
-                    </button>
+                    <LanguageSwitcher language={language} onChange={setLanguage} />
                 </div>
             </div>
 
@@ -161,7 +153,7 @@ export default function SiteDetailClient({ siteId }) {
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-5">
                         <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${protStyle}`}>
                             <i className="fa-solid fa-shield text-[10px]"></i>
-                            <span>{t.protectionStatus}: {site.protectionStatus}</span>
+                            <span>{t.protectionStatus}: {protectionName(site.protectionStatus, language)}</span>
                         </div>
                     </motion.div>
                 )}

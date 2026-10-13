@@ -8,11 +8,12 @@ UNESCO-гийн Дэлхийн өвд бүртгэлтэй (2004, шалгуур
 | | |
 |---|---|
 | 🏛️ Дурсгалууд | 32 дурсгал, зураг, тайлбар (MN/EN), хамгаалалтын зэрэглэл |
-| 🥽 VR аялал | Three.js + WebXR (Quest), hotspot навигаци, `/tours?site=ID` шууд холбоос |
+| 🥽 VR аялал | Three.js + WebXR (Quest), hotspot навигаци, байршлын эскиз, гироскоп, чимхэж томруулах, харанхуй зургийг автоматаар гэрэлтүүлэх, `/tours?site=ID` |
 | 🧊 3D / AR | `@google/model-viewer` — утасны камераар AR |
-| 🗺️ Газрын зураг | MapLibre GL 6, ангиллын шүүлтүүр |
+| 🗺️ Газрын зураг | MapLibre GL 6 — OpenFreeMap (энгийн/шөнийн), Sentinel-2 2024 хиймэл дагуул, 3D гадарга, миний байршил, зам заах |
 | 📴 Офлайн | Дурсгал тус бүр эсвэл бүх контентыг (≈1.7 GB) + газрын зургийг татаж авна |
 | 🤖 AI хөтөч | OpenAI, дурсгалын өгөгдөлд тулгуурласан, rate limit-тэй (сонголттой) |
+| 🌐 Хэл | Монгол, English, 한국어, 中文, Русский (`/map?lang=ko` г.м.) |
 | 🖥️ Киоск | `?kiosk=1` — идэвхгүй үед нүүр хуудас руу буцна |
 | 🔌 Нээлттэй API | `/api/sites`, `/api/sites/:id`, `/api/sites/geojson`, `/api/health` |
 
@@ -29,6 +30,7 @@ npm run dev
 - `scripts/check-media.mjs` — `sites.js`-ийн бүх зураг/загварын зам файлтай **том/жижиг үсэг хүртэл** таарч байгааг шалгана (Windows дээр ажиллаад Vercel дээр 404 өгөх алдааг барина). Таараагүй бол build зогсоно.
 - `scripts/copy-maplibre-worker.mjs` — MapLibre worker-ийг `public/maplibre/` руу хуулна.
 - `scripts/build-images.mjs` — `next/image`-д зориулсан WebP хэмжээсүүдийг (128–1920px) `public/_img/`-д үүсгэнэ. Эх зураг өөрчлөгдөхгүй. Анх ~25 сек, дараа нь кэшээс (`node_modules/.cache/orkhon-img`) шууд.
+- `scripts/build-panoramas.mjs` — панорама бүрийн 2048px preview, эскиз, гэрэлтүүлгийн утгыг (`app/data/panorama-manifest.json`) үүсгэнэ. Эх 8K зураг өөрчлөгдөхгүй.
 - `scripts/build-media-manifest.mjs` — офлайн татах хэмжээг тооцох `app/data/media-manifest.json` үүсгэнэ.
 
 Service worker зөвхөн production горимд (`npm run build && npm start`) идэвхжинэ.
@@ -76,5 +78,13 @@ scripts/        build-ийн өмнөх шалгалт, бэлтгэл скри�
 ```
 
 Шинэ дурсгал / панорама нэмэх: `app/data/sites.js`-д бичээд `npm run check:media` ажиллуулна.
+
+### Орчуулга
+- UI мөрүүд: `app/data/translations.js` (mn, en) ба `app/data/translations-intl.js` (ko, zh, ru) — түлхүүр бүх хэлэнд ижил.
+- Дурсгалын нэр/тайлбар: mn/en нь `sites.js`-д, ko/zh/ru нь `app/data/sites-i18n.js`-д (панорамын бүлэг, hotspot шошго хамт). Орчуулга дутвал англи → монгол руу буцна.
+- ko/zh/ru нь машин орчуулга тул эх хэлтэй хүнээр хянуулахыг зөвлөнө.
+
+### Газрын зургийн эх сурвалж
+OpenFreeMap / OpenStreetMap (вектор), EOX Sentinel-2 cloudless 2024 (CC BY-NC-SA 4.0 — арилжааны бус хэрэглээ), AWS Terrain Tiles (өндөршил). API түлхүүр шаардлагагүй. Тохиргоо: `lib/map-styles.js`.
 
 Unity WebGL аялал: `UNITY_SETUP.md`. Build-ийг `public/unity-build/`-д хийсний дараа `app/tours/page.js`-ийн `UNITY_ENABLED`-ийг `true` болгоно.

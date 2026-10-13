@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import styles from './VirtualTour.module.css';
+import dynamic from 'next/dynamic';
+import clsx from 'clsx';
 import { getPlaceHolder } from '../app/data/sites';
 import { translations } from '../app/data/translations';
+import { siteName as localizedSiteName, siteDescription as localizedSiteDescription, nodeName, hotspotLabel } from '../lib/i18n';
 import BackgroundAudio from './BackgroundAudio';
-import dynamic from 'next/dynamic';
+import LanguageSwitcher from './LanguageSwitcher';
 
-// Three.js (VR/3D) том bundle тул зөвхөн панорама ЗААВАЛ хэрэгтэй үед ачаална —
-// энгийн зурган галерей үзэж буй хэрэглэгчид Three.js татагдахгүй
+// Three.js (VR/3D) том bundle тул зөвхөн панорама хэрэгтэй үед ачаална
 const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ssr: false,
     loading: () => (
@@ -19,225 +20,228 @@ const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ),
 });
 
-export default function VirtualTour({ sites, onClose, language = 'mn', onToggleLanguage, initialSiteId = null }) {
+const topButton =
+    'w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-black/45 backdrop-blur-md border border-white/15 text-white hover:bg-black/65 transition-colors';
+
+export default function VirtualTour({ sites, onClose, language = 'mn', onLanguageChange, initialSiteId = null }) {
     const [currentIndex, setCurrentIndex] = useState(() => {
         const i = initialSiteId == null ? -1 : sites.findIndex((s) => s.id === initialSiteId);
         return i >= 0 ? i : 0;
     });
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isInfoVisible, setIsInfoVisible] = useState(true);
-    const touchStartX = useRef(null);
+    const [sceneIndex, setSceneIndex] = useState(null);
+    const [expanded, setExpanded] = useState(false);
+    const [uiHidden, setUiHidden] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [canFullscreen, setCanFullscreen] = useState(false);
+    const [sheetHeight, setSheetHeight] = useState(96);
+    const sheetRef = useRef(null);
+    const rootRef = useRef(null);
 
-    const t = translations[language];
+    const t = translations[language] || translations.mn;
     const currentSite = sites[currentIndex];
-    const progress = ((currentIndex + 1) / sites.length) * 100;
 
-    const siteName = language === 'en' && currentSite?.nameEn ? currentSite.nameEn : currentSite?.name;
-    const siteDescription = language === 'en' && currentSite?.descriptionEn ? currentSite.descriptionEn : currentSite?.description;
-    const siteCategory = t[currentSite?.category] || currentSite?.category;
-
-    // panoramaUrl-тэй БҮХ дурсгалыг, мөн panoramaTour (олон node-той, hotspot
-    // навигацитай тур)-той дурсгалуудыг НЭГ "scenes" flat жагсаалт болгож
-    // PanoramaViewer рүү дамжуулна. panoramaTour-тэй site тус бүрийн node-уудыг
-    // дараалалтайгаар нэмж, тэдгээрийн hotspot.targetIndex-ийг локал (тухайн
-    // site-ийн tour доторх) индексээс ГЛОБАЛ (flat scenes array доторх) индекс
-    // рүү хөрвүүлнэ — ингэснээр PanoramaViewer доторх hotspot дарахад яг зөв
-    // node руу шилждэг.
+    // Бүх дурсгалын панорамыг нэг flat жагсаалт болгоно; hotspot.targetIndex-ийг тухайн дурсгалын
+    // локал индексээс глобал индекс рүү хөрвүүлнэ. Нэр, шошгыг сонгосон хэлээр.
     const panoramaScenes = useMemo(() => {
         const flat = [];
         sites.forEach((s) => {
-            if (s.panoramaTour && s.panoramaTour.length > 0) {
+            if (s.panoramaTour?.length) {
                 const offset = flat.length;
                 s.panoramaTour.forEach((node) => {
                     flat.push({
                         url: node.url,
-                        name: language === 'en' && node.nameEn ? node.nameEn : node.name,
-                        description: language === 'en' && node.descriptionEn ? node.descriptionEn : node.description,
-                        group: node.group || null, // premium grouped navigation-д ашиглана
+                        name: nodeName(node, language),
+                        description: node.description,
+                        group: node.group || null,
                         siteId: s.id,
                         models3d: node.models3d || [],
                         hotspots: (node.hotspots || []).map((h) => ({
                             ...h,
-                            targetIndex: offset + h.targetIndex, // локал -> глобал индекс
+                            label: hotspotLabel(h.label, language),
+                            targetIndex: offset + h.targetIndex,
                         })),
                     });
                 });
             } else if (s.panoramaUrl) {
-                flat.push({
-                    url: s.panoramaUrl,
-                    name: language === 'en' && s.nameEn ? s.nameEn : s.name,
-                    description: language === 'en' && s.descriptionEn ? s.descriptionEn : s.description,
-                    siteId: s.id,
-                    hotspots: [],
-                });
+                flat.push({ url: s.panoramaUrl, name: localizedSiteName(s, language), siteId: s.id, hotspots: [] });
             }
         });
         return flat;
     }, [sites, language]);
 
-    const isPanorama = !!(currentSite?.panoramaUrl || (currentSite?.panoramaTour && currentSite?.panoramaTour.length > 0));
-    const currentPanoramaIndex = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
+    const isPanorama = Boolean(currentSite?.panoramaUrl || currentSite?.panoramaTour?.length);
+    const firstSceneOfSite = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
+    const activeScene = sceneIndex != null && panoramaScenes[sceneIndex]?.siteId === currentSite?.id ? panoramaScenes[sceneIndex] : panoramaScenes[firstSceneOfSite];
 
-    // PanoramaViewer дотор VR controller-оор эсвэл hotspot-оор шилжихэд
-    const handlePanoramaIndexChange = (newPanoramaIndex) => {
-        const targetSiteId = panoramaScenes[newPanoramaIndex]?.siteId;
-        const targetSiteIndex = sites.findIndex((s) => s.id === targetSiteId);
-        if (targetSiteIndex !== -1) {
-            setCurrentIndex(targetSiteIndex);
+    const handlePanoramaIndexChange = useCallback(
+        (index) => {
+            setSceneIndex(index);
+            const targetSiteIndex = sites.findIndex((s) => s.id === panoramaScenes[index]?.siteId);
+            if (targetSiteIndex !== -1 && targetSiteIndex !== currentIndex) {
+                setCurrentIndex(targetSiteIndex);
+                setCurrentImageIndex(0);
+            }
+        },
+        [sites, panoramaScenes, currentIndex]
+    );
+
+    const goToSite = useCallback(
+        (delta) => {
+            const next = currentIndex + delta;
+            if (next < 0 || next >= sites.length) return;
+            setCurrentIndex(next);
             setCurrentImageIndex(0);
-        }
+            setSceneIndex(null);
+        },
+        [currentIndex, sites.length]
+    );
+
+    // Бүтэн дэлгэц (iPhone Safari элементийн fullscreen дэмждэггүй тул товч нуугдана)
+    useEffect(() => {
+        setCanFullscreen(Boolean(document.fullscreenEnabled));
+        const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+        document.addEventListener('fullscreenchange', onChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', onChange);
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        };
+    }, []);
+    const toggleFullscreen = () => {
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        else rootRef.current?.requestFullscreen?.().catch(() => {});
     };
 
-    const goToNext = () => {
-        if (currentIndex < sites.length - 1) {
-            setCurrentIndex(currentIndex + 1);
-            setCurrentImageIndex(0);
-        }
-    };
-
-    const goToPrevious = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(currentIndex - 1);
-            setCurrentImageIndex(0);
-        }
-    };
-
-    const nextImage = () => {
-        if (currentSite.images && currentImageIndex < currentSite.images.length - 1) {
-            setCurrentImageIndex(currentImageIndex + 1);
-        }
-    };
-
-    const previousImage = () => {
-        if (currentImageIndex > 0) {
-            setCurrentImageIndex(currentImageIndex - 1);
-        }
-    };
+    // Доод самбарын өндрийг хэмжиж, панорамын байршлын жагсаалтыг түүнээс дээш байрлуулна
+    useEffect(() => {
+        if (!sheetRef.current) return;
+        const ro = new ResizeObserver(([entry]) => setSheetHeight(Math.round(entry.contentRect.height)));
+        ro.observe(sheetRef.current);
+        return () => ro.disconnect();
+    }, [uiHidden]);
 
     useEffect(() => {
-        const handleKeyPress = (e) => {
-            if (e.key === 'ArrowRight') goToNext();
-            if (e.key === 'ArrowLeft') goToPrevious();
+        const onKey = (e) => {
+            if (e.target.closest?.('input, textarea, select')) return;
             if (e.key === 'Escape') onClose();
-            if (e.key === 'i' || e.key === 'I') setIsInfoVisible(!isInfoVisible);
+            if (e.key === 'i' || e.key === 'I') setExpanded((v) => !v);
+            // Панорама горимд ←/→-г харагч өөрөө (байршил хооронд) зохицуулна
+            if (!isPanorama && e.key === 'ArrowRight') goToSite(1);
+            if (!isPanorama && e.key === 'ArrowLeft') goToSite(-1);
         };
-        window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentIndex, isInfoVisible]);
-
-    // Панорама үзэж байх үед 360° эргүүлж чирэх тул чирэх свайпыг СӨРӨГ НӨЛӨӨ үзүүлэхгүй болгож (isPanorama бол) идэвхгүй болгоно.
-    const handleTouchStart = (e) => {
-        if (isPanorama) return;
-        touchStartX.current = e.touches[0].clientX;
-    };
-    const handleTouchEnd = (e) => {
-        if (isPanorama || touchStartX.current === null) return;
-        const deltaX = touchStartX.current - e.changedTouches[0].clientX;
-        if (Math.abs(deltaX) > 50) {
-            if (deltaX > 0) goToNext(); else goToPrevious();
-        }
-        touchStartX.current = null;
-    };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [isPanorama, goToSite, onClose]);
 
     if (!currentSite) return null;
 
-    const currentImage = currentSite.images && currentSite.images.length > 0
-        ? currentSite.images[currentImageIndex]
-        : getPlaceHolder(currentSite.id);
+    const name = localizedSiteName(currentSite, language);
+    const description = localizedSiteDescription(currentSite, language);
+    const category = t[currentSite.category] || currentSite.category;
+    const images = currentSite.images?.length ? currentSite.images : [getPlaceHolder(currentSite.id)];
+    const currentImage = images[currentImageIndex] || images[0];
+    const sceneTitle = isPanorama && activeScene && activeScene.name !== name ? activeScene.name : null;
 
     return (
-        <div className={styles.container} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-            <BackgroundAudio />
-            <button className={styles.closeBtn} onClick={onClose} aria-label={t.shortcutsExit}>
-                <i className="fa-solid fa-xmark"></i>
-            </button>
-
-            <button className={styles.langBtn} onClick={onToggleLanguage} aria-label="Toggle language">
-                {language === 'mn' ? 'EN' : 'MN'}
-            </button>
-
-            <div className={styles.progressBar}>
-                <div className={styles.progress} style={{ width: `${progress}%` }}></div>
-            </div>
-
-            <div className={styles.imageContainer}>
+        <div ref={rootRef} className="fixed inset-0 z-[9999] bg-black text-white select-none">
+            {/* Үзэгдэл */}
+            <div className="absolute inset-0">
                 {isPanorama ? (
-                    <div className={styles.panoramaWrapper}>
-                        <PanoramaViewer
-                            scenes={panoramaScenes}
-                            initialIndex={currentPanoramaIndex >= 0 ? currentPanoramaIndex : 0}
-                            onIndexChange={handlePanoramaIndexChange}
-                            showControls={false}
-                        />
-                    </div>
+                    <PanoramaViewer
+                        scenes={panoramaScenes}
+                        initialIndex={firstSceneOfSite >= 0 ? firstSceneOfSite : 0}
+                        onIndexChange={handlePanoramaIndexChange}
+                        showControls
+                        t={t}
+                        uiHidden={uiHidden}
+                        onToggleUi={() => setUiHidden((v) => !v)}
+                        bottomInset={uiHidden ? 16 : sheetHeight + 12}
+                    />
                 ) : (
-                    <div className={styles.mainImage} style={{ position: 'relative', width: '90%', height: '90%' }}>
-                        <Image src={currentImage} alt={siteName} fill sizes="90vw" style={{ objectFit: 'contain' }} />
-                    </div>
-                )}
-
-                {!isPanorama && currentSite.images && currentSite.images.length > 1 && (
-                    <>
-                        <button
-                            className={`${styles.imageNav} ${styles.imagePrev}`}
-                            onClick={previousImage}
-                            disabled={currentImageIndex === 0}
-                            aria-label={language === 'mn' ? "Өмнөх зураг" : "Previous image"}
-                        >
-                            <i className="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button
-                            className={`${styles.imageNav} ${styles.imageNext}`}
-                            onClick={nextImage}
-                            disabled={currentImageIndex === currentSite.images.length - 1}
-                            aria-label={language === 'mn' ? "Дараах зураг" : "Next image"}
-                        >
-                            <i className="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <div className={styles.imageIndicator}>
-                            {currentImageIndex + 1} / {currentSite.images.length}
+                    <div className="relative w-full h-full flex items-center justify-center">
+                        <div className="relative w-[92%] h-[70%]">
+                            <Image src={currentImage} alt={name} fill sizes="92vw" className="object-contain" />
                         </div>
-                    </>
+                        {images.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentImageIndex((i) => Math.max(0, i - 1))}
+                                    disabled={currentImageIndex === 0}
+                                    aria-label={t.prevImage}
+                                    className={clsx(topButton, 'absolute left-3 top-1/2 -translate-y-1/2 disabled:opacity-30')}
+                                >
+                                    <i className="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentImageIndex((i) => Math.min(images.length - 1, i + 1))}
+                                    disabled={currentImageIndex === images.length - 1}
+                                    aria-label={t.nextImage}
+                                    className={clsx(topButton, 'absolute right-3 top-1/2 -translate-y-1/2 disabled:opacity-30')}
+                                >
+                                    <i className="fa-solid fa-chevron-right"></i>
+                                </button>
+                                <div className="absolute top-20 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/55 text-xs">
+                                    {currentImageIndex + 1} / {images.length}
+                                </div>
+                            </>
+                        )}
+                    </div>
                 )}
             </div>
 
-            {isInfoVisible && (
-                <div className={styles.infoOverlay}>
-                    <div className={styles.siteInfo}>
-                        <span className={styles.category}>{siteCategory}</span>
-                        <h2 className={styles.siteName}>{siteName}</h2>
-                        <p className={styles.description}>{siteDescription}</p>
-                    </div>
-                </div>
-            )}
+            {/* Нуух горимд ч unmount хийхгүй — арын хөгжим тасрахгүй */}
+            <div className={uiHidden ? 'hidden' : undefined}>
+                    {/* Дээд мөр */}
+                    <header className="absolute top-0 inset-x-0 z-50 flex items-start gap-3 px-3 pt-3 pb-8 bg-gradient-to-b from-black/70 via-black/30 to-transparent pointer-events-none">
+                        <button type="button" onClick={onClose} aria-label={t.shortcutsExit} className={clsx(topButton, 'pointer-events-auto')}>
+                            <i className="fa-solid fa-xmark"></i>
+                        </button>
+                        <div className="min-w-0 flex-1 pt-0.5 pr-[176px]">
+                            <h2 className="font-heading text-base font-bold leading-tight truncate drop-shadow">{name}</h2>
+                            <p className="text-[11px] text-white/75 truncate drop-shadow">
+                                {sceneTitle || category}
+                                <span className="text-white/50"> · {currentIndex + 1}/{sites.length}</span>
+                            </p>
+                        </div>
+                        <div className="absolute right-3 top-3 flex items-center gap-2 pointer-events-auto">
+                            <BackgroundAudio className={topButton} />
+                            {canFullscreen && (
+                                <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? t.vrExitFullscreen : t.vrFullscreen} title={isFullscreen ? t.vrExitFullscreen : t.vrFullscreen} className={topButton}>
+                                    <i className={`fa-solid ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+                                </button>
+                            )}
+                            {onLanguageChange && <LanguageSwitcher language={language} onChange={onLanguageChange} className="h-10 rounded-full" />}
+                        </div>
+                    </header>
 
-            <button
-                className={styles.infoToggle}
-                onClick={() => setIsInfoVisible(!isInfoVisible)}
-                aria-label={isInfoVisible ? t.hideInfo : t.showInfo}
-            >
-                <i className={`fa-solid fa-${isInfoVisible ? 'eye-slash' : 'eye'}`}></i>
-            </button>
-
-            <div className={styles.navigation} style={isPanorama ? { bottom: 'auto', top: '120px' } : undefined}>
-                <button className={styles.navBtn} onClick={goToPrevious} disabled={currentIndex === 0} aria-label={t.tourPrevious}>
-                    <i className="fa-solid fa-chevron-left"></i>
-                    <span>{t.tourPrevious}</span>
-                </button>
-                <span className={styles.navCounter}>
-                    {currentIndex + 1} / {sites.length}
-                </span>
-                <button className={styles.navBtn} onClick={goToNext} disabled={currentIndex === sites.length - 1} aria-label={t.tourNext}>
-                    <span>{t.tourNext}</span>
-                    <i className="fa-solid fa-chevron-right"></i>
-                </button>
-            </div>
-
-            <div className={styles.shortcuts}>
-                <span>← → {t.shortcutsNav}</span>
-                <span>I {t.shortcutsInfo}</span>
-                <span>ESC {t.shortcutsExit}</span>
+                    {/* Доод самбар: дурсгалын мэдээлэл + дурсгал хооронд шилжих */}
+                    <section ref={sheetRef} className="absolute bottom-0 inset-x-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                        <div className="mx-auto max-w-2xl rounded-2xl bg-navy/85 backdrop-blur-lg border border-white/10 shadow-2xl">
+                            <div className="flex items-center gap-2 p-2">
+                                <button type="button" onClick={() => goToSite(-1)} disabled={currentIndex === 0} aria-label={t.vrPrevSite} title={t.vrPrevSite} className={clsx(topButton, 'disabled:opacity-30')}>
+                                    <i className="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded} className="min-w-0 flex-1 text-left px-1">
+                                    <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
+                                    <span className="mt-1 flex items-center gap-1.5 text-[12px] text-white/80">
+                                        {expanded ? t.vrLess : t.vrMore}
+                                        <i className={`fa-solid fa-chevron-${expanded ? 'down' : 'up'} text-[9px]`}></i>
+                                    </span>
+                                </button>
+                                <button type="button" onClick={() => goToSite(1)} disabled={currentIndex === sites.length - 1} aria-label={t.vrNextSite} title={t.vrNextSite} className={clsx(topButton, 'disabled:opacity-30')}>
+                                    <i className="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            {expanded && (
+                                <div className="px-4 pb-4 max-h-[38vh] overflow-y-auto">
+                                    <h3 className="font-heading text-lg font-bold mb-2">{name}</h3>
+                                    <p className="text-sm leading-relaxed text-slate-200">{description}</p>
+                                </div>
+                            )}
+                        </div>
+                    </section>
             </div>
         </div>
     );
