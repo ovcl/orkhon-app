@@ -28,9 +28,18 @@ npm run dev
 
 - `scripts/check-media.mjs` — `sites.js`-ийн бүх зураг/загварын зам файлтай **том/жижиг үсэг хүртэл** таарч байгааг шалгана (Windows дээр ажиллаад Vercel дээр 404 өгөх алдааг барина). Таараагүй бол build зогсоно.
 - `scripts/copy-maplibre-worker.mjs` — MapLibre worker-ийг `public/maplibre/` руу хуулна.
+- `scripts/build-images.mjs` — `next/image`-д зориулсан WebP хэмжээсүүдийг (128–1920px) `public/_img/`-д үүсгэнэ. Эх зураг өөрчлөгдөхгүй. Анх ~25 сек, дараа нь кэшээс (`node_modules/.cache/orkhon-img`) шууд.
 - `scripts/build-media-manifest.mjs` — офлайн татах хэмжээг тооцох `app/data/media-manifest.json` үүсгэнэ.
 
 Service worker зөвхөн production горимд (`npm run build && npm start`) идэвхжинэ.
+
+### Hotspot тааруулах
+`npm run dev` ажиллуулаад <http://localhost:3000/dev/hotspots> нээнэ:
+1. Дурсгал, панорамаа сонгоно (улаан тоо — анхны 0°/180° утгатай, тааруулаагүй hotspot).
+2. Hotspot-ын **📍 Байрлуулах** товчийг дараад панорама дээрх хаалга/зам руу дарна.
+3. **Хадгалаад дараах →** — `app/data/sites.js` шууд шинэчлэгдэж, дараагийн панорама руу шилжинэ.
+
+Зөвхөн dev горимд ажиллана (production-д `/dev/hotspots` болон `/api/dev/hotspots` 404). Дууссаны дараа `git diff app/data/sites.js`-ээр шалгаад commit хийнэ.
 
 ## Байршуулах
 
@@ -39,7 +48,7 @@ Service worker зөвхөн production горимд (`npm run build && npm start
 2. Environment Variables: `NEXT_PUBLIC_SITE_URL` (заавал), `OPENAI_API_KEY` (сонголттой). Бусад нь `.env.local.example`-д.
 3. Deploy. Шалгах: `https://<домэйн>/api/health`.
 
-> Анхаар: Vercel Hobby багцад зураг боловсруулах (Image Optimization) сарын квоттой. Хэрэглээ өсвөл Pro багц эсвэл доорх Docker хувилбарыг ашиглана.
+> Зургийн хэмжээсүүд build үед статикаар үүсдэг тул Vercel Image Optimization огт ашиглагдахгүй (Hobby квот хэрэглэгдэхгүй). Зураг CDN-ээс шууд ирнэ.
 
 ### Docker / музейн дотоод сервер (интернэтгүй киоск)
 ```bash
@@ -50,17 +59,18 @@ Service worker болон камер (AR) нь HTTPS шаарддаг тул д�
 
 ## Офлайн горимын бүтэц
 
+- **Service worker:** `app/sw.js` (Serwist) → build үед `public/sw.js`.
 - **Precache (суулгах үед):** апп-ын JS/CSS, фонт, icon, лого, офлайн хуудас, MapLibre worker.
 - **Runtime cache:** үзсэн хуудас, зураг, панорама, 3D загвар, газрын зургийн tile.
 - **Хэрэглэгч сонгож татах:** дурсгалын хуудсан дээрх "Офлайн хадгалах", Мэдээлэл → "Офлайн горим" хэсэгт "Бүх контентыг татах" / "Газрын зураг татах".
-- Кэшийн нэрс `next.config.js` ба `lib/offline.js`-д ижил байх ёстой.
+- Кэшийн нэрс `app/sw.js` ба `lib/offline.js`-д ижил байх ёстой.
 
 ## Бүтэц
 
 ```
 app/            Хуудсууд (App Router), API маршрут, data/sites.js (32 дурсгал)
 components/     PanoramaViewer, VirtualTour, Map, Model3DViewer, AIGuide, OfflineManager …
-lib/            offline.js (Cache API), rate-limit.js, site-summary.js
+lib/            offline.js (Cache API), image-loader.js, rate-limit.js, site-summary.js
 public/         images/ (≈1.7 GB, эх чанараар), models/ (.glb, Draco), sounds/
 scripts/        build-ийн өмнөх шалгалт, бэлтгэл скриптүүд
 ```

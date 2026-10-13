@@ -5,7 +5,7 @@ import { readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
 const PUBLIC_DIR = 'public';
-const MEDIA_DIRS = ['images', 'models', 'sounds'];
+const MEDIA_DIRS = ['images', '_img', 'models', 'sounds'];
 const OUT_FILE = 'app/data/media-manifest.json';
 
 function walk(dir, out) {

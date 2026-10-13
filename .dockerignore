@@ -8,6 +8,7 @@ upload_panoramas
 .claude
 .gemini
 public/sw.js
-public/workbox-*.js
-public/fallback-*.js
+public/sw.js.map
 public/swe-worker-*.js
+public/_img
+public/maplibre

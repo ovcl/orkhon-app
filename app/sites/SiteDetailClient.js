@@ -11,6 +11,7 @@ import BottomNav from '../../components/BottomNav';
 import Model3DViewer from '../../components/Model3DViewer';
 import OfflineSaveButton from '../../components/OfflineSaveButton';
 import AIGuide from '../../components/AIGuide';
+import { imageVariant } from '../../lib/image-loader';
 
 export default function SiteDetailClient({ siteId }) {
     const [language, setLanguage] = useState('mn');
@@ -199,7 +200,7 @@ export default function SiteDetailClient({ siteId }) {
                         <Model3DViewer
                             src={site.model3d}
                             alt={siteName}
-                            poster={heroImage}
+                            poster={imageVariant(heroImage, 1080)}
                         />
                     </motion.div>
                 )}
