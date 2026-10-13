@@ -1354,7 +1354,7 @@ export const sitesData = [
         "id": 26,
         "panoramaTour": [
             {
-                "name": "Ар бөөрөг — гадна үзэмж 1", "group": "Ар бөөрөг",
+                "name": "Төвхөн хийд — гадна үзэмж 1", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-1.jpg",
                 "hotspots": [
                     {
@@ -1366,7 +1366,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Ар бөөрөг — гадна үзэмж 2", "group": "Ар бөөрөг",
+                "name": "Төвхөн хийд — гадна үзэмж 2", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-2.jpg",
                 "hotspots": [
                     {
