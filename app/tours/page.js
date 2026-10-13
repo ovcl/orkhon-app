@@ -10,6 +10,9 @@ import { motion } from "framer-motion";
 import clsx from 'clsx';
 import BottomNav from '../../components/BottomNav';
 
+// Unity build (public/unity-build/) байхгүй үед AR товчийг нууна. Build нэмсний дараа true болго.
+const UNITY_ENABLED = false;
+
 export default function ToursPage() {
     const [language, setLanguage] = useState('mn');
     const [isTourActive, setIsTourActive] = useState(false);
@@ -109,14 +112,16 @@ export default function ToursPage() {
                             {language === 'mn' ? 'VR 360 Аялал' : 'VR 360 Tour'}
                         </button>
 
-                        <button
-                            className="btn btn-secondary w-full border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10"
-                            onClick={() => startTour(true)}
-                        >
-                            <i className="fa-solid fa-cube"></i>
-                            {language === 'mn' ? 'AR Аялал (Unity)' : 'AR Tour (Unity)'}
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500 text-white">BETA</span>
-                        </button>
+                        {UNITY_ENABLED && (
+                            <button
+                                className="btn btn-secondary w-full border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10"
+                                onClick={() => startTour(true)}
+                            >
+                                <i className="fa-solid fa-cube"></i>
+                                {language === 'mn' ? 'AR Аялал (Unity)' : 'AR Tour (Unity)'}
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500 text-white">BETA</span>
+                            </button>
+                        )}
                     </div>
                 </div>
 

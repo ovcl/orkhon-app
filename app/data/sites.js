@@ -1540,6 +1540,7 @@ export const sitesData = [
     {
 
         "id": 27,
+        "model3d": "/models/baga_elstein_melhvv_chuluu_4.glb",
         "panoramaTour": [
             {
                 "name": "Бага элстэйн чулуун — 1-р харагдац", "group": "Бага элстэйн чулуун",
@@ -1583,6 +1584,7 @@ export const sitesData = [
     },
     {
         "id": 28,
+        "model3d": "/models/kharkhorum_hotiin_tuuri_dahi_melhi_Chuluu_1.glb",
         "name": "Эрдэнэзуу хийдийн хойд талд орших чулуун яст мэлхий",
         "nameEn": "Karakorum Museum Stone Turtle",
         "category": "Хөшөө дурсгал",
@@ -1598,6 +1600,7 @@ export const sitesData = [
     },
     {
         "id": 29,
+        "model3d": "/models/melhiit_tolgoin_ordnii_tuuri_dahi_melhvv_chuluu_3.glb",
         "name": "Мэлхийт толгой дээрх чулуун яст мэлхий",
         "nameEn": "Melkhiit Tolgoi Stone Turtle",
         "category": "Хөшөө дурсгал",
@@ -1613,6 +1616,7 @@ export const sitesData = [
     },
     {
         "id": 30,
+        "model3d": "/models/tarian_talbai_dahi_melhvv_chuluu_2.glb",
         "panoramaTour": [
             {
                 "name": "Тариан талбайд орших — 1-р харагдац", "group": "Тариан талбайд орших",
