@@ -29,7 +29,7 @@ export default function Model3DViewer({ src, alt, poster }) {
 
     if (!ready) {
         return (
-            <div style={{ width: "100%", height: "400px", backgroundColor: "#0f172a", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>
+            <div className="w-full h-[400px] bg-slate-900 rounded-2xl flex items-center justify-center text-white/50 text-[13px]">
                 3D загвар бэлдэж байна...
             </div>
         );
@@ -46,16 +46,11 @@ export default function Model3DViewer({ src, alt, poster }) {
             ar
             ar-modes="webxr scene-viewer quick-look"
             shadow-intensity="1"
-            style={{ width: "100%", height: "400px", backgroundColor: "#0f172a", borderRadius: "16px" }}
+            className="block w-full h-[400px] bg-slate-900 rounded-2xl"
         >
             <button
                 slot="ar-button"
-                style={{
-                    position: "absolute", bottom: "16px", right: "16px",
-                    background: "#f59e0b", color: "#0f172a", border: "none",
-                    borderRadius: "999px", padding: "10px 18px", fontWeight: "600",
-                    fontSize: "13px", cursor: "pointer",
-                }}
+                className="absolute bottom-4 right-4 bg-amber-500 text-slate-900 border-none rounded-full px-[18px] py-2.5 font-semibold text-[13px] cursor-pointer"
             >
                 📱 AR-аар харах
             </button>

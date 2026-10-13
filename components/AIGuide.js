@@ -70,7 +70,7 @@ export default function AIGuide({ siteId, language, t }) {
                 {t.aiGuideTitle}
             </h3>
 
-            <div className="rounded-2xl border border-white/6 p-4" style={{ background: 'rgba(16,24,48,0.5)' }}>
+            <div className="rounded-2xl border border-white/6 p-4 bg-surface/50">
                 {!online ? (
                     <p className="text-xs text-slate-400 flex items-center gap-2">
                         <i className="fa-solid fa-wifi text-slate-500" aria-hidden="true"></i>

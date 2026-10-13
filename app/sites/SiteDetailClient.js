@@ -39,7 +39,7 @@ export default function SiteDetailClient({ siteId }) {
     };
 
     if (!site) return (
-        <div className="flex flex-col items-center justify-center min-h-screen text-slate-400" style={{ background: '#070b14' }}>
+        <div className="flex flex-col items-center justify-center min-h-screen text-slate-400 bg-ink">
             <i className="fa-solid fa-triangle-exclamation text-4xl mb-4 text-amber-500"></i>
             <p className="mb-4">Дурсгалт газар олдсонгүй</p>
             <Link href="/sites" className="px-4 py-2 rounded-xl bg-amber-500 text-slate-900 text-sm font-bold">
@@ -66,29 +66,26 @@ export default function SiteDetailClient({ siteId }) {
         : null;
 
     return (
-        <div className="pb-28 min-h-screen" style={{ background: '#070b14' }}>
+        <div className="pb-28 min-h-screen bg-ink">
             {/* Top controls */}
             <div className="fixed top-0 left-0 right-0 z-50 p-5 flex justify-between items-start pointer-events-none max-w-[480px] mx-auto w-full">
                 <Link href="/sites"
                     aria-label={language === 'mn' ? 'Буцах' : 'Back'}
-                    className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15"
-                    style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                    className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15 bg-black/50 backdrop-blur-md">
                     <i className="fa-solid fa-arrow-left text-sm"></i>
                 </Link>
                 <div className="flex items-center gap-2 pointer-events-auto">
                     {hasTour && (
                         <Link href={`/tours?site=${site.id}`}
                             aria-label={t.startTourAtSite}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors"
-                            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors bg-black/50 backdrop-blur-md">
                             <i className="fa-solid fa-vr-cardboard text-[11px]"></i>
                             VR
                         </Link>
                     )}
                     <button onClick={toggleLanguage}
                         aria-label={language === 'mn' ? 'Switch to English' : 'Монгол хэл рүү шилжих'}
-                        className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-widest border border-white/15 transition-colors"
-                        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                        className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-widest border border-white/15 transition-colors bg-black/50 backdrop-blur-md">
                         {language === 'mn' ? 'EN' : 'MN'}
                     </button>
                 </div>
@@ -101,8 +98,7 @@ export default function SiteDetailClient({ siteId }) {
 
                 {/* Image counter */}
                 {images.length > 1 && (
-                    <div className="absolute top-16 right-5 px-2.5 py-1 rounded-lg text-[10px] font-bold text-white border border-white/15"
-                        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}>
+                    <div className="absolute top-16 right-5 px-2.5 py-1 rounded-lg text-[10px] font-bold text-white border border-white/15 bg-black/50 backdrop-blur">
                         {activeImg + 1} / {images.length}
                     </div>
                 )}
@@ -140,23 +136,20 @@ export default function SiteDetailClient({ siteId }) {
                 <motion.div
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="flex gap-3 mb-5">
-                    <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center"
-                        style={{ background: 'rgba(16,24,48,0.7)' }}>
+                    <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center bg-surface/70">
                         <i className="fa-regular fa-clock text-blue-400 mb-1 text-sm"></i>
                         <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.openStatus || 'Нээлтэй'}</span>
                         <span className="text-xs font-bold text-slate-200">24/7</span>
                     </div>
                     {site.altitude && (
-                        <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center"
-                            style={{ background: 'rgba(16,24,48,0.7)' }}>
+                        <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center bg-surface/70">
                             <i className="fa-solid fa-mountain text-purple-400 mb-1 text-sm"></i>
                             <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.altitudeLabel || 'Өндөр'}</span>
                             <span className="text-xs font-bold text-slate-200">{site.altitude}</span>
                         </div>
                     )}
                     <Link href={`/map?id=${site.id}`}
-                        className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center transition-all active:scale-95 group"
-                        style={{ background: 'rgba(16,24,48,0.7)' }}>
+                        className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center transition-all active:scale-95 group bg-surface/70">
                         <i className="fa-solid fa-location-dot text-emerald-400 mb-1 text-sm group-hover:scale-110 transition-transform"></i>
                         <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.viewOnMap}</span>
                         <span className="text-xs font-bold text-slate-200">Map</span>
@@ -184,8 +177,7 @@ export default function SiteDetailClient({ siteId }) {
                         <span className="w-1 h-5 bg-amber-500 rounded-full block"></span>
                         {t.detailAbout}
                     </h3>
-                    <div className="text-slate-300 text-sm leading-relaxed text-justify p-4 rounded-2xl border border-white/5"
-                        style={{ background: 'rgba(16,24,48,0.5)' }}>
+                    <div className="text-slate-300 text-sm leading-relaxed text-justify p-4 rounded-2xl border border-white/5 bg-surface/50">
                         {siteDescription}
                     </div>
                 </motion.div>

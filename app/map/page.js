@@ -149,15 +149,14 @@ function MapContent() {
         : "";
 
     return (
-        <div className="relative w-full overflow-hidden" style={{ height: "100dvh" }}>
+        <div className="relative w-full overflow-hidden h-dvh">
             {/* ── Top Header & Filter Bar ── */}
             <header className="fixed top-0 left-0 right-0 z-40 px-4 pt-3 pb-2 flex flex-col gap-2.5 max-w-[480px] mx-auto w-full pointer-events-none">
                 <div className="flex items-center justify-between w-full pointer-events-auto">
                     <div className="flex items-center gap-2.5">
                         <Link
                             href="/"
-                            className="w-9 h-9 rounded-xl flex items-center justify-center text-white border border-white/10 transition-colors"
-                            style={{ background: "rgba(10,14,26,0.85)", backdropFilter: "blur(16px)" }}
+                            className="w-9 h-9 rounded-xl flex items-center justify-center text-white border border-white/10 transition-colors bg-navy/85 backdrop-blur-lg"
                             aria-label="Нүүр хуудас руу буцах"
                         >
                             <i className="fa-solid fa-arrow-left text-sm"></i>
@@ -177,8 +176,7 @@ function MapContent() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={toggleLanguage}
-                            className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-wider border border-white/10 transition-colors"
-                            style={{ background: "rgba(10,14,26,0.85)", backdropFilter: "blur(16px)" }}
+                            className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-wider border border-white/10 transition-colors bg-navy/85 backdrop-blur-lg"
                         >
                             {language === "mn" ? "EN" : "MN"}
                         </button>
@@ -247,11 +245,7 @@ function MapContent() {
             >
                 <button
                     onClick={handleResetView}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white border border-white/10 transition-all shadow-xl active:scale-95"
-                    style={{
-                        background: "rgba(10, 14, 26, 0.9)",
-                        backdropFilter: "blur(16px)",
-                    }}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white border border-white/10 transition-all shadow-xl active:scale-95 bg-navy/90 backdrop-blur-lg"
                     title={language === "mn" ? "Бүх дурсгалыг харах" : "Fit Orkhon Valley view"}
                     aria-label="Төв рүү буцах"
                 >
@@ -268,17 +262,10 @@ function MapContent() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 320, damping: 26 }}
-                        className="fixed left-4 right-4 z-40 max-w-[440px] mx-auto pointer-events-auto"
-                        style={{ bottom: "90px" }}
+                        className="fixed left-4 right-4 bottom-[90px] z-40 max-w-[440px] mx-auto pointer-events-auto"
                     >
                         <div
-                            className="rounded-2xl p-3 border border-white/10 shadow-2xl overflow-hidden relative"
-                            style={{
-                                background: "rgba(10, 14, 26, 0.94)",
-                                backdropFilter: "blur(24px) saturate(180%)",
-                                WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                                boxShadow: "0 10px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)",
-                            }}
+                            className="rounded-2xl p-3 border border-white/10 overflow-hidden relative bg-navy/[0.94] backdrop-blur-[24px] backdrop-saturate-[1.8] shadow-[0_10px_40px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)]"
                         >
                             <div className="flex gap-3">
                                 {/* Thumbnail Image */}

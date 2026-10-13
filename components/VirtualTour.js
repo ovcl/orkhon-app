@@ -13,7 +13,7 @@ import dynamic from 'next/dynamic';
 const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ssr: false,
     loading: () => (
-        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.5)' }}>
+        <div className="w-full h-full flex items-center justify-center text-white/50">
             <i className="fa-solid fa-circle-notch fa-spin fa-2x"></i>
         </div>
     ),

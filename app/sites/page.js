@@ -69,7 +69,7 @@ export default function SitesPage() {
     }, {});
 
     return (
-        <div className="pb-28 min-h-screen" style={{ background: '#070b14' }}>
+        <div className="pb-28 min-h-screen bg-ink">
             {/* Header */}
             <header className={clsx(
                 "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-5 py-3.5 flex justify-between items-center max-w-[480px] mx-auto w-full",
@@ -78,8 +78,7 @@ export default function SitesPage() {
                     : "bg-transparent"
             )}>
                 <div className="flex items-center gap-3">
-                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8"
-                        style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
                         <i className="fa-solid fa-arrow-left text-sm"></i>
                     </Link>
                     <div>
@@ -91,8 +90,7 @@ export default function SitesPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     {/* List / Grid toggle */}
-                    <div className="flex rounded-lg overflow-hidden border border-white/8 p-0.5 gap-0.5"
-                        style={{ background: 'rgba(255,255,255,0.04)' }}>
+                    <div className="flex rounded-lg overflow-hidden border border-white/8 p-0.5 gap-0.5 bg-white/[0.04]">
                         {['list', 'grid'].map(m => (
                             <button key={m}
                                 onClick={() => setViewMode(m)}
@@ -112,8 +110,7 @@ export default function SitesPage() {
             </header>
 
             {/* Search + Filter sticky */}
-            <div className="fixed top-[60px] left-0 right-0 z-40 max-w-[480px] mx-auto border-b border-white/5"
-                style={{ background: 'rgba(7,11,20,0.97)', backdropFilter: 'blur(20px)' }}>
+            <div className="fixed top-[60px] left-0 right-0 z-40 max-w-[480px] mx-auto border-b border-white/5 bg-ink/[0.97] backdrop-blur-[20px]">
                 <div className="px-5 pt-3 pb-2">
                     <div className="relative">
                         <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
@@ -122,8 +119,7 @@ export default function SitesPage() {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             placeholder={t.searchPlaceholder}
-                            className="w-full rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition-colors border border-white/6 focus:border-amber-500/40"
-                            style={{ background: 'rgba(255,255,255,0.05)' }}
+                            className="w-full rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition-colors border border-white/6 focus:border-amber-500/40 bg-white/5"
                         />
                         {search && (
                             <button onClick={() => setSearch("")}
@@ -143,9 +139,8 @@ export default function SitesPage() {
                                     "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border flex items-center gap-1.5",
                                     isActive
                                         ? "bg-amber-500 text-slate-900 border-amber-500 shadow-md shadow-amber-500/20"
-                                        : "text-slate-400 border-white/6 hover:border-white/15 hover:text-slate-200"
-                                )}
-                                style={isActive ? {} : { background: 'rgba(255,255,255,0.04)' }}>
+                                        : "text-slate-400 border-white/6 hover:border-white/15 hover:text-slate-200 bg-white/[0.04]"
+                                )}>
                                 {cat !== "All" && <span className={clsx("w-1.5 h-1.5 rounded-full", isActive ? "bg-slate-900" : s.dot)}></span>}
                                 {cat === "All" ? (t.all || 'Бүгд') : (t[cat] || cat)}
                                 <span className={clsx(
@@ -182,8 +177,7 @@ export default function SitesPage() {
                                     return (
                                         <motion.div key={site.id} variants={itemVariants}>
                                             <Link href={`/sites/${site.id}`} className="block group">
-                                                <div className="rounded-2xl overflow-hidden border border-white/6 transition-all duration-300 group-hover:border-white/14"
-                                                    style={{ background: 'rgba(16,24,48,0.7)' }}>
+                                                <div className="rounded-2xl overflow-hidden border border-white/6 transition-all duration-300 group-hover:border-white/14 bg-surface/70">
                                                     <div className="relative h-[130px] overflow-hidden">
                                                         <Image src={imgSrc} alt={name} fill sizes="(max-width: 768px) 50vw, 300px" className="object-cover transition-transform duration-500 group-hover:scale-108" />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-[#101830] via-transparent to-transparent opacity-60"></div>
@@ -210,8 +204,7 @@ export default function SitesPage() {
                                 return (
                                     <motion.div key={site.id} variants={itemVariants}>
                                         <Link href={`/sites/${site.id}`} className="block group">
-                                            <div className="flex rounded-2xl overflow-hidden border border-white/6 transition-all duration-300 group-hover:border-white/12 group-hover:shadow-lg group-hover:shadow-black/20"
-                                                style={{ background: 'rgba(16,24,48,0.6)' }}>
+                                            <div className="flex rounded-2xl overflow-hidden border border-white/6 transition-all duration-300 group-hover:border-white/12 group-hover:shadow-lg group-hover:shadow-black/20 bg-surface/60">
                                                 {/* Thumb */}
                                                 <div className="relative w-[108px] min-h-[96px] flex-shrink-0 overflow-hidden">
                                                     <Image src={imgSrc} alt={name} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -251,8 +244,7 @@ export default function SitesPage() {
                     ) : (
                         <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                             className="flex flex-col items-center justify-center py-24 text-slate-500">
-                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 border border-white/6"
-                                style={{ background: 'rgba(255,255,255,0.04)' }}>
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 border border-white/6 bg-white/[0.04]">
                                 <i className="fa-solid fa-magnifying-glass text-2xl opacity-40"></i>
                             </div>
                             <p className="text-sm font-medium text-slate-400">{t.noResults}</p>

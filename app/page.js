@@ -86,8 +86,7 @@ export default function Home() {
                 </div>
                 <button
                     onClick={toggleLanguage}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/10"
-                    style={{ backdropFilter: 'blur(8px)' }}
+                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/10 backdrop-blur"
                 >
                     {language === 'mn' ? 'EN' : 'MN'}
                 </button>
@@ -112,12 +111,7 @@ export default function Home() {
                         variants={staggerContainer}
                     >
                         <motion.div variants={fadeIn} className="flex items-center gap-2 mb-4">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/20"
-                                style={{
-                                    background: 'rgba(245, 158, 11, 0.06)',
-                                    backdropFilter: 'blur(16px)',
-                                    boxShadow: '0 0 24px rgba(245, 158, 11, 0.08)',
-                                }}>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/[0.06] backdrop-blur-lg shadow-[0_0_24px_rgba(245,158,11,0.08)]">
                                 <i className="fa-solid fa-crown text-[10px] text-amber-400"></i>
                                 <span className="text-amber-300 text-[10px] font-bold uppercase tracking-[0.15em]">{t.heroBadge}</span>
                             </span>
@@ -145,8 +139,7 @@ export default function Home() {
                             <motion.div
                                 variants={scaleIn}
                                 whileTap={{ scale: 0.97 }}
-                                className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-[#101830]/90 bg-gradient-to-br ${item.gradient} border border-white/10 transition-all duration-300 group-hover:border-white/20 group-hover:shadow-lg relative overflow-hidden`}
-                                style={{ backdropFilter: 'blur(12px)' }}
+                                className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-[#101830]/90 bg-gradient-to-br ${item.gradient} border border-white/10 transition-all duration-300 group-hover:border-white/20 group-hover:shadow-lg relative overflow-hidden backdrop-blur-md`}
                             >
                                 <div className={`absolute -top-6 -right-6 w-16 h-16 ${item.accentColor} rounded-full opacity-[0.08] blur-xl`}></div>
                                 <div className={`w-9 h-9 rounded-xl ${item.iconBg} flex items-center justify-center ${item.iconColor} transition-transform duration-300 group-hover:scale-110`}>
@@ -181,12 +174,8 @@ export default function Home() {
                         {popularSites.map((item, idx) => (
                             <Link key={idx} href={item.id ? `/sites/${item.id}` : '/sites'} className="block min-w-[170px]">
                                 <motion.div
-                                    className="h-[235px] rounded-2xl overflow-hidden relative snap-start group cursor-pointer"
+                                    className="h-[235px] rounded-2xl overflow-hidden relative snap-start group cursor-pointer border border-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
                                     whileTap={{ scale: 0.97 }}
-                                    style={{
-                                        border: '1px solid rgba(255,255,255,0.06)',
-                                        boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                                    }}
                                 >
                                     <Image src={item.img} alt={item.title} fill sizes="200px" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent p-4 flex flex-col justify-end">

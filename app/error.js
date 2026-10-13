@@ -8,29 +8,9 @@ export default function Error({ error, reset }) {
     }, [error]);
 
     return (
-        <div style={{
-            height: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-            background: '#0f172a',
-            color: 'white',
-            textAlign: 'center'
-        }}>
-            <h2 style={{ marginBottom: '20px' }}>Алдаа гарлаа!</h2>
-            <button
-                onClick={() => reset()}
-                style={{
-                    padding: '10px 20px',
-                    background: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer'
-                }}
-            >
+        <div className="h-screen flex flex-col items-center justify-center p-5 bg-slate-900 text-white text-center">
+            <h2 className="mb-5">Алдаа гарлаа!</h2>
+            <button onClick={() => reset()} className="px-5 py-2.5 bg-blue-600 text-white border-none rounded-lg cursor-pointer">
                 Дахин ачаалах
             </button>
         </div>

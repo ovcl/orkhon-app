@@ -2,30 +2,10 @@ import Link from 'next/link';
 
 export default function NotFound() {
     return (
-        <div style={{
-            height: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-            background: '#0f172a',
-            color: 'white',
-            textAlign: 'center'
-        }}>
-            <h2 style={{ marginBottom: '10px' }}>404 - Хуудас олдсонгүй</h2>
-            <p style={{ color: '#94a3b8', marginBottom: '30px' }}>Таны хайсан хуудас байхгүй эсвэл нүүсэн байна.</p>
-            <Link
-                href="/"
-                style={{
-                    padding: '10px 20px',
-                    background: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    textDecoration: 'none'
-                }}
-            >
+        <div className="h-screen flex flex-col items-center justify-center p-5 bg-slate-900 text-white text-center">
+            <h2 className="mb-2.5">404 - Хуудас олдсонгүй</h2>
+            <p className="text-slate-400 mb-[30px]">Таны хайсан хуудас байхгүй эсвэл нүүсэн байна.</p>
+            <Link href="/" className="px-5 py-2.5 bg-blue-600 text-white border-none rounded-lg no-underline">
                 Нүүр хуудас руу буцах
             </Link>
         </div>

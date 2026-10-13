@@ -86,14 +86,14 @@ export default function OfflineManager({ t }) {
             <p className="text-sm text-slate-300 leading-relaxed">{t.offlineIntro}</p>
 
             <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-xl border border-white/5" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                <div className="p-3 rounded-xl border border-white/5 bg-black/20">
                     <div className="text-xl font-bold text-white">
                         {ready}
                         <span className="text-sm text-slate-500">/{sitesData.length}</span>
                     </div>
                     <div className="text-[10px] text-slate-500 uppercase tracking-wider">{t.offlineSitesReady}</div>
                 </div>
-                <div className="p-3 rounded-xl border border-white/5" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                <div className="p-3 rounded-xl border border-white/5 bg-black/20">
                     <div className="text-xl font-bold text-white">{storage ? formatBytes(storage.usage) : '—'}</div>
                     <div className="text-[10px] text-slate-500 uppercase tracking-wider">
                         {t.offlineStorage}
