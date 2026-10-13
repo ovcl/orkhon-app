@@ -1291,27 +1291,29 @@ export const sitesData = [
         "id": 25,
         "panoramaTour": [
             {
-                "name": "дуган дотор", "group": "дуган дотор",
-                "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
+                "name": "үүд",
+                "group": "үүд",
+                "url": "/images/panoramas/pano-25-үүд.jpg",
                 "hotspots": [
                     {
                         "yaw": 0,
                         "pitch": -8,
                         "targetIndex": 1,
                         "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Сүм рүү орох"
                     }
                 ]
             },
             {
-                "name": "үүд", "group": "үүд",
-                "url": "/images/panoramas/pano-25-үүд.jpg",
+                "name": "хашаан дотор",
+                "group": "хашаан дотор",
+                "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
                     {
                         "yaw": 180,
                         "pitch": -8,
@@ -1321,14 +1323,15 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хашаан дотор", "group": "хашаан дотор",
-                "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
+                "name": "дуган дотор",
+                "group": "дуган дотор",
+                "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
+                        "yaw": 0,
                         "pitch": -8,
-                        "targetIndex": 1,
-                        "label": "Буцах"
+                        "targetIndex": 0,
+                        "label": "Сүмээс гарах"
                     }
                 ]
             }
