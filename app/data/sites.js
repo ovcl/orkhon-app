@@ -1291,8 +1291,8 @@ export const sitesData = [
         "id": 25,
         "panoramaTour": [
             {
-                "name": "үүд",
-                "group": "үүд",
+                "name": "Үүдний хэсэг",
+                "group": "Үүдний хэсэг",
                 "url": "/images/panoramas/pano-25-үүд.jpg",
                 "hotspots": [
                     {
@@ -1310,8 +1310,8 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хашаан дотор",
-                "group": "хашаан дотор",
+                "name": "Хашаан дотор",
+                "group": "Хашаан дотор",
                 "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
                 "hotspots": [
                     {
@@ -1323,8 +1323,8 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "дуган дотор",
-                "group": "дуган дотор",
+                "name": "Дуган дотор",
+                "group": "Дуган дотор",
                 "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
                 "hotspots": [
                     {
