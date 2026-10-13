@@ -225,6 +225,7 @@ export const labelTranslations = {
     'Цогт гэр эхийн сүм рүү': { en: 'To Tsogt Ger Ekh Temple', ko: '촉트 게르 에흐 사원으로', zh: '前往粗格特格尔额赫寺', ru: 'К храму Цогт-Гэр-Эх' },
     'Туурь руу буцах': { en: 'Back to the ruins', ko: '유적으로 돌아가기', zh: '返回遗址', ru: 'Назад к руинам' },
     'Мэлхий чулуу руу': { en: 'To the stone turtle', ko: '돌거북으로', zh: '前往石龟', ru: 'К каменной черепахе' },
+    'Хархорум хотын туурь руу': { en: 'To Karakorum city ruins', ko: '카라코룸 도성 유적으로', zh: '前往哈拉和林城址', ru: 'К городищу Каракорум' },
     'Гол гурван зуу рүү': { en: 'To the Three Main Temples', ko: '3대 주요 사원으로', zh: '前往三大主殿', ru: 'К трём главным храмам' },
     'Лаврин рүү': { en: 'To Lavrin Temple', ko: '라브린 사원으로', zh: '前往拉布楞殿', ru: 'К храму Лаврин' },
     'Хийд рүү буцах': { en: 'Back to the monastery', ko: '사원으로 돌아가기', zh: '返回寺院', ru: 'Назад к монастырю' },

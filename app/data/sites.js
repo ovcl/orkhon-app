@@ -891,11 +891,11 @@ export const sitesData = [
             {
                 "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Туурь руу буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Мэлхий чулуу руу" }
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
                 ]
             },
             {
-                "name": "Мэлхий чулуу", "group": "Мэлхий чулуу", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
+                "name": "Хархорум хотын туурь — 2-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
