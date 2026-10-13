@@ -9,6 +9,9 @@ import clsx from "clsx";
 import { sitesData } from "../data/sites";
 import { translations } from "../data/translations";
 import BottomNav from "../../components/BottomNav";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { useLanguage } from "../../lib/useLanguage";
+import { isLanguage, siteName, protectionName } from "../../lib/i18n";
 
 // Map component нь WebGL (browser) дээр ажилладаг тул SSR-г унтраана
 const MapView = dynamic(() => import("../../components/Map"), {
@@ -42,28 +45,55 @@ function getCategoryMeta(cat) {
     };
 }
 
+/** Хоёр цэгийн хоорондох зай (км) — haversine */
+function distanceKm(a, b) {
+    const R = 6371;
+    const toRad = (d) => (d * Math.PI) / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+const BASE_STYLES = [
+    { id: "streets", icon: "fa-map", key: "mapStreets" },
+    { id: "satellite", icon: "fa-satellite", key: "mapSatellite" },
+    { id: "dark", icon: "fa-moon", key: "mapDark" },
+];
+
+const floatButton =
+    "w-10 h-10 rounded-xl flex items-center justify-center border transition-all shadow-xl active:scale-95 backdrop-blur-lg";
+
 function MapContent() {
     const searchParams = useSearchParams();
-    const [language, setLanguage] = useState("mn");
+    const [language, setLanguage] = useLanguage();
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedSite, setSelectedSite] = useState(null);
+    const [baseStyle, setBaseStyle] = useState("streets");
+    const [terrain, setTerrain] = useState(false);
+    const [showLayers, setShowLayers] = useState(false);
+    const [userLocation, setUserLocation] = useState(null);
     const mapInstanceRef = useRef(null);
 
-    // Хэл тохируулах (URL params эсвэл localStorage-аас)
+    // /map?lang=ko г.м. — QR код, киоскоос шууд хэл сонгож нээх
     useEffect(() => {
         const urlLang = searchParams.get("lang");
-        const savedLang = localStorage.getItem("language");
-        if (urlLang && (urlLang === "mn" || urlLang === "en")) {
-            setLanguage(urlLang);
-        } else if (savedLang && (savedLang === "mn" || savedLang === "en")) {
-            setLanguage(savedLang);
-        }
-    }, [searchParams]);
+        if (isLanguage(urlLang)) setLanguage(urlLang);
+    }, [searchParams, setLanguage]);
 
-    const toggleLanguage = () => {
-        const next = language === "mn" ? "en" : "mn";
-        setLanguage(next);
-        localStorage.setItem("language", next);
+    // Сонгосон давхаргыг санана
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem("map-style");
+            if (BASE_STYLES.some((b) => b.id === saved)) setBaseStyle(saved);
+        } catch {}
+    }, []);
+    const chooseStyle = (id) => {
+        setBaseStyle(id);
+        setShowLayers(false);
+        try {
+            localStorage.setItem("map-style", id);
+        } catch {}
     };
 
     const t = translations[language] || translations.mn;
@@ -144,44 +174,36 @@ function MapContent() {
     };
 
     const activeMeta = selectedSite ? getCategoryMeta(selectedSite.category) : null;
-    const siteTitle = selectedSite
-        ? (language === "en" && selectedSite.nameEn ? selectedSite.nameEn : selectedSite.name)
-        : "";
+    const siteTitle = selectedSite ? siteName(selectedSite, language) : "";
+    const distance = selectedSite && userLocation ? distanceKm(userLocation, selectedSite.location) : null;
 
     return (
-        <div className="relative w-full overflow-hidden" style={{ height: "100dvh" }}>
+        <div className="relative w-full overflow-hidden h-dvh">
             {/* ── Top Header & Filter Bar ── */}
             <header className="fixed top-0 left-0 right-0 z-40 px-4 pt-3 pb-2 flex flex-col gap-2.5 max-w-[480px] mx-auto w-full pointer-events-none">
                 <div className="flex items-center justify-between w-full pointer-events-auto">
                     <div className="flex items-center gap-2.5">
                         <Link
                             href="/"
-                            className="w-9 h-9 rounded-xl flex items-center justify-center text-white border border-white/10 transition-colors"
-                            style={{ background: "rgba(10,14,26,0.85)", backdropFilter: "blur(16px)" }}
-                            aria-label="Нүүр хуудас руу буцах"
+                            className="w-9 h-9 rounded-xl flex items-center justify-center text-white border border-white/10 transition-colors bg-navy/85 backdrop-blur-lg"
+                            aria-label={t.back}
                         >
                             <i className="fa-solid fa-arrow-left text-sm"></i>
                         </Link>
-                        <div>
+                        <div className="px-3 py-1.5 rounded-xl bg-navy/85 backdrop-blur-lg border border-white/10">
                             <h1 className="font-heading font-bold text-base text-white leading-none">
                                 {t.navMap || "Газрын зураг"}
                             </h1>
                             <p className="text-[11px] text-amber-400/90 font-medium leading-tight mt-0.5">
                                 {filteredSites.length === sitesData.length
-                                    ? `${sitesData.length} ${language === "mn" ? "дурсгал" : "sites"}`
-                                    : `${filteredSites.length} / ${sitesData.length} ${language === "mn" ? "дурсгал" : "sites"}`}
+                                    ? `${sitesData.length} ${t.sitesUnit}`
+                                    : `${filteredSites.length} / ${sitesData.length} ${t.sitesUnit}`}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={toggleLanguage}
-                            className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-wider border border-white/10 transition-colors"
-                            style={{ background: "rgba(10,14,26,0.85)", backdropFilter: "blur(16px)" }}
-                        >
-                            {language === "mn" ? "EN" : "MN"}
-                        </button>
+                        <LanguageSwitcher language={language} onChange={setLanguage} className="rounded-xl border-white/10 bg-navy/85 backdrop-blur-lg" />
                     </div>
                 </div>
 
@@ -234,28 +256,62 @@ function MapContent() {
                     onSelectSite={setSelectedSite}
                     categoryMeta={categoryMeta}
                     language={language}
+                    baseStyle={baseStyle}
+                    terrain={terrain}
+                    onUserLocation={setUserLocation}
                     onMapReady={(map) => {
                         mapInstanceRef.current = map;
                     }}
                 />
             </div>
 
-            {/* ── Floating Controls (Recenter Button) ── */}
-            <div
-                className="fixed right-3.5 z-30 transition-all duration-300"
-                style={{ bottom: selectedSite ? "235px" : "120px" }}
-            >
+            {/* ── Давхарга, 3D, бүтнээр харах ── */}
+            <div className="fixed left-3.5 top-[118px] z-30 flex flex-col gap-2">
+                <div className="relative">
+                    <button
+                        onClick={() => setShowLayers((v) => !v)}
+                        className={clsx(floatButton, showLayers ? "bg-amber-500 text-slate-900 border-amber-400" : "bg-navy/90 text-white border-white/10")}
+                        title={t.mapLayers}
+                        aria-label={t.mapLayers}
+                        aria-expanded={showLayers}
+                    >
+                        <i className="fa-solid fa-layer-group text-sm"></i>
+                    </button>
+                    {showLayers && (
+                        <div className="absolute left-12 top-0 w-44 p-1.5 rounded-xl bg-navy/95 backdrop-blur-lg border border-white/10 shadow-2xl">
+                            <p className="px-2 pt-1 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{t.mapLayers}</p>
+                            {BASE_STYLES.map((b) => (
+                                <button
+                                    key={b.id}
+                                    onClick={() => chooseStyle(b.id)}
+                                    className={clsx(
+                                        "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-left transition-colors",
+                                        baseStyle === b.id ? "bg-amber-500/15 text-amber-400 font-semibold" : "text-slate-200 hover:bg-white/5"
+                                    )}
+                                >
+                                    <i className={`fa-solid ${b.icon} w-4 text-center`}></i>
+                                    {t[b.key]}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <button
+                    onClick={() => setTerrain((v) => !v)}
+                    className={clsx(floatButton, "text-[11px] font-bold", terrain ? "bg-amber-500 text-slate-900 border-amber-400" : "bg-navy/90 text-white border-white/10")}
+                    title={t.mapTerrain}
+                    aria-label={t.mapTerrain}
+                    aria-pressed={terrain}
+                >
+                    3D
+                </button>
                 <button
                     onClick={handleResetView}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white border border-white/10 transition-all shadow-xl active:scale-95"
-                    style={{
-                        background: "rgba(10, 14, 26, 0.9)",
-                        backdropFilter: "blur(16px)",
-                    }}
-                    title={language === "mn" ? "Бүх дурсгалыг харах" : "Fit Orkhon Valley view"}
-                    aria-label="Төв рүү буцах"
+                    className={clsx(floatButton, "bg-navy/90 text-amber-400 border-white/10")}
+                    title={t.mapFit}
+                    aria-label={t.mapFit}
                 >
-                    <i className="fa-solid fa-expand text-sm text-amber-400"></i>
+                    <i className="fa-solid fa-expand text-sm"></i>
                 </button>
             </div>
 
@@ -268,17 +324,10 @@ function MapContent() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 320, damping: 26 }}
-                        className="fixed left-4 right-4 z-40 max-w-[440px] mx-auto pointer-events-auto"
-                        style={{ bottom: "90px" }}
+                        className="fixed left-4 right-4 bottom-[90px] z-40 max-w-[440px] mx-auto pointer-events-auto"
                     >
                         <div
-                            className="rounded-2xl p-3 border border-white/10 shadow-2xl overflow-hidden relative"
-                            style={{
-                                background: "rgba(10, 14, 26, 0.94)",
-                                backdropFilter: "blur(24px) saturate(180%)",
-                                WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                                boxShadow: "0 10px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)",
-                            }}
+                            className="rounded-2xl p-3 border border-white/10 overflow-hidden relative bg-navy/[0.94] backdrop-blur-[24px] backdrop-saturate-[1.8] shadow-[0_10px_40px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)]"
                         >
                             <div className="flex gap-3">
                                 {/* Thumbnail Image */}
@@ -325,7 +374,7 @@ function MapContent() {
                                             <button
                                                 onClick={() => setSelectedSite(null)}
                                                 className="w-6 h-6 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                                                aria-label="Хаах"
+                                                aria-label={t.back}
                                             >
                                                 <i className="fa-solid fa-xmark text-xs"></i>
                                             </button>
@@ -342,8 +391,14 @@ function MapContent() {
                                                 <i className="fa-solid fa-mountain-sun text-[10px] text-amber-500/80"></i>
                                                 <span>{selectedSite.altitude}</span>
                                                 {selectedSite.protectionStatus && (
-                                                    <span className="truncate">• {selectedSite.protectionStatus}</span>
+                                                    <span className="truncate">• {protectionName(selectedSite.protectionStatus, language)}</span>
                                                 )}
+                                            </p>
+                                        )}
+                                        {distance != null && (
+                                            <p className="text-[11px] text-emerald-400 flex items-center gap-1 mt-0.5">
+                                                <i className="fa-solid fa-location-arrow text-[10px]"></i>
+                                                {distance < 1 ? `${Math.round(distance * 1000)} м` : `${distance.toFixed(distance < 10 ? 1 : 0)} км`} {t.mapDistanceAway}
                                             </p>
                                         )}
                                     </div>
@@ -354,20 +409,30 @@ function MapContent() {
                                             href={`/sites/${selectedSite.id}`}
                                             className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] transition-all duration-200 shadow-md shadow-amber-500/20"
                                         >
-                                            <span>{language === "mn" ? "Дэлгэрэнгүй үзэх" : "View Details"}</span>
+                                            <span>{t.mapOpenDetails}</span>
                                             <i className="fa-solid fa-arrow-right text-[10px]"></i>
                                         </Link>
 
                                         {(selectedSite.panoramaTour || selectedSite.panoramaUrl) && (
                                             <Link
-                                                href="/tours"
+                                                href={`/tours?site=${selectedSite.id}`}
                                                 className="flex items-center justify-center gap-1 py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-amber-400 border border-amber-500/30 text-[11px] font-bold transition-colors"
-                                                title={language === "mn" ? "VR аялал" : "VR Tour"}
-                                                aria-label="VR аялал"
+                                                title={t.vrTour}
+                                                aria-label={t.vrTour}
                                             >
                                                 <i className="fa-solid fa-vr-cardboard"></i>
                                             </Link>
                                         )}
+                                        <a
+                                            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSite.location.lat},${selectedSite.location.lng}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-sky-300 border border-sky-400/30 text-[11px] font-bold transition-colors"
+                                            title={t.mapNavigate}
+                                            aria-label={t.mapNavigate}
+                                        >
+                                            <i className="fa-solid fa-diamond-turn-right"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

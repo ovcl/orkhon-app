@@ -891,11 +891,11 @@ export const sitesData = [
             {
                 "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Туурь руу буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Мэлхий чулуу руу" }
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
                 ]
             },
             {
-                "name": "Мэлхий чулуу", "group": "Мэлхий чулуу", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
+                "name": "Хархорум хотын туурь — 2-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
                     { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
@@ -1291,27 +1291,29 @@ export const sitesData = [
         "id": 25,
         "panoramaTour": [
             {
-                "name": "дуган дотор", "group": "дуган дотор",
-                "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
+                "name": "Үүдний хэсэг",
+                "group": "Үүдний хэсэг",
+                "url": "/images/panoramas/pano-25-үүд.jpg",
                 "hotspots": [
                     {
                         "yaw": 0,
                         "pitch": -8,
                         "targetIndex": 1,
                         "label": "Дараах"
+                    },
+                    {
+                        "yaw": 180,
+                        "pitch": -8,
+                        "targetIndex": 2,
+                        "label": "Сүм рүү орох"
                     }
                 ]
             },
             {
-                "name": "үүд", "group": "үүд",
-                "url": "/images/panoramas/pano-25-үүд.jpg",
+                "name": "Хашаан дотор",
+                "group": "Хашаан дотор",
+                "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
                     {
                         "yaw": 180,
                         "pitch": -8,
@@ -1321,14 +1323,15 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "хашаан дотор", "group": "хашаан дотор",
-                "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
+                "name": "Дуган дотор",
+                "group": "Дуган дотор",
+                "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
+                        "yaw": 0,
                         "pitch": -8,
-                        "targetIndex": 1,
-                        "label": "Буцах"
+                        "targetIndex": 0,
+                        "label": "Сүмээс гарах"
                     }
                 ]
             }
@@ -1354,7 +1357,7 @@ export const sitesData = [
         "id": 26,
         "panoramaTour": [
             {
-                "name": "Ар бөөрөг — гадна үзэмж 1", "group": "Ар бөөрөг",
+                "name": "Төвхөн хийд — гадна үзэмж 1", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-1.jpg",
                 "hotspots": [
                     {
@@ -1366,7 +1369,7 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Ар бөөрөг — гадна үзэмж 2", "group": "Ар бөөрөг",
+                "name": "Төвхөн хийд — гадна үзэмж 2", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-2.jpg",
                 "hotspots": [
                     {
@@ -1540,6 +1543,7 @@ export const sitesData = [
     {
 
         "id": 27,
+        "model3d": "/models/baga_elstein_melhvv_chuluu_4.glb",
         "panoramaTour": [
             {
                 "name": "Бага элстэйн чулуун — 1-р харагдац", "group": "Бага элстэйн чулуун",
@@ -1583,6 +1587,7 @@ export const sitesData = [
     },
     {
         "id": 28,
+        "model3d": "/models/kharkhorum_hotiin_tuuri_dahi_melhi_Chuluu_1.glb",
         "name": "Эрдэнэзуу хийдийн хойд талд орших чулуун яст мэлхий",
         "nameEn": "Karakorum Museum Stone Turtle",
         "category": "Хөшөө дурсгал",
@@ -1598,6 +1603,7 @@ export const sitesData = [
     },
     {
         "id": 29,
+        "model3d": "/models/melhiit_tolgoin_ordnii_tuuri_dahi_melhvv_chuluu_3.glb",
         "name": "Мэлхийт толгой дээрх чулуун яст мэлхий",
         "nameEn": "Melkhiit Tolgoi Stone Turtle",
         "category": "Хөшөө дурсгал",
@@ -1613,6 +1619,7 @@ export const sitesData = [
     },
     {
         "id": 30,
+        "model3d": "/models/tarian_talbai_dahi_melhvv_chuluu_2.glb",
         "panoramaTour": [
             {
                 "name": "Тариан талбайд орших — 1-р харагдац", "group": "Тариан талбайд орших",

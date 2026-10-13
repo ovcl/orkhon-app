@@ -6,6 +6,11 @@ import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import clsx from 'clsx';
 import BottomNav from '../../components/BottomNav';
+import OfflineManager from '../../components/OfflineManager';
+import { translations } from '../data/translations';
+import { infoContentIntl } from './content-intl';
+import { useLanguage } from '../../lib/useLanguage';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -18,22 +23,15 @@ const itemVariants = {
 };
 
 export default function InfoPage() {
-    const [language, setLanguage] = useState('mn');
+    const [language, setLanguage] = useLanguage();
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     const content = {
         mn: {
@@ -86,7 +84,7 @@ export default function InfoPage() {
                 privacyText: "Таны хувийн мэдээллийг хамгаалж, зөвхөн аппын үйл ажиллагаанд ашиглана."
             },
             seasonTitle: "Аялалын улирал",
-            seasonBestMonths: "Тохиромжтой саруud: 5–9-р сар"
+            seasonBestMonths: "Тохиромжтой сарууд: 5–9-р сар"
         },
         en: {
             title: "Information",
@@ -142,30 +140,26 @@ export default function InfoPage() {
         }
     };
 
-    const t = content[language];
+    const t = content[language] || infoContentIntl[language] || content.mn;
 
-    const CARD_BG = { background: 'rgba(16,24,48,0.6)', border: '1px solid rgba(255,255,255,0.06)' };
+    const CARD = 'bg-surface/60 border border-white/[0.06]';
 
     return (
-        <div className="pb-28 min-h-screen" style={{ background: '#070b14' }}>
+        <div className="pb-28 min-h-screen bg-ink">
             {/* Header */}
             <header className={clsx(
                 "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-5 py-4 flex justify-between items-center max-w-[480px] mx-auto w-full",
                 scrolled ? "bg-[#070b14]/95 backdrop-blur-xl border-b border-white/5 shadow-lg" : "bg-transparent"
             )}>
                 <div className="flex items-center gap-3">
-                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8"
-                        style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
                         <i className="fa-solid fa-arrow-left text-sm"></i>
                     </Link>
                     <h1 className={clsx("font-heading font-bold text-lg text-white transition-all", scrolled ? "opacity-100" : "opacity-0")}>
                         {t.title}
                     </h1>
                 </div>
-                <button onClick={toggleLanguage}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/8">
-                    {language === 'mn' ? 'EN' : 'MN'}
-                </button>
+                <LanguageSwitcher language={language} onChange={setLanguage} className="rounded-lg text-slate-300 hover:text-white border-white/8" />
             </header>
 
             <main className="pt-20 px-5">
@@ -179,14 +173,14 @@ export default function InfoPage() {
                     {/* About */}
                     <motion.section variants={itemVariants}>
                         <SectionTitle icon="fa-solid fa-mountain" color="border-amber-500" iconColor="text-amber-500" title={t.about.title} />
-                        <div className="rounded-2xl p-5 space-y-4" style={CARD_BG}>
+                        <div className={`rounded-2xl p-5 space-y-4 ${CARD}`}>
                             <div className="flex items-center gap-2 flex-wrap">
                                 <span className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-400 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">
                                     {t.about.unesco}
                                 </span>
                                 <span className="text-xs text-slate-500">{t.about.year}</span>
                             </div>
-                            <div className="p-3 rounded-xl border border-white/5" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                            <div className="p-3 rounded-xl border border-white/5 bg-black/20">
                                 <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 font-semibold">{t.about.location}</div>
                                 <p className="text-sm text-slate-200">{t.about.locationText}</p>
                             </div>
@@ -202,15 +196,14 @@ export default function InfoPage() {
                     {/* Visitor */}
                     <motion.section variants={itemVariants}>
                         <SectionTitle icon="fa-solid fa-circle-info" color="border-blue-500" iconColor="text-blue-500" title={t.visitor.title} />
-                        <div className="rounded-2xl p-5 space-y-5" style={CARD_BG}>
+                        <div className={`rounded-2xl p-5 space-y-5 ${CARD}`}>
                             {[
                                 { icon: "fa-solid fa-location-dot", label: t.visitor.howToGet, text: t.visitor.howToGetText, color: "text-red-400" },
                                 { icon: "fa-solid fa-calendar", label: t.visitor.bestSeason, text: t.visitor.bestSeasonText, color: "text-orange-400" },
                                 { icon: "fa-solid fa-hotel", label: t.visitor.accommodation, text: t.visitor.accommodationText, color: "text-indigo-400" }
                             ].map((item, idx) => (
                                 <div key={idx} className="flex gap-4">
-                                    <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${item.color}`}
-                                        style={{ background: 'rgba(255,255,255,0.06)' }}>
+                                    <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-white/[0.06] ${item.color}`}>
                                         <i className={`${item.icon} text-sm`}></i>
                                     </div>
                                     <div>
@@ -225,7 +218,7 @@ export default function InfoPage() {
                     {/* Season */}
                     <motion.section variants={itemVariants}>
                         <SectionTitle icon="fa-solid fa-sun" color="border-orange-500" iconColor="text-orange-400" title={t.seasonTitle} />
-                        <div className="rounded-2xl p-5" style={CARD_BG}>
+                        <div className={`rounded-2xl p-5 ${CARD}`}>
                             <p className="text-xs text-slate-500 mb-4">{t.seasonBestMonths}</p>
                             <div className="grid grid-cols-12 gap-1">
                                 {Array.from({ length: 12 }, (_, i) => {
@@ -234,8 +227,8 @@ export default function InfoPage() {
                                     return (
                                         <div key={month} className={clsx(
                                             "h-8 rounded-md flex items-center justify-center text-[10px] font-bold transition-colors",
-                                            active ? "bg-amber-500 text-slate-900" : "text-slate-600"
-                                        )} style={active ? {} : { background: 'rgba(255,255,255,0.04)' }}>
+                                            active ? "bg-amber-500 text-slate-900" : "text-slate-600 bg-white/[0.04]"
+                                        )}>
                                             {month}
                                         </div>
                                     );
@@ -244,11 +237,11 @@ export default function InfoPage() {
                             <div className="flex items-center gap-4 mt-4 text-xs text-slate-400">
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-3 h-3 rounded bg-amber-500 inline-block"></span>
-                                    {language === 'mn' ? 'Тохиромжтой' : 'Best season'}
+                                    {translations[language].seasonGood}
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-3 h-3 rounded inline-block" style={{ background: 'rgba(255,255,255,0.06)' }}></span>
-                                    {language === 'mn' ? 'Хязгаарлагдмал' : 'Limited'}
+                                    <span className="w-3 h-3 rounded inline-block bg-white/[0.06]"></span>
+                                    {translations[language].seasonLimited}
                                 </span>
                             </div>
                         </div>
@@ -257,13 +250,13 @@ export default function InfoPage() {
                     {/* Regulations */}
                     <motion.section variants={itemVariants}>
                         <SectionTitle icon="fa-solid fa-scale-balanced" color="border-red-500" iconColor="text-red-500" title={t.regulations.title} />
-                        <div className="rounded-2xl p-5 space-y-3" style={CARD_BG}>
+                        <div className={`rounded-2xl p-5 space-y-3 ${CARD}`}>
                             {[
                                 { icon: "fa-solid fa-shield", label: t.regulations.protection, text: t.regulations.protectionText },
                                 { icon: "fa-solid fa-camera", label: t.regulations.photography, text: t.regulations.photographyText },
                                 { icon: "fa-solid fa-user-check", label: t.regulations.behavior, text: t.regulations.behaviorText }
                             ].map((item, idx) => (
-                                <div key={idx} className="p-3 rounded-xl border border-white/5" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                                <div key={idx} className="p-3 rounded-xl border border-white/5 bg-black/20">
                                     <h4 className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                                         <i className={item.icon}></i> {item.label}
                                     </h4>
@@ -276,7 +269,7 @@ export default function InfoPage() {
                     {/* Contact */}
                     <motion.section variants={itemVariants}>
                         <SectionTitle icon="fa-solid fa-address-book" color="border-emerald-500" iconColor="text-emerald-500" title={t.contact.title} />
-                        <div className="rounded-2xl p-5 space-y-4" style={CARD_BG}>
+                        <div className={`rounded-2xl p-5 space-y-4 ${CARD}`}>
                             <h3 className="font-bold text-white text-base">{t.contact.office}</h3>
                             <div className="space-y-3">
                                 {[
@@ -301,13 +294,20 @@ export default function InfoPage() {
                                         { icon: "fa-brands fa-instagram", color: "text-pink-400", hover: "hover:bg-pink-600" },
                                     ].map((s, i) => (
                                         <a key={i} href="#"
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center ${s.color} ${s.hover} hover:text-white transition-all border border-white/8`}
-                                            style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center ${s.color} ${s.hover} hover:text-white transition-all border border-white/8 bg-white/5`}>
                                             <i className={`${s.icon} text-lg`}></i>
                                         </a>
                                     ))}
                                 </div>
                             </div>
+                        </div>
+                    </motion.section>
+
+                    {/* Offline */}
+                    <motion.section variants={itemVariants} id="offline">
+                        <SectionTitle icon="fa-solid fa-cloud-arrow-down" color="border-emerald-500" iconColor="text-emerald-500" title={translations[language].offlineTitle} />
+                        <div className={`rounded-2xl p-5 ${CARD}`}>
+                            <OfflineManager t={translations[language]} />
                         </div>
                     </motion.section>
 

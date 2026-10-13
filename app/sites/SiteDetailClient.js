@@ -2,22 +2,26 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { sitesData, getPlaceHolder } from "../../data/sites";
-import { translations } from "../../data/translations";
+import { sitesData, getPlaceHolder } from "../data/sites";
+import { translations } from "../data/translations";
 import Link from 'next/link';
 import clsx from 'clsx';
 import { motion } from "framer-motion";
-import BottomNav from '../../../components/BottomNav';
-import Model3DViewer from '../../../components/Model3DViewer';
+import BottomNav from '../../components/BottomNav';
+import Model3DViewer from '../../components/Model3DViewer';
+import OfflineSaveButton from '../../components/OfflineSaveButton';
+import AIGuide from '../../components/AIGuide';
+import { imageVariant } from '../../lib/image-loader';
+import { useLanguage } from '../../lib/useLanguage';
+import { siteName as localizedName, siteDescription as localizedDescription, protectionName } from '../../lib/i18n';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
-export default function SiteDetailClient({ params }) {
-    const [language, setLanguage] = useState('mn');
+export default function SiteDetailClient({ siteId }) {
+    const [language, setLanguage] = useLanguage();
     const [activeImg, setActiveImg] = useState(0);
-    const site = sitesData.find(s => s.id.toString() === params.id);
+    const site = sitesData.find(s => s.id === siteId);
 
     useEffect(() => {
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
     }, []);
 
     // Auto-slide images
@@ -29,14 +33,9 @@ export default function SiteDetailClient({ params }) {
         return () => clearInterval(autoSlide);
     }, [site]);
 
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     if (!site) return (
-        <div className="flex flex-col items-center justify-center min-h-screen text-slate-400" style={{ background: '#070b14' }}>
+        <div className="flex flex-col items-center justify-center min-h-screen text-slate-400 bg-ink">
             <i className="fa-solid fa-triangle-exclamation text-4xl mb-4 text-amber-500"></i>
             <p className="mb-4">Дурсгалт газар олдсонгүй</p>
             <Link href="/sites" className="px-4 py-2 rounded-xl bg-amber-500 text-slate-900 text-sm font-bold">
@@ -48,9 +47,10 @@ export default function SiteDetailClient({ params }) {
     const t = translations[language];
     const images = site.images && site.images.length > 0 ? site.images : [getPlaceHolder(site.id)];
     const heroImage = images[activeImg];
-    const siteName = language === 'en' && site.nameEn ? site.nameEn : site.name;
-    const siteDescription = language === 'en' && site.descriptionEn ? site.descriptionEn : site.description;
+    const siteName = localizedName(site, language);
+    const siteDescription = localizedDescription(site, language);
     const catLabel = t[site.category] || site.category;
+    const hasTour = Boolean(site.panoramaUrl || site.panoramaTour?.length);
 
     const protectionColors = {
         'Улсын хамгаалалтад': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
@@ -62,28 +62,24 @@ export default function SiteDetailClient({ params }) {
         : null;
 
     return (
-        <div className="pb-28 min-h-screen" style={{ background: '#070b14' }}>
+        <div className="pb-28 min-h-screen bg-ink">
             {/* Top controls */}
             <div className="fixed top-0 left-0 right-0 z-50 p-5 flex justify-between items-start pointer-events-none max-w-[480px] mx-auto w-full">
                 <Link href="/sites"
-                    className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15"
-                    style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                    aria-label={t.back}
+                    className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15 bg-black/50 backdrop-blur-md">
                     <i className="fa-solid fa-arrow-left text-sm"></i>
                 </Link>
                 <div className="flex items-center gap-2 pointer-events-auto">
-                    {(site.panoramaUrl || (site.panoramaTour && site.panoramaTour.length > 0)) && (
-                        <Link href="/tours"
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors"
-                            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
+                    {hasTour && (
+                        <Link href={`/tours?site=${site.id}`}
+                            aria-label={t.startTourAtSite}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors bg-black/50 backdrop-blur-md">
                             <i className="fa-solid fa-vr-cardboard text-[11px]"></i>
                             VR
                         </Link>
                     )}
-                    <button onClick={toggleLanguage}
-                        className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-widest border border-white/15 transition-colors"
-                        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
-                        {language === 'mn' ? 'EN' : 'MN'}
-                    </button>
+                    <LanguageSwitcher language={language} onChange={setLanguage} />
                 </div>
             </div>
 
@@ -94,8 +90,7 @@ export default function SiteDetailClient({ params }) {
 
                 {/* Image counter */}
                 {images.length > 1 && (
-                    <div className="absolute top-16 right-5 px-2.5 py-1 rounded-lg text-[10px] font-bold text-white border border-white/15"
-                        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}>
+                    <div className="absolute top-16 right-5 px-2.5 py-1 rounded-lg text-[10px] font-bold text-white border border-white/15 bg-black/50 backdrop-blur">
                         {activeImg + 1} / {images.length}
                     </div>
                 )}
@@ -133,23 +128,20 @@ export default function SiteDetailClient({ params }) {
                 <motion.div
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="flex gap-3 mb-5">
-                    <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center"
-                        style={{ background: 'rgba(16,24,48,0.7)' }}>
+                    <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center bg-surface/70">
                         <i className="fa-regular fa-clock text-blue-400 mb-1 text-sm"></i>
                         <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.openStatus || 'Нээлтэй'}</span>
                         <span className="text-xs font-bold text-slate-200">24/7</span>
                     </div>
                     {site.altitude && (
-                        <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center"
-                            style={{ background: 'rgba(16,24,48,0.7)' }}>
+                        <div className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center bg-surface/70">
                             <i className="fa-solid fa-mountain text-purple-400 mb-1 text-sm"></i>
                             <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.altitudeLabel || 'Өндөр'}</span>
                             <span className="text-xs font-bold text-slate-200">{site.altitude}</span>
                         </div>
                     )}
                     <Link href={`/map?id=${site.id}`}
-                        className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center transition-all active:scale-95 group"
-                        style={{ background: 'rgba(16,24,48,0.7)' }}>
+                        className="flex-1 p-3 rounded-2xl border border-white/6 flex flex-col items-center justify-center text-center transition-all active:scale-95 group bg-surface/70">
                         <i className="fa-solid fa-location-dot text-emerald-400 mb-1 text-sm group-hover:scale-110 transition-transform"></i>
                         <span className="text-[9px] text-slate-500 uppercase tracking-wider block mb-0.5">{t.viewOnMap}</span>
                         <span className="text-xs font-bold text-slate-200">Map</span>
@@ -161,10 +153,15 @@ export default function SiteDetailClient({ params }) {
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-5">
                         <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${protStyle}`}>
                             <i className="fa-solid fa-shield text-[10px]"></i>
-                            <span>{t.protectionStatus}: {site.protectionStatus}</span>
+                            <span>{t.protectionStatus}: {protectionName(site.protectionStatus, language)}</span>
                         </div>
                     </motion.div>
                 )}
+
+                {/* Offline save */}
+                <div className="mb-5">
+                    <OfflineSaveButton site={site} t={t} />
+                </div>
 
                 {/* Description */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -172,8 +169,7 @@ export default function SiteDetailClient({ params }) {
                         <span className="w-1 h-5 bg-amber-500 rounded-full block"></span>
                         {t.detailAbout}
                     </h3>
-                    <div className="text-slate-300 text-sm leading-relaxed text-justify p-4 rounded-2xl border border-white/5"
-                        style={{ background: 'rgba(16,24,48,0.5)' }}>
+                    <div className="text-slate-300 text-sm leading-relaxed text-justify p-4 rounded-2xl border border-white/5 bg-surface/50">
                         {siteDescription}
                     </div>
                 </motion.div>
@@ -188,10 +184,12 @@ export default function SiteDetailClient({ params }) {
                         <Model3DViewer
                             src={site.model3d}
                             alt={siteName}
-                            poster={heroImage}
+                            poster={imageVariant(heroImage, 1080)}
                         />
                     </motion.div>
                 )}
+
+                <AIGuide siteId={site.id} language={language} t={t} />
 
                 {/* Gallery grid — show all images as tappable grid */}
                 {images.length > 1 && (
@@ -223,11 +221,11 @@ export default function SiteDetailClient({ params }) {
 
                 {/* CTA */}
                 <div className="mt-8 mb-4">
-                    <Link href="/tours">
-                        <button className="btn btn-primary w-full h-14 text-base shadow-lg shadow-amber-500/20">
-                            {t.startTourHere || 'Аялал эхлэх'}
-                            <i className="fa-solid fa-arrow-right ml-2"></i>
-                        </button>
+                    <Link
+                        href={hasTour ? `/tours?site=${site.id}` : '/tours'}
+                        className="btn btn-primary w-full h-14 text-base shadow-lg shadow-amber-500/20">
+                        {hasTour ? t.startTourAtSite : (t.startTourHere || 'Аялал эхлэх')}
+                        <i className="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
                     </Link>
                 </div>
             </div>

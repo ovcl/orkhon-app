@@ -3,7 +3,7 @@
 // тул position:fixed тохируулсан map canvas зөв хэмжээгээр харагдахгүй болдог.
 export default function MapLayout({ children }) {
     return (
-        <div style={{ position: "relative", minHeight: "100vh", background: "#070b14" }}>
+        <div className="relative min-h-screen bg-ink">
             {children}
         </div>
     );

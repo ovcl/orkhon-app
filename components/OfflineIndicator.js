@@ -32,14 +32,9 @@ export default function OfflineIndicator() {
 
     return (
         <div
-            className="fixed top-0 left-0 right-0 z-[9999] text-center py-2 px-4 text-xs font-semibold tracking-wide transition-all duration-300"
-            style={{
-                background: isOffline
-                    ? 'linear-gradient(90deg, #ef4444, #dc2626)'
-                    : 'linear-gradient(90deg, #22c55e, #16a34a)',
-                color: 'white',
-                animation: 'slideDown 0.3s ease-out',
-            }}
+            className={`fixed top-0 left-0 right-0 z-[9999] text-center py-2 px-4 text-xs font-semibold tracking-wide text-white transition-all duration-300 animate-[slideDown_0.3s_ease-out] bg-gradient-to-r ${
+                isOffline ? 'from-red-500 to-red-600' : 'from-green-500 to-green-600'
+            }`}
         >
             {isOffline ? (
                 <span className="flex items-center justify-center gap-2">

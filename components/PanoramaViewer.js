@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import clsx from 'clsx';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import panoramaMeta from '../app/data/panorama-manifest.json';
 
 /**
  * PanoramaViewer — VR-native 360° харагч + HOTSPOT NAVIGATION
@@ -33,14 +34,54 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
  * - initialIndex: эхлэх индекс (default 0)
  * - onIndexChange: (index) => void
  */
-export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange, showControls = true }) {
+// Харанхуй панорамыг автоматаар гэрэлтүүлэх зорилтот дундаж гэрэлтүүлэг (0–255, бүх панорамын медиан)
+const TARGET_LUM = 116;
+const FOV_MIN = 30;
+const FOV_MAX = 90;
+const VIEW_PREFS_KEY = 'pano-view';
+const HINT_KEY = 'pano-hint-seen';
+
+function readViewPrefs() {
+    try {
+        const v = JSON.parse(localStorage.getItem(VIEW_PREFS_KEY) || '{}');
+        return { enhance: v.enhance !== false, brightness: Number(v.brightness) || 1 };
+    } catch {
+        return { enhance: true, brightness: 1 };
+    }
+}
+
+/** Гэрэлтүүлэг/тодруулгын shader параметр: зураг харанхуй байх тусам сүүдрийг илүү өргөнө. */
+function enhanceParams(url, enhance, brightness) {
+    const lum = panoramaMeta[url]?.lum ?? TARGET_LUM;
+    const autoLift = enhance ? Math.min(1.75, Math.max(1, 1 + ((TARGET_LUM - lum) / TARGET_LUM) * 1.2)) : 1;
+    return { lift: autoLift * brightness, saturation: enhance ? 1.08 : 1, sharpen: enhance ? 0.35 : 0 };
+}
+
+export default function PanoramaViewer({
+    scenes,
+    initialIndex = 0,
+    onIndexChange,
+    showControls = true,
+    t = {},
+    uiHidden = false,
+    onToggleUi,
+    bottomInset = 20,
+}) {
     const containerRef = useRef(null);
+    const stripRef = useRef(null);
     const [loading, setLoading] = useState(true);
+    const [hdLoading, setHdLoading] = useState(false);
     const [isPresenting, setIsPresenting] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
-    const [showDragHint, setShowDragHint] = useState(true);
     const [xrSupported, setXrSupported] = useState(null);
-    const [showFlatInfo, setShowFlatInfo] = useState(false);
+    const [autoRotate, setAutoRotate] = useState(true);
+    const [gyroAvailable, setGyroAvailable] = useState(false);
+    const [gyroOn, setGyroOn] = useState(false);
+    const [viewPrefs, setViewPrefs] = useState({ enhance: true, brightness: 1 });
+    const [showLight, setShowLight] = useState(false);
+    const [showHint, setShowHint] = useState(false);
+    const viewPrefsRef = useRef(viewPrefs);
+    viewPrefsRef.current = viewPrefs;
 
     const currentIndexRef = useRef(initialIndex);
     const sceneStateRef = useRef({});
@@ -87,6 +128,36 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         const geometry = new THREE.SphereGeometry(500, 60, 40);
         geometry.scale(-1, 1, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        // Эх зургийг өөрчлөхгүйгээр render үед: харанхуй хэсгийг өргөх (gamma муруй), бага зэрэг
+        // өнгө нэмэх, нарийн тодруулга (unsharp mask). Утгыг enhanceParams() тооцно.
+        const enhanceUniforms = {
+            uLift: { value: 1 },
+            uSat: { value: 1 },
+            uSharpen: { value: 0 },
+            uTexel: { value: new THREE.Vector2(1 / 8192, 1 / 4096) },
+        };
+        material.onBeforeCompile = (shader) => {
+            Object.assign(shader.uniforms, enhanceUniforms);
+            shader.fragmentShader =
+                'uniform float uLift;\nuniform float uSat;\nuniform float uSharpen;\nuniform vec2 uTexel;\n' +
+                shader.fragmentShader.replace(
+                    '#include <map_fragment>',
+                    `#ifdef USE_MAP
+                        vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+                        if ( uSharpen > 0.0 ) {
+                            vec3 nb = texture2D( map, vMapUv + vec2( uTexel.x, 0.0 ) ).rgb + texture2D( map, vMapUv - vec2( uTexel.x, 0.0 ) ).rgb
+                                + texture2D( map, vMapUv + vec2( 0.0, uTexel.y ) ).rgb + texture2D( map, vMapUv - vec2( 0.0, uTexel.y ) ).rgb;
+                            sampledDiffuseColor.rgb = max( sampledDiffuseColor.rgb + ( sampledDiffuseColor.rgb - nb * 0.25 ) * uSharpen, 0.0 );
+                        }
+                        diffuseColor *= sampledDiffuseColor;
+                        vec3 g = pow( clamp( diffuseColor.rgb, 0.0, 1.0 ), vec3( 1.0 / 2.2 ) );
+                        g = 1.0 - pow( 1.0 - g, vec3( uLift ) );
+                        float lum = dot( g, vec3( 0.2126, 0.7152, 0.0722 ) );
+                        g = mix( vec3( lum ), g, uSat );
+                        diffuseColor.rgb = pow( clamp( g, 0.0, 1.0 ), vec3( 2.2 ) );
+                    #endif`
+                );
+        };
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
 
@@ -121,28 +192,73 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
 
         renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-        const loadTexture = (url, fadeIn = true) => {
+        let currentUrl = null;
+        let loadToken = 0;
+
+        const applyEnhance = () => {
+            if (!currentUrl) return;
+            const { enhance, brightness } = viewPrefsRef.current;
+            const p = enhanceParams(currentUrl, enhance, brightness);
+            enhanceUniforms.uLift.value = p.lift;
+            enhanceUniforms.uSat.value = p.saturation;
+            enhanceUniforms.uSharpen.value = p.sharpen;
+        };
+
+        const setMap = (texture) => {
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            texture.minFilter = THREE.LinearMipmapLinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.generateMipmaps = true;
+            const previous = material.map;
+            material.map = texture;
+            material.color.set(0xffffff);
+            material.needsUpdate = true;
+            enhanceUniforms.uTexel.value.set(1 / (texture.image?.width || 8192), 1 / (texture.image?.height || 4096));
+            if (previous && previous !== texture) previous.dispose();
+        };
+
+        const loadImage = (url) =>
+            new Promise((resolve, reject) => textureLoader.load(url, resolve, undefined, reject));
+
+        // Эхлээд 2048px preview-г агшин зуур харуулж, дараа нь бүрэн 8K зургийг ард нь ачаална.
+        // Офлайн үед 8K кэшэд байхгүй бол preview хэвээр харагдана.
+        const loadTexture = async (url, fadeIn = true) => {
+            const token = ++loadToken;
+            currentUrl = url;
+            applyEnhance();
+            const preview = panoramaMeta[url]?.preview;
             setLoading(true);
-            textureLoader.load(url, (texture) => {
-                if (isCancelled) return;
-                texture.colorSpace = THREE.SRGBColorSpace;
-                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                texture.minFilter = THREE.LinearMipmapLinearFilter;
-                texture.magFilter = THREE.LinearFilter;
-                texture.generateMipmaps = true;
-                material.map = texture;
-                material.color.set(0xffffff);
-                material.needsUpdate = true;
-                setLoading(false);
-            }, undefined, (err) => {
-                if (!isCancelled) {
+            setHdLoading(false);
+            let shown = false;
+            if (preview) {
+                try {
+                    const tex = await loadImage(preview);
+                    if (isCancelled || token !== loadToken) return tex.dispose();
+                    setMap(tex);
+                    shown = true;
+                    setLoading(false);
+                    if (fadeIn) fadeTo(0, 400);
+                } catch {}
+            }
+            setHdLoading(shown);
+            try {
+                const full = await loadImage(url);
+                if (isCancelled || token !== loadToken) return full.dispose();
+                setMap(full);
+                if (!shown && fadeIn) fadeTo(0, 400);
+            } catch (err) {
+                if (!shown && !isCancelled && token === loadToken) {
                     console.error('Failed to load panorama image:', url, err);
                     material.map = null;
                     material.color.set(0x111111);
                     material.needsUpdate = true;
-                    setLoading(false);
                 }
-            });
+            }
+            if (!isCancelled && token === loadToken) {
+                setLoading(false);
+                setHdLoading(false);
+            }
         };
 
         let fadeAnim = null;
@@ -168,24 +284,99 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         controls.enableDamping = true;
         controls.dampingFactor = 0.12;
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 1.4;
-        setTimeout(() => { if (!isCancelled) controls.autoRotateSpeed = 0.2; }, 3000);
+        controls.autoRotateSpeed = 0.35;
         camera.position.set(0, 0, 0.1);
         controls.target.set(-0.87, -0.58, 0.5);
         controls.update();
 
         const onFirstInteract = () => {
-            setShowDragHint(false);
             controls.autoRotate = false;
+            setAutoRotate(false);
         };
         renderer.domElement.addEventListener('pointerdown', onFirstInteract, { once: true });
 
-        const onWheel = (e) => {
-            e.preventDefault();
-            camera.fov = Math.max(30, Math.min(100, camera.fov + e.deltaY * 0.05));
+        const setFov = (fov) => {
+            camera.fov = Math.max(FOV_MIN, Math.min(FOV_MAX, fov));
             camera.updateProjectionMatrix();
         };
+        const onWheel = (e) => {
+            e.preventDefault();
+            setFov(camera.fov + e.deltaY * 0.05);
+        };
         renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
+
+        // Хоёр хуруугаар чимхэж томруулах
+        const touches = new Map();
+        let pinchStart = null;
+        const pinchDistance = () => {
+            const [a, b] = [...touches.values()];
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        };
+        const onTouchDown = (e) => {
+            if (e.pointerType !== 'touch') return;
+            touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (touches.size === 2) pinchStart = { dist: pinchDistance(), fov: camera.fov };
+        };
+        const onTouchMove = (e) => {
+            if (!touches.has(e.pointerId)) return;
+            touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (touches.size === 2 && pinchStart) setFov(pinchStart.fov * (pinchStart.dist / pinchDistance()));
+        };
+        const onTouchUp = (e) => {
+            touches.delete(e.pointerId);
+            if (touches.size < 2) pinchStart = null;
+        };
+        renderer.domElement.addEventListener('pointerdown', onTouchDown);
+        renderer.domElement.addEventListener('pointermove', onTouchMove);
+        window.addEventListener('pointerup', onTouchUp);
+        window.addEventListener('pointercancel', onTouchUp);
+
+        // Гироскоп: утсаа эргүүлэхэд харах чиглэл дагана (хуучин three.js DeviceOrientationControls-ийн томьёо)
+        const gyro = { enabled: false, has: false, alpha: 0, beta: 0, gamma: 0, offset: 0 };
+        const zee = new THREE.Vector3(0, 0, 1);
+        const gyroEuler = new THREE.Euler();
+        const q0 = new THREE.Quaternion();
+        const q1 = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5));
+        const onOrientation = (e) => {
+            if (e.alpha == null) return;
+            gyro.has = true;
+            gyro.alpha = e.alpha;
+            gyro.beta = e.beta;
+            gyro.gamma = e.gamma;
+        };
+        const screenAngle = () => THREE.MathUtils.degToRad(window.screen?.orientation?.angle ?? window.orientation ?? 0);
+        const currentYaw = () => {
+            const d = new THREE.Vector3();
+            camera.getWorldDirection(d);
+            return THREE.MathUtils.radToDeg(Math.atan2(-d.x, -d.z));
+        };
+        const setGyro = (on) => {
+            gyro.enabled = on;
+            if (on) {
+                window.addEventListener('deviceorientation', onOrientation);
+                gyro.offset = null; // эхний уншилтаар одоогийн чиглэлд тааруулна
+                controls.enabled = false;
+                controls.autoRotate = false;
+            } else {
+                window.removeEventListener('deviceorientation', onOrientation);
+                const d = new THREE.Vector3();
+                camera.getWorldDirection(d);
+                controls.target.copy(camera.position).add(d);
+                controls.enabled = true;
+                controls.update();
+            }
+        };
+        const updateGyro = () => {
+            if (!gyro.enabled || !gyro.has) return;
+            if (gyro.offset === null) gyro.offset = gyro.alpha - currentYaw();
+            const alpha = THREE.MathUtils.degToRad(gyro.alpha - gyro.offset);
+            const beta = THREE.MathUtils.degToRad(gyro.beta);
+            const gamma = THREE.MathUtils.degToRad(gyro.gamma);
+            gyroEuler.set(beta, alpha, -gamma, 'YXZ');
+            camera.quaternion.setFromEuler(gyroEuler);
+            camera.quaternion.multiply(q1);
+            camera.quaternion.multiply(q0.setFromAxisAngle(zee, -screenAngle()));
+        };
 
         // ---------- VR: 3D navigation UI (camera-т наасан, харах чиглэлээс үл хамаарна) ----------
         const createInfoTexture = (title, text) => {
@@ -646,28 +837,25 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         renderer.xr.addEventListener('sessionstart', onSessionStart);
         renderer.xr.addEventListener('sessionend', onSessionEnd);
 
-        let vrButtonElement = null;
         if (navigator.xr) {
             navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
-                if (isCancelled) return;
-                setXrSupported(supported);
-                // ЗӨВХӨН бодитоор дэмжигдэх үед three.js-ийн VR товчийг үүсгэнэ —
-                // үгүй бол three.js өөрийн "VR NOT SUPPORTED" мессежийг харуулж,
-                // миний доод талын зөөлөн tooltip-тэй давхцаж, эмх замбараагүй
-                // харагддаг байсныг арилгав.
-                if (supported && !isCancelled) {
-                    vrButtonElement = VRButton.createButton(renderer);
-                    vrButtonElement.style.position = 'absolute';
-                    vrButtonElement.style.bottom = '20px';
-                    vrButtonElement.style.left = '50%';
-                    vrButtonElement.style.transform = 'translateX(-50%)';
-                    vrButtonElement.style.zIndex = '100';
-                    container.appendChild(vrButtonElement);
-                }
+                if (!isCancelled) setXrSupported(supported);
             }).catch(() => { if (!isCancelled) setXrSupported(false); });
         } else {
             setXrSupported(false);
         }
+        // three.js-ийн VRButton-той ижил session тохиргоо — товчийг өөрсдийн UI-д байрлуулна
+        const enterVR = async () => {
+            if (renderer.xr.getSession()) return renderer.xr.getSession().end();
+            try {
+                const session = await navigator.xr.requestSession('immersive-vr', {
+                    optionalFeatures: ['local-floor', 'bounded-floor', 'layers'],
+                });
+                await renderer.xr.setSession(session);
+            } catch (err) {
+                console.error('WebXR session failed', err);
+            }
+        };
 
         buildHotspots(currentIndexRef.current);
         buildModels3d(currentIndexRef.current);
@@ -675,6 +863,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         renderer.setAnimationLoop(() => {
             if (isCancelled) return;
             if (controls.enabled) controls.update();
+            updateGyro();
 
             const pulseTime = performance.now() / 1000;
             hotspotMeshes.forEach((h) => {
@@ -739,11 +928,29 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         });
         resizeObserver.observe(container);
 
-        sceneStateRef.current = { loadTexture, fadeTo, updateInfoPanelText, buildHotspots, buildModels3d };
+        sceneStateRef.current = {
+            loadTexture,
+            fadeTo,
+            updateInfoPanelText,
+            buildHotspots,
+            buildModels3d,
+            applyEnhance,
+            zoomBy: (delta) => setFov(camera.fov + delta),
+            setAutoRotate: (on) => {
+                controls.autoRotate = on;
+            },
+            setGyro,
+            enterVR,
+        };
 
         return () => {
             isCancelled = true;
             renderer.domElement.removeEventListener('wheel', onWheel);
+            renderer.domElement.removeEventListener('pointerdown', onTouchDown);
+            renderer.domElement.removeEventListener('pointermove', onTouchMove);
+            window.removeEventListener('pointerup', onTouchUp);
+            window.removeEventListener('pointercancel', onTouchUp);
+            window.removeEventListener('deviceorientation', onOrientation);
             renderer.domElement.removeEventListener('pointerdown', onPointerDown);
             renderer.domElement.removeEventListener('pointerup', onPointerUp);
             renderer.xr.removeEventListener('sessionstart', onSessionStart);
@@ -760,7 +967,6 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
             geometry.dispose();
             scene.clear();
             if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
-            if (vrButtonElement && container.contains(vrButtonElement)) container.removeChild(vrButtonElement);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [scenes]);
@@ -792,134 +998,220 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentIndex]);
 
+    // ---------- UI төлөв ↔ three.js ----------
+    useEffect(() => {
+        setViewPrefs(readViewPrefs());
+        setGyroAvailable(typeof window.DeviceOrientationEvent !== 'undefined' && window.matchMedia('(pointer: coarse)').matches);
+        try {
+            if (showControls && !localStorage.getItem(HINT_KEY)) setShowHint(true);
+        } catch {}
+    }, [showControls]);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(VIEW_PREFS_KEY, JSON.stringify(viewPrefs));
+        } catch {}
+        sceneStateRef.current.applyEnhance?.();
+    }, [viewPrefs]);
+
+    useEffect(() => {
+        sceneStateRef.current.setAutoRotate?.(autoRotate);
+    }, [autoRotate]);
+
+    const toggleGyro = async () => {
+        const next = !gyroOn;
+        if (next && typeof window.DeviceOrientationEvent?.requestPermission === 'function') {
+            try {
+                if ((await window.DeviceOrientationEvent.requestPermission()) !== 'granted') return;
+            } catch {
+                return;
+            }
+        }
+        sceneStateRef.current.setGyro?.(next);
+        setGyroOn(next);
+        if (next) setAutoRotate(false);
+    };
+
+    const dismissHint = () => {
+        setShowHint(false);
+        try {
+            localStorage.setItem(HINT_KEY, '1');
+        } catch {}
+    };
+
+    useEffect(() => {
+        if (!showControls) return;
+        const onKey = (e) => {
+            if (e.target.closest?.('input, textarea, select')) return;
+            if (e.key === 'ArrowLeft') goTo(-1);
+            else if (e.key === 'ArrowRight') goTo(1);
+            else if (e.key === '+' || e.key === '=') sceneStateRef.current.zoomBy?.(-8);
+            else if (e.key === '-') sceneStateRef.current.zoomBy?.(8);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [showControls, goTo]);
+
+    const siteScenes = useMemo(() => {
+        const siteId = scenes[currentIndex]?.siteId;
+        return scenes.map((s, index) => ({ ...s, index })).filter((s) => s.siteId === siteId);
+    }, [scenes, currentIndex]);
+    const scenePosition = siteScenes.findIndex((s) => s.index === currentIndex) + 1;
+
+    useEffect(() => {
+        stripRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }, [currentIndex, uiHidden]);
+
+    const railButton = (key, { icon, label, onClick, active = false }) => (
+        <button
+            key={key}
+            type="button"
+            onClick={onClick}
+            title={label}
+            aria-label={label}
+            aria-pressed={active}
+            className={clsx(
+                'w-10 h-10 shrink-0 rounded-full flex items-center justify-center border backdrop-blur-md transition-colors',
+                active ? 'bg-amber-500 text-slate-900 border-amber-400' : 'bg-glass/70 text-white border-white/15 hover:bg-glass/90'
+            )}
+        >
+            <i className={`fa-solid ${icon} text-sm`} aria-hidden="true"></i>
+        </button>
+    );
+
+    const controlsVisible = showControls && !isPresenting;
+
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#000', borderRadius: '12px', overflow: 'hidden' }}>
+        <div className="relative w-full h-full bg-black overflow-hidden">
+            <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none" />
+
             {loading && (
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                    <i className="fa-solid fa-circle-notch fa-spin fa-2x"></i>
-                    <span style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>Loading 360...</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white/70 pointer-events-none">
+                    <i className="fa-solid fa-circle-notch fa-spin text-2xl" aria-hidden="true"></i>
+                    <span className="text-xs font-semibold tracking-wide">{t.vrLoading || 'Loading 360°'}</span>
                 </div>
             )}
 
-            {!loading && showDragHint && !isPresenting && (
-                <div style={{ position: 'absolute', top: '68px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '999px', fontSize: '12px', zIndex: 60, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="fa-solid fa-arrows-up-down-left-right" style={{ fontSize: '11px' }}></i>
-                    Чирж тойрч хараарай
-                </div>
-            )}
-
-            {showControls && xrSupported === false && !isPresenting && (
-                <div style={{ position: 'absolute', bottom: scenes.length > 1 ? '75px' : '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: '999px', fontSize: '11px', zIndex: 60, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="fa-solid fa-circle-info"></i>
-                    VR-ээр үзэхийн тулд Meta Quest Browser-аар нээнэ үү
-                </div>
-            )}
-
-            {showControls && !isPresenting && (
+            {controlsVisible && uiHidden && (
                 <button
-                    onClick={() => setShowFlatInfo((v) => !v)}
-                    aria-label="Мэдээлэл"
-                    style={{ position: 'absolute', bottom: scenes.length > 1 ? '80px' : '20px', left: '20px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(10,10,14,0.65)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                    type="button"
+                    onClick={onToggleUi}
+                    aria-label={t.vrShowUI}
+                    title={t.vrShowUI}
+                    className="absolute right-3 bottom-4 z-40 w-11 h-11 rounded-full bg-glass/70 border border-white/20 text-white backdrop-blur-md flex items-center justify-center"
                 >
-                    <i className="fa-solid fa-info"></i>
+                    <i className="fa-solid fa-eye" aria-hidden="true"></i>
                 </button>
             )}
 
-            {showControls && !isPresenting && showFlatInfo && (
-                <div style={{ position: 'absolute', bottom: scenes.length > 1 ? '130px' : '70px', left: '20px', maxWidth: '280px', background: 'rgba(10,10,14,0.85)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '12px', padding: '14px 16px', zIndex: 60, color: '#fff' }}>
-                    <p style={{ margin: '0 0 6px', fontWeight: 'bold', fontSize: '14px' }}>{scenes[currentIndex]?.name}</p>
-                    <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>{scenes[currentIndex]?.description}</p>
-                </div>
-            )}
-
-            {/* ───── PREMIUM тогтмол гарчиг + group tabs ───── */}
-            {showControls && !isPresenting && scenes.length > 1 && (() => {
-                const currentScene = scenes[currentIndex];
-                const siteScenes = scenes.filter((s) => s.siteId === currentScene.siteId);
-                const groupOrder = [];
-                siteScenes.forEach((s) => { if (s.group && !groupOrder.includes(s.group)) groupOrder.push(s.group); });
-                const hasGroups = groupOrder.length > 1;
-                const currentGroup = currentScene.group;
-
-                // Тухайн бүлэг доторх өнцгийн индекс (жишээ нь "2 / 3")
-                const groupScenes = currentGroup ? siteScenes.filter((s) => s.group === currentGroup) : [];
-                const angleIndex = groupScenes.findIndex((s) => s === currentScene);
-                const angleTotal = groupScenes.length;
-
-                const jumpToGroup = (g) => {
-                    const target = scenes.findIndex((s) => s.siteId === currentScene.siteId && s.group === g);
-                    if (target !== -1) navigateTo(target);
-                };
-
-                return (
-                    <div style={{ position: 'absolute', top: '68px', left: '50%', transform: 'translateX(-50%)', zIndex: 55, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', maxWidth: '92vw' }}>
-                        {/* Тогтмол харагдах гарчиг — museum brand-ийн Playfair Display фонт */}
-                        <div style={{ background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(10px)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '999px', padding: '8px 20px', textAlign: 'center' }}>
-                            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: '15px', color: '#fff' }}>
-                                {currentGroup && angleTotal > 1 ? currentGroup : currentScene.name}
-                            </span>
-                            {currentGroup && angleTotal > 1 && (
-                                <span style={{ marginLeft: '8px', fontSize: '11px', color: 'rgba(245,158,11,0.9)', fontFamily: "'Inter', sans-serif" }}>
-                                    {angleIndex + 1}/{angleTotal}
-                                </span>
-                            )}
-                        </div>
-
-                        {/* Group tabs — олон дэд дурсгалтай цогцолборт л харагдана (жишээ нь Хөшөө Цайдам, Эрдэнэ Зуу) */}
-                        {hasGroups && (
-                            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', maxWidth: '92vw', padding: '2px' }}>
-                                {groupOrder.map((g) => (
-                                    <button
-                                        key={g}
-                                        onClick={() => jumpToGroup(g)}
-                                        style={{
-                                            flexShrink: 0,
-                                            background: g === currentGroup ? '#f59e0b' : 'rgba(10,10,14,0.6)',
-                                            color: g === currentGroup ? '#0f172a' : 'rgba(255,255,255,0.75)',
-                                            border: '1px solid ' + (g === currentGroup ? '#f59e0b' : 'rgba(255,255,255,0.15)'),
-                                            borderRadius: '999px',
-                                            padding: '5px 14px',
-                                            fontSize: '12px',
-                                            fontWeight: g === currentGroup ? 600 : 400,
-                                            whiteSpace: 'nowrap',
-                                            transition: 'all 0.2s ease',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        {g}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+            {controlsVisible && !uiHidden && (
+                <>
+                    {/* Баруун талын хяналт */}
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5 max-h-[calc(100%-200px)] overflow-y-auto no-scrollbar">
+                        {railButton('zin', { icon: 'fa-plus', label: t.vrZoomIn, onClick: () => sceneStateRef.current.zoomBy?.(-10) })}
+                        {railButton('zout', { icon: 'fa-minus', label: t.vrZoomOut, onClick: () => sceneStateRef.current.zoomBy?.(10) })}
+                        {railButton('rot', { icon: 'fa-rotate', label: t.vrAutoRotate, active: autoRotate, onClick: () => setAutoRotate((v) => !v) })}
+                        {gyroAvailable && railButton('gyro', { icon: 'fa-mobile-screen-button', label: t.vrGyro, active: gyroOn, onClick: toggleGyro })}
+                        {railButton('light', { icon: 'fa-sun', label: t.vrBrightness, active: showLight, onClick: () => setShowLight((v) => !v) })}
+                        {xrSupported && railButton('vr', { icon: 'fa-vr-cardboard', label: t.vrEnterVR, onClick: () => sceneStateRef.current.enterVR?.() })}
+                        {railButton('help', { icon: 'fa-circle-question', label: t.vrHelp, onClick: () => setShowHint(true) })}
+                        {onToggleUi && railButton('hide', { icon: 'fa-eye-slash', label: t.vrHideUI, onClick: onToggleUi })}
                     </div>
-                );
-            })()}
 
-            {showControls && !isPresenting && scenes.length > 1 && (
-                <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50, pointerEvents: 'none' }}>
-                    <button
-                        onClick={() => goTo(-1)}
-                        disabled={currentIndex === 0}
-                        aria-label="Өмнөх"
-                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: currentIndex === 0 ? 0.3 : 1, transition: 'transform 0.15s ease' }}
-                    >
-                        <i className="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <span style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', color: 'rgba(255,255,255,0.85)', borderRadius: '999px', padding: '10px 18px', fontSize: '12px', fontFamily: "'Inter', sans-serif", letterSpacing: '0.3px' }}>
-                        {currentIndex + 1} / {scenes.length}
-                    </span>
-                    <button
-                        onClick={() => goTo(1)}
-                        disabled={currentIndex === scenes.length - 1}
-                        aria-label="Дараах"
-                        style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', borderRadius: '999px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: currentIndex === scenes.length - 1 ? 0.3 : 1, transition: 'transform 0.15s ease' }}
-                    >
-                        <i className="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
+                    {/* Гэрэлтүүлэг / сайжруулалт */}
+                    {showLight && (
+                        <div className="absolute right-16 top-1/2 -translate-y-1/2 z-40 w-60 rounded-2xl bg-navy/95 backdrop-blur-lg border border-white/10 p-4 text-white shadow-2xl">
+                            <div className="flex items-center justify-between text-xs font-semibold mb-2">
+                                <span>{t.vrBrightness}</span>
+                                <span className="text-amber-400">{Math.round(viewPrefs.brightness * 100)}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0.6"
+                                max="1.6"
+                                step="0.05"
+                                value={viewPrefs.brightness}
+                                onChange={(e) => setViewPrefs((p) => ({ ...p, brightness: Number(e.target.value) }))}
+                                aria-label={t.vrBrightness}
+                                className="w-full accent-amber-500"
+                            />
+                            <label className="mt-3 flex items-center justify-between gap-3 text-xs cursor-pointer">
+                                <span>{t.vrEnhance}</span>
+                                <input
+                                    type="checkbox"
+                                    checked={viewPrefs.enhance}
+                                    onChange={(e) => setViewPrefs((p) => ({ ...p, enhance: e.target.checked }))}
+                                    className="w-4 h-4 accent-amber-500"
+                                />
+                            </label>
+                        </div>
+                    )}
+
+                    {hdLoading && (
+                        <div className="absolute left-3 top-[76px] z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur text-[10px] font-bold text-white/80 pointer-events-none">
+                            <i className="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> HD
+                        </div>
+                    )}
+
+                    {/* Энэ дурсгалын байршлууд */}
+                    {siteScenes.length > 1 && (
+                        <div className="absolute left-0 right-0 z-30 px-3" style={{ bottom: bottomInset }}>
+                            <div className="px-1 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/70 drop-shadow">
+                                {t.vrScenes} · {scenePosition}/{siteScenes.length}
+                            </div>
+                            <div ref={stripRef} className="flex gap-2 overflow-x-auto no-scrollbar snap-x pb-1">
+                                {siteScenes.map((sc) => {
+                                    const active = sc.index === currentIndex;
+                                    const thumb = panoramaMeta[sc.url]?.thumb;
+                                    return (
+                                        <button
+                                            key={sc.index}
+                                            type="button"
+                                            data-active={active}
+                                            aria-current={active ? 'true' : undefined}
+                                            onClick={() => navigateTo(sc.index)}
+                                            className={clsx(
+                                                'snap-start shrink-0 w-[112px] rounded-xl overflow-hidden border text-left bg-black/55 backdrop-blur-md transition-all',
+                                                active ? 'border-amber-400 ring-2 ring-amber-400/40' : 'border-white/15 opacity-80 hover:opacity-100'
+                                            )}
+                                        >
+                                            {thumb ? (
+                                                <img src={thumb} alt="" loading="lazy" className="w-full h-14 object-cover" />
+                                            ) : (
+                                                <div className="w-full h-14 bg-white/10" />
+                                            )}
+                                            <span className="block px-2 py-1 h-[30px] text-[10px] leading-tight text-white line-clamp-2">{sc.name}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
 
-            <div ref={containerRef} style={{ width: '100%', height: '100%', cursor: 'grab' }} />
+            {showHint && controlsVisible && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm p-6" onClick={dismissHint}>
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="pano-hint-title"
+                        className="w-full max-w-xs rounded-2xl bg-navy/95 border border-white/10 p-5 text-white shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 id="pano-hint-title" className="font-heading text-lg font-bold mb-4">{t.vrHintTitle}</h3>
+                        <ul className="space-y-3 text-sm text-slate-200">
+                            <li className="flex gap-3"><i className="fa-solid fa-hand-pointer text-amber-400 w-5 mt-0.5" aria-hidden="true"></i>{t.vrHintDrag}</li>
+                            <li className="flex gap-3"><i className="fa-solid fa-magnifying-glass-plus text-amber-400 w-5 mt-0.5" aria-hidden="true"></i>{t.vrHintZoom}</li>
+                            <li className="flex gap-3"><i className="fa-solid fa-circle-arrow-up text-amber-400 w-5 mt-0.5" aria-hidden="true"></i>{t.vrHintHotspot}</li>
+                            {xrSupported === false && (
+                                <li className="flex gap-3 text-xs text-slate-400"><i className="fa-solid fa-vr-cardboard w-5 mt-0.5" aria-hidden="true"></i>{t.vrQuestHint}</li>
+                            )}
+                        </ul>
+                        <button type="button" onClick={dismissHint} className="btn btn-primary w-full mt-5">{t.vrHintGotIt}</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

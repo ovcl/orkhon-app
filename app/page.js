@@ -8,7 +8,8 @@ import { translations } from './data/translations';
 import { sitesData } from './data/sites';
 import clsx from 'clsx';
 import BottomNav from '../components/BottomNav';
-import OfflineIndicator from '../components/OfflineIndicator';
+import { useLanguage } from '../lib/useLanguage';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 12 },
@@ -29,44 +30,36 @@ const scaleIn = {
 };
 
 export default function Home() {
-    const [language, setLanguage] = useState('mn');
+    const [language, setLanguage] = useLanguage();
     const [scrolled, setScrolled] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        const savedLang = localStorage.getItem('language');
-        if (savedLang) setLanguage(savedLang);
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const t = translations[language];
-    const toggleLanguage = () => {
-        const newLang = language === 'mn' ? 'en' : 'mn';
-        setLanguage(newLang);
-        localStorage.setItem('language', newLang);
-    };
 
     const vrSitesCount = sitesData.filter(s => s.panoramaUrl || (s.panoramaTour && s.panoramaTour.length > 0)).length;
 
     const popularSites = [
-        { img: "/images/sites/16.jpg", title: t.kharakhorum, type: language === 'mn' ? 'Эртний хот' : 'Ancient City', id: 16 },
-        { img: "/images/sites/24.jpg", title: t.erdeneZuu, type: language === 'mn' ? 'Сүм хийд' : 'Monastery', id: 24 },
-        { img: "/images/sites/31.jpg", title: t.ulaanTsutgalan, type: language === 'mn' ? 'Байгаль' : 'Nature', id: 31 },
+        { img: "/images/sites/16.jpg", title: t.kharakhorum, type: t['Эртний хот'], id: 16 },
+        { img: "/images/sites/24.jpg", title: t.erdeneZuu, type: t['Сүм хийд'], id: 24 },
+        { img: "/images/sites/31.jpg", title: t.ulaanTsutgalan, type: t.nature, id: 31 },
     ];
 
     const navCards = [
-        { href: "/sites", icon: "fa-solid fa-landmark", title: t.navSites, desc: language === 'mn' ? `${sitesData.length} дурсгал` : `${sitesData.length} sites`, gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", accentColor: "bg-blue-500" },
-        { href: "/map", icon: "fa-solid fa-map-location-dot", title: t.navMap, desc: language === 'mn' ? 'Интерактив' : 'Interactive', gradient: "from-emerald-500/20 via-teal-500/10 to-transparent", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-400", accentColor: "bg-emerald-500" },
+        { href: "/sites", icon: "fa-solid fa-landmark", title: t.navSites, desc: `${sitesData.length} ${t.sitesUnit}`, gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", accentColor: "bg-blue-500" },
+        { href: "/map", icon: "fa-solid fa-map-location-dot", title: t.navMap, desc: t.interactive, gradient: "from-emerald-500/20 via-teal-500/10 to-transparent", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-400", accentColor: "bg-emerald-500" },
         { href: "/tours", icon: "fa-solid fa-vr-cardboard", title: t.navTours, desc: `${vrSitesCount} VR`, gradient: "from-orange-500/20 via-amber-500/10 to-transparent", iconBg: "bg-orange-500/15", iconColor: "text-orange-400", accentColor: "bg-orange-500" },
-        { href: "/info", icon: "fa-solid fa-circle-info", title: t.navInfo, desc: language === 'mn' ? 'Мэдээлэл' : 'Details', gradient: "from-purple-500/20 via-pink-500/10 to-transparent", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", accentColor: "bg-purple-500" }
+        { href: "/info", icon: "fa-solid fa-circle-info", title: t.navInfo, desc: t.details, gradient: "from-purple-500/20 via-pink-500/10 to-transparent", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", accentColor: "bg-purple-500" }
     ];
 
     return (
         <div className="pb-28">
-            <OfflineIndicator />
 
             {/* Header */}
             <header className={clsx(
@@ -86,13 +79,7 @@ export default function Home() {
                         {t.appName}
                     </h1>
                 </div>
-                <button
-                    onClick={toggleLanguage}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest border border-white/10"
-                    style={{ backdropFilter: 'blur(8px)' }}
-                >
-                    {language === 'mn' ? 'EN' : 'MN'}
-                </button>
+                <LanguageSwitcher language={language} onChange={setLanguage} className="rounded-lg text-slate-300 hover:text-white border-white/10" />
             </header>
 
             <main>
@@ -114,12 +101,7 @@ export default function Home() {
                         variants={staggerContainer}
                     >
                         <motion.div variants={fadeIn} className="flex items-center gap-2 mb-4">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/20"
-                                style={{
-                                    background: 'rgba(245, 158, 11, 0.06)',
-                                    backdropFilter: 'blur(16px)',
-                                    boxShadow: '0 0 24px rgba(245, 158, 11, 0.08)',
-                                }}>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/[0.06] backdrop-blur-lg shadow-[0_0_24px_rgba(245,158,11,0.08)]">
                                 <i className="fa-solid fa-crown text-[10px] text-amber-400"></i>
                                 <span className="text-amber-300 text-[10px] font-bold uppercase tracking-[0.15em]">{t.heroBadge}</span>
                             </span>
@@ -147,8 +129,7 @@ export default function Home() {
                             <motion.div
                                 variants={scaleIn}
                                 whileTap={{ scale: 0.97 }}
-                                className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-[#101830]/90 bg-gradient-to-br ${item.gradient} border border-white/10 transition-all duration-300 group-hover:border-white/20 group-hover:shadow-lg relative overflow-hidden`}
-                                style={{ backdropFilter: 'blur(12px)' }}
+                                className={`p-4 h-[96px] flex flex-col items-start justify-between rounded-2xl bg-[#101830]/90 bg-gradient-to-br ${item.gradient} border border-white/10 transition-all duration-300 group-hover:border-white/20 group-hover:shadow-lg relative overflow-hidden backdrop-blur-md`}
                             >
                                 <div className={`absolute -top-6 -right-6 w-16 h-16 ${item.accentColor} rounded-full opacity-[0.08] blur-xl`}></div>
                                 <div className={`w-9 h-9 rounded-xl ${item.iconBg} flex items-center justify-center ${item.iconColor} transition-transform duration-300 group-hover:scale-110`}>
@@ -183,12 +164,8 @@ export default function Home() {
                         {popularSites.map((item, idx) => (
                             <Link key={idx} href={item.id ? `/sites/${item.id}` : '/sites'} className="block min-w-[170px]">
                                 <motion.div
-                                    className="h-[235px] rounded-2xl overflow-hidden relative snap-start group cursor-pointer"
+                                    className="h-[235px] rounded-2xl overflow-hidden relative snap-start group cursor-pointer border border-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
                                     whileTap={{ scale: 0.97 }}
-                                    style={{
-                                        border: '1px solid rgba(255,255,255,0.06)',
-                                        boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                                    }}
                                 >
                                     <Image src={item.img} alt={item.title} fill sizes="200px" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent p-4 flex flex-col justify-end">

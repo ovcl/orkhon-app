@@ -1,30 +1,44 @@
 {
   "name": "orkhon-app",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/check-media.mjs && node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "check:media": "node scripts/check-media.mjs"
   },
   "dependencies": {
-    "@google/model-viewer": "^3.4.0",
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@google/model-viewer": "^4.2.0",
+    "@serwist/next": "^9.5.12",
     "clsx": "^2.1.1",
     "framer-motion": "^12.26.1",
-    "maplibre-gl": "^4.7.1",
-    "next": "14.2.35",
-    "next-pwa": "^5.6.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-map-gl": "^7.1.7",
+    "maplibre-gl": "^6.11.2",
+    "next": "^15.5.27",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "react-unity-webgl": "^10.1.6",
-    "sharp": "^0.34.5",
-    "three": "^0.174.0"
+    "serwist": "^9.5.12",
+    "sharp": "^0.35.5",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.23",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.30",
     "tailwindcss": "^3.4.1"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "overrides": {
+    "postcss": "$postcss",
+    "serialize-javascript": "^7.1.2",
+    "source-map-js": "^1.2.2",
+    "fast-uri": "^3.1.8",
+    "postcss-selector-parser": "^7.1.6",
+    "browserslist": "^4.29.3"
   }
 }

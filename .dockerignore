@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.env*.local
+image-backup-original
+upload_images
+upload_panoramas
+.claude
+.gemini
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+public/_img
+public/_pano
+public/maplibre

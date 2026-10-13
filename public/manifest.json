@@ -5,22 +5,56 @@
     "start_url": "/",
     "display": "standalone",
     "orientation": "portrait",
-    "background_color": "#0a0f1e",
-    "theme_color": "#0a0f1e",
-    "categories": ["travel", "education", "tourism"],
+    "background_color": "#070b14",
+    "theme_color": "#070b14",
+    "categories": [
+        "travel",
+        "education",
+        "tourism"
+    ],
     "lang": "mn",
     "icons": [
         {
             "src": "/logo.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
             "src": "/logo.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "id": "/",
+    "scope": "/",
+    "shortcuts": [
+        {
+            "name": "Дурсгалууд",
+            "short_name": "Дурсгал",
+            "url": "/sites"
+        },
+        {
+            "name": "Газрын зураг",
+            "short_name": "Зураг",
+            "url": "/map"
+        },
+        {
+            "name": "VR аялал",
+            "short_name": "VR",
+            "url": "/tours"
+        },
+        {
+            "name": "Офлайн татах",
+            "short_name": "Офлайн",
+            "url": "/info#offline"
         }
     ]
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-export default function BackgroundAudio() {
+export default function BackgroundAudio({ className = '' }) {
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false); // Хэрэглэгч өөрөө хаасан эсэх
@@ -65,11 +65,9 @@ export default function BackgroundAudio() {
             <audio ref={audioRef} src="/sounds/orkhon-valley.mp3" loop preload="auto" />
             <button
                 onClick={toggleAudio}
-                className="fixed top-5 right-[152px] z-[60] w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white/70 hover:text-amber-400 hover:bg-black/60 flex items-center justify-center transition-all duration-300"
+                className={`${className} ${isPlaying ? 'text-amber-400' : 'text-white/70'}`}
                 aria-label="Toggle Background Music"
-                style={{
-                    boxShadow: isPlaying ? '0 0 15px rgba(245, 158, 11, 0.2)' : 'none'
-                }}
+                aria-pressed={isPlaying}
             >
                 <i className={`fa-solid ${isPlaying ? 'fa-music' : 'fa-volume-xmark'} text-[14px]`}></i>
             </button>
