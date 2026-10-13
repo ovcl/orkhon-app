@@ -2,18 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { sitesData, getPlaceHolder } from "../../data/sites";
-import { translations } from "../../data/translations";
+import { sitesData, getPlaceHolder } from "../data/sites";
+import { translations } from "../data/translations";
 import Link from 'next/link';
 import clsx from 'clsx';
 import { motion } from "framer-motion";
-import BottomNav from '../../../components/BottomNav';
-import Model3DViewer from '../../../components/Model3DViewer';
+import BottomNav from '../../components/BottomNav';
+import Model3DViewer from '../../components/Model3DViewer';
+import OfflineSaveButton from '../../components/OfflineSaveButton';
+import AIGuide from '../../components/AIGuide';
 
-export default function SiteDetailClient({ params }) {
+export default function SiteDetailClient({ siteId }) {
     const [language, setLanguage] = useState('mn');
     const [activeImg, setActiveImg] = useState(0);
-    const site = sitesData.find(s => s.id.toString() === params.id);
+    const site = sitesData.find(s => s.id === siteId);
 
     useEffect(() => {
         const savedLang = localStorage.getItem('language');
@@ -51,6 +53,7 @@ export default function SiteDetailClient({ params }) {
     const siteName = language === 'en' && site.nameEn ? site.nameEn : site.name;
     const siteDescription = language === 'en' && site.descriptionEn ? site.descriptionEn : site.description;
     const catLabel = t[site.category] || site.category;
+    const hasTour = Boolean(site.panoramaUrl || site.panoramaTour?.length);
 
     const protectionColors = {
         'Улсын хамгаалалтад': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
@@ -66,13 +69,15 @@ export default function SiteDetailClient({ params }) {
             {/* Top controls */}
             <div className="fixed top-0 left-0 right-0 z-50 p-5 flex justify-between items-start pointer-events-none max-w-[480px] mx-auto w-full">
                 <Link href="/sites"
+                    aria-label={language === 'mn' ? 'Буцах' : 'Back'}
                     className="pointer-events-auto w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors border border-white/15"
                     style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
                     <i className="fa-solid fa-arrow-left text-sm"></i>
                 </Link>
                 <div className="flex items-center gap-2 pointer-events-auto">
-                    {(site.panoramaUrl || (site.panoramaTour && site.panoramaTour.length > 0)) && (
-                        <Link href="/tours"
+                    {hasTour && (
+                        <Link href={`/tours?site=${site.id}`}
+                            aria-label={t.startTourAtSite}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-amber-400 border border-amber-500/30 transition-colors"
                             style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
                             <i className="fa-solid fa-vr-cardboard text-[11px]"></i>
@@ -80,6 +85,7 @@ export default function SiteDetailClient({ params }) {
                         </Link>
                     )}
                     <button onClick={toggleLanguage}
+                        aria-label={language === 'mn' ? 'Switch to English' : 'Монгол хэл рүү шилжих'}
                         className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-widest border border-white/15 transition-colors"
                         style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)' }}>
                         {language === 'mn' ? 'EN' : 'MN'}
@@ -166,6 +172,11 @@ export default function SiteDetailClient({ params }) {
                     </motion.div>
                 )}
 
+                {/* Offline save */}
+                <div className="mb-5">
+                    <OfflineSaveButton site={site} t={t} />
+                </div>
+
                 {/* Description */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                     <h3 className="font-heading text-lg font-bold text-white mb-3 flex items-center gap-2">
@@ -192,6 +203,8 @@ export default function SiteDetailClient({ params }) {
                         />
                     </motion.div>
                 )}
+
+                <AIGuide siteId={site.id} language={language} t={t} />
 
                 {/* Gallery grid — show all images as tappable grid */}
                 {images.length > 1 && (
@@ -223,11 +236,11 @@ export default function SiteDetailClient({ params }) {
 
                 {/* CTA */}
                 <div className="mt-8 mb-4">
-                    <Link href="/tours">
-                        <button className="btn btn-primary w-full h-14 text-base shadow-lg shadow-amber-500/20">
-                            {t.startTourHere || 'Аялал эхлэх'}
-                            <i className="fa-solid fa-arrow-right ml-2"></i>
-                        </button>
+                    <Link
+                        href={hasTour ? `/tours?site=${site.id}` : '/tours'}
+                        className="btn btn-primary w-full h-14 text-base shadow-lg shadow-amber-500/20">
+                        {hasTour ? t.startTourAtSite : (t.startTourHere || 'Аялал эхлэх')}
+                        <i className="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
                     </Link>
                 </div>
             </div>

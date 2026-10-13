@@ -1,15 +1,59 @@
+import { Inter, Playfair_Display } from "next/font/google";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
 import AmbientBackground from "../components/AmbientBackground";
+import Providers from "../components/Providers";
+
+// Фонт, icon-ыг build үед татаж өөрийн серверээс өгнө — офлайн/киоскод CDN хэрэггүй
+const inter = Inter({
+    subsets: ["latin", "cyrillic", "cyrillic-ext"],
+    weight: ["300", "400", "500", "600", "700", "800"],
+    variable: "--font-inter",
+    display: "swap",
+});
+
+const playfair = Playfair_Display({
+    subsets: ["latin", "cyrillic"],
+    weight: ["400", "600", "700"],
+    style: ["normal", "italic"],
+    variable: "--font-playfair",
+    display: "swap",
+});
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const description =
+    "Орхоны хөндийн соёлын дурсгалт газрын виртуал хөтөч — VR панорама, 3D загвар, газрын зураг, офлайн горим. UNESCO Дэлхийн өв. | Orkhon Valley Cultural Landscape virtual guide.";
 
 export const metadata = {
-    title: "Orkhon Valley | Орхоны хөндий",
-    description: "Орхоны хөндийн соёлын дурсгалт газрын виртуал хөтөч | Cultural Landscape Virtual Guide",
+    metadataBase: new URL(siteUrl),
+    title: {
+        default: "Orkhon Valley | Орхоны хөндий",
+        template: "%s | Орхоны хөндий",
+    },
+    description,
+    applicationName: "Orkhon Valley Guide",
     manifest: "/manifest.json",
+    keywords: ["Орхоны хөндий", "Orkhon Valley", "UNESCO", "World Heritage", "Хархорум", "Karakorum", "Эрдэнэ Зуу", "VR", "Mongolia"],
     appleWebApp: {
         capable: true,
-        statusBarStyle: 'black-translucent',
-        title: 'Orkhon Valley',
+        statusBarStyle: "black-translucent",
+        title: "Orkhon Valley",
     },
+    icons: {
+        icon: "/logo.png",
+        apple: "/logo.png",
+    },
+    openGraph: {
+        type: "website",
+        siteName: "Orkhon Valley | Орхоны хөндий",
+        title: "Orkhon Valley | Орхоны хөндий",
+        description,
+        locale: "mn_MN",
+        alternateLocale: ["en_US"],
+        images: [{ url: "/hero.jpg", alt: "Orkhon Valley" }],
+    },
+    twitter: { card: "summary_large_image" },
+    formatDetection: { telephone: false },
 };
 
 export const viewport = {
@@ -17,25 +61,18 @@ export const viewport = {
     initialScale: 1,
     maximumScale: 1,
     userScalable: false,
+    viewportFit: "cover",
     themeColor: "#070b14",
 };
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="mn">
-            <head>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
-                <link rel="apple-touch-icon" href="/logo.png" />
-                <meta name="apple-mobile-web-app-capable" content="yes" />
-            </head>
+        <html lang="mn" className={`${inter.variable} ${playfair.variable}`}>
             <body className="antialiased">
                 <AmbientBackground />
-                <div className="container">
-                    {children}
-                </div>
+                <Providers>
+                    <div className="container">{children}</div>
+                </Providers>
             </body>
         </html>
     );

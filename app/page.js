@@ -8,7 +8,6 @@ import { translations } from './data/translations';
 import { sitesData } from './data/sites';
 import clsx from 'clsx';
 import BottomNav from '../components/BottomNav';
-import OfflineIndicator from '../components/OfflineIndicator';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 12 },
@@ -66,7 +65,6 @@ export default function Home() {
 
     return (
         <div className="pb-28">
-            <OfflineIndicator />
 
             {/* Header */}
             <header className={clsx(

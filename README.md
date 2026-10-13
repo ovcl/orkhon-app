@@ -1,191 +1,70 @@
-# Orkhon Valley Cultural Landscape App
+# Орхоны хөндийн соёлын дурсгалт газар — виртуал хөтөч
 
-A Next.js web application showcasing the UNESCO World Heritage Site of Orkhon Valley with AR/VR virtual tours powered by Unity and AI-guided experiences.
+UNESCO-гийн Дэлхийн өвд бүртгэлтэй (2004, шалгуур ii, iii, iv) Орхоны хөндийн соёлын дурсгалт газрын (ОВЦЛ) албан ёсны PWA апп.
+32 дурсгал, 84 панорама бүхий VR аялал, 7 ширхэг 3D/AR загвар, интерактив газрын зураг, AI хөтөчтэй. **Бүрэн офлайн** ажиллах боломжтой.
 
-## Features
+## Боломжууд
 
-- 🏛️ **Heritage Sites**: Explore 32+ archaeological and cultural sites
-- 🗺️ **Interactive Map**: Leaflet-based map with marker clustering
-- 🚌 **Virtual Tours**: Dual-mode tours (Classic & VR/AR)
-- 🤖 **AI Guide**: OpenAI-powered virtual tour guide
-- 🌐 **Multilingual**: Mongolian and English support
-- 📱 **Responsive**: Works on desktop and mobile devices
+| | |
+|---|---|
+| 🏛️ Дурсгалууд | 32 дурсгал, зураг, тайлбар (MN/EN), хамгаалалтын зэрэглэл |
+| 🥽 VR аялал | Three.js + WebXR (Quest), hotspot навигаци, `/tours?site=ID` шууд холбоос |
+| 🧊 3D / AR | `@google/model-viewer` — утасны камераар AR |
+| 🗺️ Газрын зураг | MapLibre GL 6, ангиллын шүүлтүүр |
+| 📴 Офлайн | Дурсгал тус бүр эсвэл бүх контентыг (≈1.7 GB) + газрын зургийг татаж авна |
+| 🤖 AI хөтөч | OpenAI, дурсгалын өгөгдөлд тулгуурласан, rate limit-тэй (сонголттой) |
+| 🖥️ Киоск | `?kiosk=1` — идэвхгүй үед нүүр хуудас руу буцна |
+| 🔌 Нээлттэй API | `/api/sites`, `/api/sites/:id`, `/api/sites/geojson`, `/api/health` |
 
-## Tech Stack
+## Хөгжүүлэлт
 
-### Frontend
-- **Framework**: Next.js 14
-- **Styling**: Tailwind CSS + CSS Modules
-- **Maps**: Leaflet + React Leaflet
-- **Animations**: Framer Motion
-- **3D/AR**: Unity WebGL (react-unity-webgl)
-
-### Backend
-
-- **AI**: OpenAI GPT-3.5 Turbo
-- **Hosting**: Vercel (recommended)
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-
-- OpenAI API key
-- Unity 2022 LTS (for VR/AR development)
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone <repository-url>
-cd orkhon-app
-```
-
-2. **Install dependencies**
 ```bash
 npm install
-```
-
-3. **Set up environment variables**
-
-Create `.env.local` file:
-```bash
 cp .env.local.example .env.local
-```
-
-Edit `.env.local` and add your credentials:
-
-- OpenAI API key
-- Cloudinary credentials (optional)
-
-
-
-6. **Run development server**
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+`npm run dev` / `npm run build` нь дараах скриптүүдийг автоматаар ажиллуулна:
 
-## Project Structure
+- `scripts/check-media.mjs` — `sites.js`-ийн бүх зураг/загварын зам файлтай **том/жижиг үсэг хүртэл** таарч байгааг шалгана (Windows дээр ажиллаад Vercel дээр 404 өгөх алдааг барина). Таараагүй бол build зогсоно.
+- `scripts/copy-maplibre-worker.mjs` — MapLibre worker-ийг `public/maplibre/` руу хуулна.
+- `scripts/build-media-manifest.mjs` — офлайн татах хэмжээг тооцох `app/data/media-manifest.json` үүсгэнэ.
+
+Service worker зөвхөн production горимд (`npm run build && npm start`) идэвхжинэ.
+
+## Байршуулах
+
+### Vercel (санал болгох)
+1. GitHub репог Vercel-д холбоно — Next.js автоматаар танигдана.
+2. Environment Variables: `NEXT_PUBLIC_SITE_URL` (заавал), `OPENAI_API_KEY` (сонголттой). Бусад нь `.env.local.example`-д.
+3. Deploy. Шалгах: `https://<домэйн>/api/health`.
+
+> Анхаар: Vercel Hobby багцад зураг боловсруулах (Image Optimization) сарын квоттой. Хэрэглээ өсвөл Pro багц эсвэл доорх Docker хувилбарыг ашиглана.
+
+### Docker / музейн дотоод сервер (интернэтгүй киоск)
+```bash
+docker build -t orkhon-app .
+docker run -d -p 3000:3000 --env-file .env.local --restart unless-stopped orkhon-app
+```
+Service worker болон камер (AR) нь HTTPS шаарддаг тул дотоод сүлжээнд `mkcert`-ээр гэрчилгээ үүсгэж reverse proxy (Caddy/nginx)-ийн ард ажиллуулна. `localhost` дээр HTTPS шаардлагагүй.
+
+## Офлайн горимын бүтэц
+
+- **Precache (суулгах үед):** апп-ын JS/CSS, фонт, icon, лого, офлайн хуудас, MapLibre worker.
+- **Runtime cache:** үзсэн хуудас, зураг, панорама, 3D загвар, газрын зургийн tile.
+- **Хэрэглэгч сонгож татах:** дурсгалын хуудсан дээрх "Офлайн хадгалах", Мэдээлэл → "Офлайн горим" хэсэгт "Бүх контентыг татах" / "Газрын зураг татах".
+- Кэшийн нэрс `next.config.js` ба `lib/offline.js`-д ижил байх ёстой.
+
+## Бүтэц
 
 ```
-orkhon-app/
-├── app/
-│   ├── api/              # API routes
-│   │   ├── sites/        # Sites data endpoint
-│   │   └── ai-guide/     # AI guide endpoint
-│   ├── data/             # Static data
-│   ├── map/              # Map page
-│   ├── sites/            # Sites listing page
-│   ├── tours/            # Tours page (Classic + VR/AR)
-│   └── info/             # Info page
-├── components/
-│   ├── VirtualTour.js    # Classic tour component
-│   └── UnityPlayer.js    # Unity WebGL player
-
-└── public/
-    └── unity-build/      # Unity WebGL build files
+app/            Хуудсууд (App Router), API маршрут, data/sites.js (32 дурсгал)
+components/     PanoramaViewer, VirtualTour, Map, Model3DViewer, AIGuide, OfflineManager …
+lib/            offline.js (Cache API), rate-limit.js, site-summary.js
+public/         images/ (≈1.7 GB, эх чанараар), models/ (.glb, Draco), sounds/
+scripts/        build-ийн өмнөх шалгалт, бэлтгэл скриптүүд
 ```
 
-## Unity VR/AR Setup
+Шинэ дурсгал / панорама нэмэх: `app/data/sites.js`-д бичээд `npm run check:media` ажиллуулна.
 
-For setting up the Unity project for AR/VR tours, see [UNITY_SETUP.md](./UNITY_SETUP.md)
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-
-## Features Guide
-
-### Classic Virtual Tour
-
-Navigate through heritage sites with:
-- High-resolution images
-- Detailed descriptions (Mongolian & English)
-- Keyboard shortcuts (Arrow keys, I, ESC)
-- Progress tracking
-
-### VR/AR Tour (Beta)
-
-Unity-powered immersive experience with:
-- 360° panoramic images
-- AR information overlays
-- Interactive map
-- AI-powered virtual guide
-
-### AI Virtual Guide
-
-Ask questions about any heritage site:
-- Context-aware responses
-- Multilingual support
-- Response caching for performance
-- Powered by OpenAI GPT-3.5
-
-## API Endpoints
-
-### GET /api/sites
-Fetch all heritage sites
-```javascript
-// Query parameters
-?category=Хөшөө дурсгал  // Filter by category
-?limit=10                 // Limit results
-```
-
-### POST /api/ai-guide
-Get AI-powered site explanations
-```javascript
-{
-  "siteId": 1,
-  "question": "Tell me about this site",  // Optional
-  "language": "mn"  // 'mn' or 'en'
-}
-```
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push code to GitHub
-2. Import project in Vercel
-3. Add environment variables
-4. Deploy
-
-### Other Platforms
-
-The app can be deployed to any platform supporting Next.js:
-- Netlify
-- AWS Amplify
-- Google Cloud Run
-- Self-hosted
-
-## Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
-
-[Add your license here]
-
-## Acknowledgments
-
-- UNESCO World Heritage Centre
-- Orkhon Valley World Heritage Site Administration
-- OpenAI for infrastructure
-- Unity Technologies for AR/VR platform
-
-## Support
-
-For issues or questions:
-- Create an issue on GitHub
-- Contact: [your-email@example.com]
+Unity WebGL аялал: `UNITY_SETUP.md`. Build-ийг `public/unity-build/`-д хийсний дараа `app/tours/page.js`-ийн `UNITY_ENABLED`-ийг `true` болгоно.

@@ -95,7 +95,38 @@ export const translations = {
         seasonSummer: "Зун",
         seasonAutumn: "Намар",
         seasonWinter: "Өвөл",
-        seasonBestMonths: "Тохиромжтой саруud: 5–9-р сар"
+        seasonBestMonths: "Тохиромжтой сарууд: 5–9-р сар",
+
+        // Offline
+        offlineSave: "Офлайн хадгалах",
+        offlineSaving: "Татаж байна",
+        offlineSaved: "Офлайн бэлэн",
+        offlineRemove: "Офлайнаас устгах",
+        offlineFailed: "Зарим файл татагдсангүй — дахин оролдоно уу",
+        offlineTitle: "Офлайн горим",
+        offlineIntro: "Орхоны хөндийд интернэт сул тул аялалын өмнө контентоо татаж аваарай. Татсан дурсгал, панорама, 3D загвар интернэтгүй ажиллана.",
+        offlineDownloadAll: "Бүх контентыг татах",
+        offlineDownloadMap: "Газрын зураг татах",
+        offlineCancel: "Зогсоох",
+        offlineClear: "Офлайн контентыг устгах",
+        offlineClearConfirm: "Татсан бүх контентыг устгах уу?",
+        offlineStorage: "Ашигласан зай",
+        offlineSitesReady: "дурсгал офлайн бэлэн",
+        offlineUnsupported: "Энэ браузер офлайн горимыг дэмжихгүй байна.",
+        offlineLargeWarning: "Их хэмжээний файл — WiFi ашиглахыг зөвлөе.",
+        offlineDone: "Татаж дууслаа",
+
+        // AI guide
+        aiGuideTitle: "AI хөтөч",
+        aiGuideIntro: "Танилцуулга сонсох",
+        aiGuidePlaceholder: "Энэ дурсгалын талаар асуух...",
+        aiGuideAsk: "Асуух",
+        aiGuideThinking: "Бодож байна...",
+        aiGuideError: "Хариулт авахад алдаа гарлаа. Дахин оролдоно уу.",
+        aiGuideRateLimit: "Хэт олон асуулт — түр хүлээгээд дахин оролдоно уу.",
+        aiGuideOffline: "AI хөтөч интернэт шаарддаг.",
+        aiGuideDisclaimer: "AI-ийн хариулт алдаатай байж болно. Баталгаат мэдээллийг музейн ажилтнаас лавлана уу.",
+        startTourAtSite: "Энэ дурсгалын VR аялал"
     },
     en: {
         // Header
@@ -193,6 +224,37 @@ export const translations = {
         seasonSummer: "Summer",
         seasonAutumn: "Autumn",
         seasonWinter: "Winter",
-        seasonBestMonths: "Best months: May–September"
+        seasonBestMonths: "Best months: May–September",
+
+        // Offline
+        offlineSave: "Save offline",
+        offlineSaving: "Downloading",
+        offlineSaved: "Available offline",
+        offlineRemove: "Remove offline copy",
+        offlineFailed: "Some files failed — please try again",
+        offlineTitle: "Offline mode",
+        offlineIntro: "Connectivity in the Orkhon Valley is limited, so download content before your trip. Saved sites, panoramas and 3D models work without internet.",
+        offlineDownloadAll: "Download everything",
+        offlineDownloadMap: "Download map",
+        offlineCancel: "Stop",
+        offlineClear: "Delete offline content",
+        offlineClearConfirm: "Delete all downloaded content?",
+        offlineStorage: "Storage used",
+        offlineSitesReady: "sites available offline",
+        offlineUnsupported: "This browser does not support offline mode.",
+        offlineLargeWarning: "Large download — Wi-Fi recommended.",
+        offlineDone: "Download complete",
+
+        // AI guide
+        aiGuideTitle: "AI guide",
+        aiGuideIntro: "Hear an introduction",
+        aiGuidePlaceholder: "Ask about this site...",
+        aiGuideAsk: "Ask",
+        aiGuideThinking: "Thinking...",
+        aiGuideError: "Could not get an answer. Please try again.",
+        aiGuideRateLimit: "Too many questions — please wait a moment.",
+        aiGuideOffline: "The AI guide needs an internet connection.",
+        aiGuideDisclaimer: "AI answers may contain mistakes. Please confirm with museum staff.",
+        startTourAtSite: "VR tour of this site"
     }
 };

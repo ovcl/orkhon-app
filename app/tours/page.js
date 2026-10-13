@@ -20,9 +20,18 @@ export default function ToursPage() {
     const [unityReady, setUnityReady] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
+    const [initialSiteId, setInitialSiteId] = useState(null);
+
     useEffect(() => {
         const savedLang = localStorage.getItem('language');
         if (savedLang) setLanguage(savedLang);
+
+        // /tours?site=ID — дурсгалын хуудаснаас шууд тухайн дурсгалын VR аялал руу
+        const siteParam = Number(new URLSearchParams(window.location.search).get('site'));
+        if (siteParam && sitesData.some((s) => s.id === siteParam)) {
+            setInitialSiteId(siteParam);
+            setIsTourActive(true);
+        }
 
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -48,6 +57,8 @@ export default function ToursPage() {
 
     const closeTour = () => {
         setIsTourActive(false);
+        setInitialSiteId(null);
+        if (window.location.search) window.history.replaceState(null, '', '/tours');
         setUnityReady(false);
     };
 
@@ -178,6 +189,7 @@ export default function ToursPage() {
                     onClose={closeTour}
                     language={language}
                     onToggleLanguage={toggleLanguage}
+                    initialSiteId={initialSiteId}
                 />
             )}
 

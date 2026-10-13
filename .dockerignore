@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env*.local
+image-backup-original
+upload_images
+upload_panoramas
+.claude
+.gemini
+public/sw.js
+public/workbox-*.js
+public/fallback-*.js
+public/swe-worker-*.js

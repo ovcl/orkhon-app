@@ -203,7 +203,7 @@
 }
 
 .siteName {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-playfair), 'Playfair Display', serif;
     font-size: 1.7rem;
     font-weight: 600;
     margin-bottom: 10px;

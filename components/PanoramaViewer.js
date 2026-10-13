@@ -134,6 +134,8 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                 material.color.set(0xffffff);
                 material.needsUpdate = true;
                 setLoading(false);
+                // Эхний ачаалалт: хар fade overlay (opacity 1)-ийг арилгана
+                if (fadeIn) fadeTo(0, 400);
             }, undefined, (err) => {
                 if (!isCancelled) {
                     console.error('Failed to load panorama image:', url, err);
@@ -855,11 +857,11 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                     <div style={{ position: 'absolute', top: '68px', left: '50%', transform: 'translateX(-50%)', zIndex: 55, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', maxWidth: '92vw' }}>
                         {/* Тогтмол харагдах гарчиг — museum brand-ийн Playfair Display фонт */}
                         <div style={{ background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(10px)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '999px', padding: '8px 20px', textAlign: 'center' }}>
-                            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: '15px', color: '#fff' }}>
+                            <span style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif", fontWeight: 600, fontSize: '15px', color: '#fff' }}>
                                 {currentGroup && angleTotal > 1 ? currentGroup : currentScene.name}
                             </span>
                             {currentGroup && angleTotal > 1 && (
-                                <span style={{ marginLeft: '8px', fontSize: '11px', color: 'rgba(245,158,11,0.9)', fontFamily: "'Inter', sans-serif" }}>
+                                <span style={{ marginLeft: '8px', fontSize: '11px', color: 'rgba(245,158,11,0.9)', fontFamily: "var(--font-inter), 'Inter', sans-serif" }}>
                                     {angleIndex + 1}/{angleTotal}
                                 </span>
                             )}
@@ -905,7 +907,7 @@ export default function PanoramaViewer({ scenes, initialIndex = 0, onIndexChange
                     >
                         <i className="fa-solid fa-chevron-left"></i>
                     </button>
-                    <span style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', color: 'rgba(255,255,255,0.85)', borderRadius: '999px', padding: '10px 18px', fontSize: '12px', fontFamily: "'Inter', sans-serif", letterSpacing: '0.3px' }}>
+                    <span style={{ pointerEvents: 'auto', background: 'rgba(10,10,14,0.65)', backdropFilter: 'blur(8px)', color: 'rgba(255,255,255,0.85)', borderRadius: '999px', padding: '10px 18px', fontSize: '12px', fontFamily: "var(--font-inter), 'Inter', sans-serif", letterSpacing: '0.3px' }}>
                         {currentIndex + 1} / {scenes.length}
                     </span>
                     <button

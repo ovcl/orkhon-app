@@ -15,7 +15,7 @@ export default function BottomNav({ t }) {
     ];
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-5 pt-16 bg-gradient-to-t from-[#070b14] via-[#070b14]/85 to-transparent pointer-events-none max-w-[480px] mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-5 pt-16 bg-gradient-to-t from-[#070b14] via-[#070b14]/85 to-transparent pointer-events-none max-w-[480px] mx-auto" style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}>
             <nav
                 aria-label="Үндсэн навигаци"
                 className="pointer-events-auto rounded-2xl px-2 py-2 flex items-center gap-0.5"
@@ -28,7 +28,7 @@ export default function BottomNav({ t }) {
                 }}
             >
                 {navItems.map((item) => {
-                    const isActive = pathname === item.href;
+                    const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
                     return (
                         <Link
                             key={item.href}

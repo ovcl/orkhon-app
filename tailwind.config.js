@@ -8,8 +8,8 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Outfit"', 'sans-serif'],
-                heading: ['"Playfair Display"', 'serif'],
+                sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
+                heading: ['var(--font-playfair)', '"Playfair Display"', 'serif'],
             },
             colors: {
                 background: "var(--background)",

@@ -19,8 +19,11 @@ const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ),
 });
 
-export default function VirtualTour({ sites, onClose, language = 'mn', onToggleLanguage }) {
-    const [currentIndex, setCurrentIndex] = useState(0);
+export default function VirtualTour({ sites, onClose, language = 'mn', onToggleLanguage, initialSiteId = null }) {
+    const [currentIndex, setCurrentIndex] = useState(() => {
+        const i = initialSiteId == null ? -1 : sites.findIndex((s) => s.id === initialSiteId);
+        return i >= 0 ? i : 0;
+    });
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isInfoVisible, setIsInfoVisible] = useState(true);
     const touchStartX = useRef(null);

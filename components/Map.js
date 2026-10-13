@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+
+// Worker-ийг public/-аас ачаална (scripts/copy-maplibre-worker.mjs)
+maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
 const DEFAULT_CENTER = { lng: 102.55, lat: 47.15 };
 const DEFAULT_ZOOM = 8.5;

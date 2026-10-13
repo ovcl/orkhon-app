@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import clsx from 'clsx';
 import BottomNav from '../../components/BottomNav';
+import OfflineManager from '../../components/OfflineManager';
+import { translations } from '../data/translations';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -308,6 +310,14 @@ export default function InfoPage() {
                                     ))}
                                 </div>
                             </div>
+                        </div>
+                    </motion.section>
+
+                    {/* Offline */}
+                    <motion.section variants={itemVariants} id="offline">
+                        <SectionTitle icon="fa-solid fa-cloud-arrow-down" color="border-emerald-500" iconColor="text-emerald-500" title={translations[language].offlineTitle} />
+                        <div className="rounded-2xl p-5" style={CARD_BG}>
+                            <OfflineManager t={translations[language]} />
                         </div>
                     </motion.section>
 
