@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
+    "predev": "node scripts/dev-sw-reset.mjs && node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/check-media.mjs && node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "build": "next build",
