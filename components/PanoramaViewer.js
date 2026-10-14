@@ -471,64 +471,59 @@ export default function PanoramaViewer({
         // camera-ийн хүүхэд биш, world space дотор тогтмол байрлалтай.
         // -----------------------------------------------------------------
         const makeHotspotMesh = (label) => {
-            // Орчин үеийн минималист тэмдэг: бараан шилэн дугуй + цагаан хүрээ + урагш заах
-            // сум, доор нь очих газрын нэртэй pill. 2x нягтралтай canvas (VR-д тод харагдана).
-            const W = 448, H = 288;
+            // Цэвэрхэн минималист тэмдэг: дэвсгэргүй нимгэн цагаан цагираг + урагш заах сум,
+            // доор нь хайрцаггүй жижиг шошго. Тод зураг дээр ч харагдахаар зөөлөн сүүдэртэй.
+            // 2x нягтралтай canvas (VR-д тод харагдана).
+            const W = 384, H = 256;
             const canvas = document.createElement('canvas');
             canvas.width = W; canvas.height = H;
             const ctx = canvas.getContext('2d');
-            const cx = W / 2, cy = 104, radius = 46;
+            const cx = W / 2, cy = 92, radius = 38;
 
-            ctx.save();
-            ctx.shadowColor = 'rgba(0,0,0,0.45)';
-            ctx.shadowBlur = 18;
-            ctx.fillStyle = 'rgba(15,23,42,0.55)';
+            ctx.shadowColor = 'rgba(0,0,0,0.55)';
+            ctx.shadowBlur = 10;
+
+            // Маш бүдэг дотор дүүргэлт — сумыг зураг дээрээс ялгаж харуулна
+            ctx.fillStyle = 'rgba(255,255,255,0.14)';
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.fill();
-            ctx.restore();
 
-            ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3.5;
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.stroke();
 
-            ctx.lineWidth = 8;
+            ctx.lineWidth = 6;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.beginPath();
-            ctx.moveTo(cx - 17, cy + 9); ctx.lineTo(cx, cy - 10); ctx.lineTo(cx + 17, cy + 9);
+            ctx.moveTo(cx - 13, cy + 7); ctx.lineTo(cx, cy - 7); ctx.lineTo(cx + 13, cy + 7);
             ctx.stroke();
 
             if (label) {
-                ctx.font = '600 26px Inter, system-ui, sans-serif';
-                const maxText = W - 48;
+                ctx.font = '600 24px Inter, system-ui, sans-serif';
+                const maxText = W - 32;
                 let text = label;
                 if (ctx.measureText(text).width > maxText) {
                     while (text.length > 1 && ctx.measureText(text + '…').width > maxText) text = text.slice(0, -1);
                     text = text.trimEnd() + '…';
                 }
-                const pillW = ctx.measureText(text).width + 36;
-                const pillH = 46;
-                const pillY = cy + radius + 22;
-                ctx.fillStyle = 'rgba(15,23,42,0.75)';
-                ctx.beginPath();
-                if (ctx.roundRect) ctx.roundRect(cx - pillW / 2, pillY, pillW, pillH, pillH / 2);
-                else ctx.rect(cx - pillW / 2, pillY, pillW, pillH);
-                ctx.fill();
+                ctx.shadowColor = 'rgba(0,0,0,0.85)';
+                ctx.shadowBlur = 8;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(text, cx, pillY + pillH / 2 + 1);
+                ctx.fillText(text, cx, cy + radius + 34);
             }
 
             const tex = new THREE.CanvasTexture(canvas);
             tex.colorSpace = THREE.SRGBColorSpace;
             tex.anisotropy = 4;
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.95 });
-            // ~14° өргөн: утсан дээр ч тод уншигдана, үзэгдлийг халхлахгүй
-            const geom = new THREE.PlaneGeometry(10, 6.4);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.92 });
+            // ~11° өргөн: тод уншигдах ч үзэгдлийг халхлахгүй
+            const geom = new THREE.PlaneGeometry(7.8, 5.2);
             const meshObj = new THREE.Mesh(geom, mat);
             meshObj.renderOrder = 998;
             meshObj.userData.baseScale = 1;
