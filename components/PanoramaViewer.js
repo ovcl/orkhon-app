@@ -471,63 +471,62 @@ export default function PanoramaViewer({
         // camera-ийн хүүхэд биш, world space дотор тогтмол байрлалтай.
         // -----------------------------------------------------------------
         const makeHotspotMesh = (label) => {
-            // Цэвэрхэн минималист тэмдэг: дэвсгэргүй нимгэн цагаан цагираг + урагш заах сум,
-            // доор нь хайрцаггүй жижиг шошго. Тод зураг дээр ч харагдахаар зөөлөн сүүдэртэй.
-            // 2x нягтралтай canvas (VR-д тод харагдана).
-            const W = 384, H = 256;
+            // Минималист цэг: зөөлөн тунгалаг хүрээтэй цагаан цэг. Нэр нь зөвхөн
+            // хулганаар дээр нь очих, VR controller-оор онох эсвэл цэг дэлгэцийн
+            // голд ойртох үед (утас, гироскоп, Cardboard) зөөлөн гарч ирнэ.
+            const S = 160;
             const canvas = document.createElement('canvas');
-            canvas.width = W; canvas.height = H;
+            canvas.width = S; canvas.height = S;
             const ctx = canvas.getContext('2d');
-            const cx = W / 2, cy = 92, radius = 38;
-
-            ctx.shadowColor = 'rgba(0,0,0,0.55)';
-            ctx.shadowBlur = 10;
-
-            // Маш бүдэг дотор дүүргэлт — сумыг зураг дээрээс ялгаж харуулна
-            ctx.fillStyle = 'rgba(255,255,255,0.14)';
+            const c = S / 2;
+            ctx.fillStyle = 'rgba(255,255,255,0.28)';
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.arc(c, c, 52, 0, Math.PI * 2);
             ctx.fill();
-
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 3.5;
+            ctx.shadowColor = 'rgba(0,0,0,0.45)';
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = '#ffffff';
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-            ctx.stroke();
-
-            ctx.lineWidth = 6;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(cx - 13, cy + 7); ctx.lineTo(cx, cy - 7); ctx.lineTo(cx + 13, cy + 7);
-            ctx.stroke();
-
-            if (label) {
-                ctx.font = '600 24px Inter, system-ui, sans-serif';
-                const maxText = W - 32;
-                let text = label;
-                if (ctx.measureText(text).width > maxText) {
-                    while (text.length > 1 && ctx.measureText(text + '…').width > maxText) text = text.slice(0, -1);
-                    text = text.trimEnd() + '…';
-                }
-                ctx.shadowColor = 'rgba(0,0,0,0.85)';
-                ctx.shadowBlur = 8;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#ffffff';
-                ctx.fillText(text, cx, cy + radius + 34);
-            }
+            ctx.arc(c, c, 22, 0, Math.PI * 2);
+            ctx.fill();
 
             const tex = new THREE.CanvasTexture(canvas);
             tex.colorSpace = THREE.SRGBColorSpace;
-            tex.anisotropy = 4;
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.92 });
-            // ~11° өргөн: тод уншигдах ч үзэгдлийг халхлахгүй
-            const geom = new THREE.PlaneGeometry(7.8, 5.2);
-            const meshObj = new THREE.Mesh(geom, mat);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide });
+            const meshObj = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4), mat);
             meshObj.renderOrder = 998;
-            meshObj.userData.baseScale = 1;
             meshObj.userData.pulsePhase = Math.random() * Math.PI * 2;
+            meshObj.userData.focus = 0;
+
+            if (label) {
+                const LW = 640, LH = 96;
+                const lc = document.createElement('canvas');
+                lc.width = LW; lc.height = LH;
+                const lctx = lc.getContext('2d');
+                lctx.font = '600 44px Inter, system-ui, sans-serif';
+                let text = label;
+                const maxText = LW - 40;
+                if (lctx.measureText(text).width > maxText) {
+                    while (text.length > 1 && lctx.measureText(text + '…').width > maxText) text = text.slice(0, -1);
+                    text = text.trimEnd() + '…';
+                }
+                lctx.shadowColor = 'rgba(0,0,0,0.9)';
+                lctx.shadowBlur = 12;
+                lctx.textAlign = 'center';
+                lctx.textBaseline = 'middle';
+                lctx.fillStyle = '#ffffff';
+                lctx.fillText(text, LW / 2, LH / 2);
+                const ltex = new THREE.CanvasTexture(lc);
+                ltex.colorSpace = THREE.SRGBColorSpace;
+                ltex.anisotropy = 4;
+                const lmat = new THREE.MeshBasicMaterial({ map: ltex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0 });
+                const labelMesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 1.5), lmat);
+                labelMesh.position.set(0, -2.6, 0);
+                labelMesh.renderOrder = 999;
+                labelMesh.visible = false;
+                meshObj.add(labelMesh);
+                meshObj.userData.labelMesh = labelMesh;
+            }
             return meshObj;
         };
 
@@ -545,6 +544,12 @@ export default function PanoramaViewer({
         const clearHotspots = () => {
             hotspotMeshes.forEach((h) => {
                 scene.remove(h);
+                const lm = h.userData.labelMesh;
+                if (lm) {
+                    lm.geometry.dispose();
+                    lm.material.map?.dispose();
+                    lm.material.dispose();
+                }
                 h.geometry.dispose();
                 h.material.map?.dispose();
                 h.material.dispose();
@@ -911,17 +916,50 @@ export default function PanoramaViewer({
         buildHotspots(currentIndexRef.current);
         buildModels3d(currentIndexRef.current);
 
+        // Хулганаар hotspot дээр очиход нэрийг нь харуулж, cursor-ыг солино
+        const viewDir = new THREE.Vector3();
+        const hotspotDir = new THREE.Vector3();
+        const hoverNdc = new THREE.Vector2();
+        const hoverRay = new THREE.Raycaster();
+        let pointerHover = null;
+        const onHoverMove = (e) => {
+            if (e.pointerType === 'touch') return;
+            const rect = renderer.domElement.getBoundingClientRect();
+            hoverNdc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
+            hoverRay.setFromCamera(hoverNdc, camera);
+            pointerHover = hoverRay.intersectObjects(hotspotMeshes, false)[0]?.object || null;
+            renderer.domElement.style.cursor = pointerHover ? 'pointer' : '';
+        };
+        const onHoverLeave = () => {
+            pointerHover = null;
+            renderer.domElement.style.cursor = '';
+        };
+        renderer.domElement.addEventListener('pointermove', onHoverMove);
+        renderer.domElement.addEventListener('pointerleave', onHoverLeave);
+
         renderer.setAnimationLoop(() => {
             if (isCancelled) return;
             if (controls.enabled) controls.update();
             updateGyro();
 
             const pulseTime = performance.now() / 1000;
+            camera.getWorldDirection(viewDir);
             hotspotMeshes.forEach((h) => {
                 h.lookAt(camera.position);
-                // Зөөлөн "амьсгалах" эффект — 0.94–1.06 хооронд удаан хэлбэлзэнэ, анхаарал татах ч төвөгтэй биш
-                const s = 1 + 0.06 * Math.sin(pulseTime * 1.4 + (h.userData.pulsePhase || 0));
+                // Нэр харуулах эсэх: хулгана/controller-оор онсон, эсвэл дэлгэцийн голд ойр (~9°)
+                const centered = hotspotDir.copy(h.position).normalize().dot(viewDir) > 0.988;
+                const target = h === pointerHover || h.userData.xrHover || centered ? 1 : 0;
+                h.userData.focus += (target - h.userData.focus) * 0.18;
+                const f = h.userData.focus;
+                // Зөөлөн "амьсгалах" эффект + онох үед томрох
+                const s = 1 + 0.06 * Math.sin(pulseTime * 1.4 + (h.userData.pulsePhase || 0)) + 0.25 * f;
                 h.scale.set(s, s, s);
+                const lm = h.userData.labelMesh;
+                if (lm) {
+                    lm.material.opacity = f;
+                    lm.visible = f > 0.02;
+                    lm.scale.setScalar(1 / s);
+                }
             });
 
             // Идэвхтэй нээлттэй 3D загварыг аажим эргүүлж, "амьд" мэдрэмж өгнө
@@ -951,8 +989,7 @@ export default function PanoramaViewer({
                     else { btn.scale.setScalar(1.0); btn.material.color.setHex(0xb0b0b0); }
                 });
                 hotspotMeshes.forEach((h) => {
-                    if (h === hoveredObj) h.scale.setScalar(1.15);
-                    else h.scale.setScalar(1.0);
+                    h.userData.xrHover = h === hoveredObj;
                 });
                 modelTriggerMeshes.forEach((h) => {
                     if (h !== hoveredObj) h.userData.hoverBoost = 0;
@@ -1005,6 +1042,8 @@ export default function PanoramaViewer({
             renderer.domElement.removeEventListener('wheel', onWheel);
             renderer.domElement.removeEventListener('pointerdown', onTouchDown);
             renderer.domElement.removeEventListener('pointermove', onTouchMove);
+            renderer.domElement.removeEventListener('pointermove', onHoverMove);
+            renderer.domElement.removeEventListener('pointerleave', onHoverLeave);
             window.removeEventListener('pointerup', onTouchUp);
             window.removeEventListener('pointercancel', onTouchUp);
             window.removeEventListener('deviceorientation', onOrientation);
