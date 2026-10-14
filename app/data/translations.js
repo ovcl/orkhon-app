@@ -183,6 +183,17 @@ export const translations = {
         seasonLimited: "Хязгаарлагдмал",
         prevImage: "Өмнөх зураг",
         nextImage: "Дараах зураг",
+        vrMenuTitle: "VR шилээр үзэх",
+        vrHeadsetHere: "Энэ VR шилээр үзэх",
+        vrHeadsetHereDesc: "Quest, Pico, Vision Pro зэрэг шилний браузерт ажиллана",
+        vrCardboard: "Утас + VR хайрцаг (Cardboard)",
+        vrCardboardDesc: "Утсаа хэвтээ эргүүлж VR Box-д хийнэ. Сум руу 2 секунд ширтэж шилжинэ.",
+        vrSendQuest: "Meta Quest шил рүү илгээх",
+        vrSendQuestDesc: "Meta бүртгэлээрээ нэвтэрсэн Quest шил дээр энэ хуудас нээгдэнэ",
+        vrScanQr: "Pico, Quest 3 шилний камераар эсвэл өөр утсаар уншуулж энэ аялалыг шууд нээнэ.",
+        vrExitCardboard: "Гарах",
+        vrRotateHint: "Утсаа хэвтээ эргүүлээд VR хайрцагт хийнэ үү",
+        vrGazeHint: "Цагаан сум руу 2 секунд ширтэхэд дараагийн байршил руу шилжинэ",
         language: "Хэл"
     },
     en: {
@@ -367,6 +378,17 @@ export const translations = {
         seasonLimited: "Limited",
         prevImage: "Previous image",
         nextImage: "Next image",
+        vrMenuTitle: "View in VR",
+        vrHeadsetHere: "View in this headset",
+        vrHeadsetHereDesc: "Works in the browser of Quest, Pico, Vision Pro and similar headsets",
+        vrCardboard: "Phone + VR box (Cardboard)",
+        vrCardboardDesc: "Turn your phone sideways and put it in a VR box. Look at an arrow for 2 seconds to move.",
+        vrSendQuest: "Send to Meta Quest",
+        vrSendQuestDesc: "Opens this page on the Quest headset signed in to your Meta account",
+        vrScanQr: "Scan with a Pico or Quest 3 camera, or with another phone, to open this tour directly.",
+        vrExitCardboard: "Exit",
+        vrRotateHint: "Turn your phone sideways and place it in the VR box",
+        vrGazeHint: "Look at a white arrow for 2 seconds to move to the next spot",
         language: "Language"
     }
 };

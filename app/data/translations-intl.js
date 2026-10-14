@@ -45,6 +45,7 @@ export const intlTranslations = {
         mapLocate: '내 위치', mapFit: '오르혼 계곡 전체 보기', mapOpenDetails: '자세히', mapNavigate: '길 찾기',
         mapLocating: '위치를 확인하는 중...', mapLocationDenied: '위치 권한이 허용되지 않았습니다', mapYouAreHere: '현재 위치', mapDistanceAway: '거리',
         sitesUnit: "곳", nature: "자연", interactive: "인터랙티브", details: "정보", vrTour: "VR 투어", clearSearch: "검색 지우기", vr360Tour: "VR 360 투어", aiGuideVrMode: "AI 가이드(VR 모드)", seasonGood: "추천", seasonLimited: "제한적", prevImage: "이전 사진", nextImage: "다음 사진",
+        vrMenuTitle: "VR로 보기", vrHeadsetHere: "이 헤드셋으로 보기", vrHeadsetHereDesc: "Quest, Pico, Vision Pro 등 헤드셋 브라우저에서 작동합니다", vrCardboard: "휴대폰 + VR 박스 (Cardboard)", vrCardboardDesc: "휴대폰을 가로로 돌려 VR 박스에 넣으세요. 화살표를 2초간 바라보면 이동합니다.", vrSendQuest: "Meta Quest로 보내기", vrSendQuestDesc: "Meta 계정으로 로그인된 Quest 헤드셋에서 이 페이지가 열립니다", vrScanQr: "Pico, Quest 3 카메라나 다른 휴대폰으로 스캔하면 이 투어가 바로 열립니다.", vrExitCardboard: "나가기", vrRotateHint: "휴대폰을 가로로 돌려 VR 박스에 넣어 주세요", vrGazeHint: "흰색 화살표를 2초간 바라보면 다음 장소로 이동합니다",
         language: '언어',
     },
     zh: {
@@ -90,6 +91,7 @@ export const intlTranslations = {
         mapLocate: '我的位置', mapFit: '查看整个鄂尔浑河谷', mapOpenDetails: '详情', mapNavigate: '导航',
         mapLocating: '正在定位...', mapLocationDenied: '未获得定位权限', mapYouAreHere: '您在这里', mapDistanceAway: '距离',
         sitesUnit: "处遗址", nature: "自然", interactive: "互动", details: "详情", vrTour: "VR游览", clearSearch: "清除搜索", vr360Tour: "VR 360游览", aiGuideVrMode: "AI导览（VR模式）", seasonGood: "适宜", seasonLimited: "有限", prevImage: "上一张", nextImage: "下一张",
+        vrMenuTitle: "用VR眼镜观看", vrHeadsetHere: "在此头显中观看", vrHeadsetHereDesc: "适用于Quest、Pico、Vision Pro等头显的浏览器", vrCardboard: "手机 + VR盒子（Cardboard）", vrCardboardDesc: "将手机横放并装入VR盒子。注视箭头2秒即可移动。", vrSendQuest: "发送到Meta Quest", vrSendQuestDesc: "将在已登录您Meta账号的Quest头显上打开此页面", vrScanQr: "用Pico、Quest 3的摄像头或另一部手机扫描，即可直接打开此游览。", vrExitCardboard: "退出", vrRotateHint: "请将手机横放并装入VR盒子", vrGazeHint: "注视白色箭头2秒即可前往下一个地点",
         language: '语言',
     },
     ru: {
@@ -135,6 +137,7 @@ export const intlTranslations = {
         mapLocate: 'Моё местоположение', mapFit: 'Вся долина Орхона', mapOpenDetails: 'Подробнее', mapNavigate: 'Маршрут',
         mapLocating: 'Определяем местоположение...', mapLocationDenied: 'Нет доступа к геолокации', mapYouAreHere: 'Вы здесь', mapDistanceAway: 'расстояние',
         sitesUnit: "памятников", nature: "Природа", interactive: "Интерактивно", details: "Подробно", vrTour: "VR-тур", clearSearch: "Сбросить поиск", vr360Tour: "VR-тур 360°", aiGuideVrMode: "ИИ-гид (VR-режим)", seasonGood: "Сезон", seasonLimited: "Ограничено", prevImage: "Предыдущее фото", nextImage: "Следующее фото",
+        vrMenuTitle: "Смотреть в VR", vrHeadsetHere: "Смотреть в этом шлеме", vrHeadsetHereDesc: "Работает в браузере Quest, Pico, Vision Pro и подобных шлемов", vrCardboard: "Телефон + VR-бокс (Cardboard)", vrCardboardDesc: "Поверните телефон горизонтально и вставьте в VR-бокс. Смотрите на стрелку 2 секунды, чтобы перейти.", vrSendQuest: "Отправить на Meta Quest", vrSendQuestDesc: "Страница откроется на шлеме Quest, где выполнен вход в ваш аккаунт Meta", vrScanQr: "Отсканируйте камерой Pico, Quest 3 или другим телефоном, чтобы сразу открыть этот тур.", vrExitCardboard: "Выйти", vrRotateHint: "Поверните телефон горизонтально и вставьте его в VR-бокс", vrGazeHint: "Смотрите на белую стрелку 2 секунды, чтобы перейти к следующей точке",
         language: 'Язык',
     },
 };

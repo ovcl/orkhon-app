@@ -5,6 +5,8 @@ import clsx from 'clsx';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { StereoEffect } from 'three/addons/effects/StereoEffect.js';
+import qrcode from 'qrcode-generator';
 import panoramaMeta from '../app/data/panorama-manifest.json';
 
 /**
@@ -40,6 +42,15 @@ const FOV_MIN = 30;
 const FOV_MAX = 90;
 const VIEW_PREFS_KEY = 'pano-view';
 const HINT_KEY = 'pano-hint-seen';
+const GAZE_MS = 2000; // Cardboard горимд сум руу ширтэж шилжих хугацаа
+
+/** Хуваалцах хаягийн QR код (SVG) — интернэтгүй ч үүснэ */
+function qrSvg(text) {
+    const qr = qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    return qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+}
 
 function readViewPrefs() {
     try {
@@ -80,6 +91,12 @@ export default function PanoramaViewer({
     const [viewPrefs, setViewPrefs] = useState({ enhance: true, brightness: 1 });
     const [showLight, setShowLight] = useState(false);
     const [showHint, setShowHint] = useState(false);
+    const [showVrMenu, setShowVrMenu] = useState(false);
+    const [cardboard, setCardboard] = useState(false);
+    const [portrait, setPortrait] = useState(false);
+    const [isPhone, setIsPhone] = useState(false);
+    const reticleRefs = useRef([]);
+    const cardboardRestoreRef = useRef(null);
     const viewPrefsRef = useRef(viewPrefs);
     viewPrefsRef.current = viewPrefs;
 
@@ -857,6 +874,46 @@ export default function PanoramaViewer({
             }
         };
 
+        // ---------- Cardboard / VR Box: хоёр нүдний дүрс + ширтэж сонгох ----------
+        const stereo = new StereoEffect(renderer);
+        stereo.setEyeSeparation(0.064);
+        const cardboardState = { on: false, target: null, since: 0, savedFov: camera.fov };
+        const screenCenter = new THREE.Vector2(0, 0);
+        const setReticle = (progress) => {
+            reticleRefs.current.forEach((el) => el && el.style.setProperty('--p', `${Math.round(progress * 360)}deg`));
+        };
+        const updateGaze = () => {
+            raycaster.setFromCamera(screenCenter, camera);
+            const targets = hotspotMeshes.concat(modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
+            const hit = raycaster.intersectObjects(targets, false)[0]?.object || null;
+            const now = performance.now();
+            if (hit !== cardboardState.target) {
+                cardboardState.target = hit;
+                cardboardState.since = now;
+            }
+            const progress = hit ? Math.min(1, (now - cardboardState.since) / GAZE_MS) : 0;
+            setReticle(progress);
+            if (hit && progress >= 1) {
+                cardboardState.target = null;
+                setReticle(0);
+                hit.userData.action?.();
+            }
+        };
+        const setCardboardMode = (on) => {
+            cardboardState.on = on;
+            cardboardState.target = null;
+            if (on) {
+                cardboardState.savedFov = camera.fov;
+                camera.fov = 90;
+            } else {
+                camera.fov = cardboardState.savedFov;
+                // StereoEffect viewport-ыг баруун хагаст үлдээдэг тул бүтэн хэмжээг сэргээнэ
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+            camera.updateProjectionMatrix();
+            setReticle(0);
+        };
+
         buildHotspots(currentIndexRef.current);
         buildModels3d(currentIndexRef.current);
 
@@ -912,7 +969,12 @@ export default function PanoramaViewer({
                 }
             }
 
-            renderer.render(scene, camera);
+            if (cardboardState.on && !renderer.xr.isPresenting) {
+                updateGaze();
+                stereo.render(scene, camera);
+            } else {
+                renderer.render(scene, camera);
+            }
         });
 
         const resizeObserver = new ResizeObserver((entries) => {
@@ -941,6 +1003,7 @@ export default function PanoramaViewer({
             },
             setGyro,
             enterVR,
+            setCardboardMode,
         };
 
         return () => {
@@ -1032,6 +1095,68 @@ export default function PanoramaViewer({
         if (next) setAutoRotate(false);
     };
 
+    useEffect(() => {
+        const update = () => setPortrait(window.innerHeight > window.innerWidth);
+        update();
+        setIsPhone(window.matchMedia('(pointer: coarse)').matches);
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+    }, []);
+
+    const enterCardboard = async () => {
+        setShowVrMenu(false);
+        // iOS-д гироскопын зөвшөөрлийг товч дарсан даруйд асуух ёстой. Зөвшөөрөөгүй (эсвэл
+        // мэдрэгчгүй) бол горим асаалттай хэвээр, харин хуруугаар чирж эргүүлнэ.
+        let gyroAllowed = true;
+        if (typeof window.DeviceOrientationEvent?.requestPermission === 'function') {
+            try {
+                gyroAllowed = (await window.DeviceOrientationEvent.requestPermission()) === 'granted';
+            } catch {
+                gyroAllowed = false;
+            }
+        }
+        const restore = { gyroWasOn: gyroOn, wakeLock: null };
+        cardboardRestoreRef.current = restore;
+        if (gyroAllowed) {
+            sceneStateRef.current.setGyro?.(true);
+            setGyroOn(true);
+        }
+        setAutoRotate(false);
+        // Fullscreen, чиглэл түгжих, дэлгэц унтрахгүй байх — зарим браузерт promise хэзээ ч
+        // дуусахгүй тул хүлээлгүй (fire-and-forget) дуудна
+        const fs = document.documentElement.requestFullscreen?.();
+        Promise.resolve(fs)
+            .then(() => window.screen.orientation?.lock?.('landscape'))
+            .catch(() => {});
+        navigator.wakeLock?.request('screen').then((lock) => (restore.wakeLock = lock)).catch(() => {});
+        sceneStateRef.current.setCardboardMode?.(true);
+        setCardboard(true);
+    };
+
+    const exitCardboard = useCallback(() => {
+        const restore = cardboardRestoreRef.current;
+        cardboardRestoreRef.current = null;
+        sceneStateRef.current.setCardboardMode?.(false);
+        if (!restore?.gyroWasOn) {
+            sceneStateRef.current.setGyro?.(false);
+            setGyroOn(false);
+        }
+        restore?.wakeLock?.release?.().catch(() => {});
+        try {
+            window.screen.orientation?.unlock?.();
+        } catch {}
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        setCardboard(false);
+    }, []);
+
+    useEffect(() => () => cardboardRestoreRef.current && exitCardboard(), [exitCardboard]);
+
+    const shareUrl =
+        typeof window !== 'undefined' && scenes[currentIndex]
+            ? `${window.location.origin}/tours?site=${scenes[currentIndex].siteId}`
+            : '';
+    const qrMarkup = useMemo(() => (showVrMenu && shareUrl ? qrSvg(shareUrl) : ''), [showVrMenu, shareUrl]);
+
     const dismissHint = () => {
         setShowHint(false);
         try {
@@ -1043,14 +1168,19 @@ export default function PanoramaViewer({
         if (!showControls) return;
         const onKey = (e) => {
             if (e.target.closest?.('input, textarea, select')) return;
+            if (e.key === 'Escape' && cardboardRestoreRef.current) {
+                e.stopImmediatePropagation();
+                exitCardboard();
+                return;
+            }
             if (e.key === 'ArrowLeft') goTo(-1);
             else if (e.key === 'ArrowRight') goTo(1);
             else if (e.key === '+' || e.key === '=') sceneStateRef.current.zoomBy?.(-8);
             else if (e.key === '-') sceneStateRef.current.zoomBy?.(8);
         };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [showControls, goTo]);
+        window.addEventListener('keydown', onKey, true);
+        return () => window.removeEventListener('keydown', onKey, true);
+    }, [showControls, goTo, exitCardboard]);
 
     const siteScenes = useMemo(() => {
         const siteId = scenes[currentIndex]?.siteId;
@@ -1079,10 +1209,10 @@ export default function PanoramaViewer({
         </button>
     );
 
-    const controlsVisible = showControls && !isPresenting;
+    const controlsVisible = showControls && !isPresenting && !cardboard;
 
     return (
-        <div className="relative w-full h-full bg-black overflow-hidden">
+        <div className={clsx('bg-black overflow-hidden', cardboard ? 'fixed inset-0 z-[60]' : 'relative w-full h-full')}>
             <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none" />
 
             {loading && (
@@ -1107,20 +1237,23 @@ export default function PanoramaViewer({
             {controlsVisible && !uiHidden && (
                 <>
                     {/* Баруун талын хяналт */}
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5 max-h-[calc(100%-200px)] overflow-y-auto no-scrollbar">
+                    <div
+                        className="absolute right-3 top-[72px] z-40 flex flex-col gap-1.5 overflow-y-auto no-scrollbar"
+                        style={{ maxHeight: `calc(100% - ${72 + bottomInset + (siteScenes.length > 1 ? 118 : 8)}px)` }}
+                    >
+                        {railButton('vr', { icon: 'fa-vr-cardboard', label: t.vrMenuTitle, active: showVrMenu, onClick: () => setShowVrMenu((v) => !v) })}
                         {railButton('zin', { icon: 'fa-plus', label: t.vrZoomIn, onClick: () => sceneStateRef.current.zoomBy?.(-10) })}
                         {railButton('zout', { icon: 'fa-minus', label: t.vrZoomOut, onClick: () => sceneStateRef.current.zoomBy?.(10) })}
                         {railButton('rot', { icon: 'fa-rotate', label: t.vrAutoRotate, active: autoRotate, onClick: () => setAutoRotate((v) => !v) })}
                         {gyroAvailable && railButton('gyro', { icon: 'fa-mobile-screen-button', label: t.vrGyro, active: gyroOn, onClick: toggleGyro })}
                         {railButton('light', { icon: 'fa-sun', label: t.vrBrightness, active: showLight, onClick: () => setShowLight((v) => !v) })}
-                        {xrSupported && railButton('vr', { icon: 'fa-vr-cardboard', label: t.vrEnterVR, onClick: () => sceneStateRef.current.enterVR?.() })}
                         {railButton('help', { icon: 'fa-circle-question', label: t.vrHelp, onClick: () => setShowHint(true) })}
                         {onToggleUi && railButton('hide', { icon: 'fa-eye-slash', label: t.vrHideUI, onClick: onToggleUi })}
                     </div>
 
                     {/* Гэрэлтүүлэг / сайжруулалт */}
                     {showLight && (
-                        <div className="absolute right-16 top-1/2 -translate-y-1/2 z-40 w-60 rounded-2xl bg-navy/95 backdrop-blur-lg border border-white/10 p-4 text-white shadow-2xl">
+                        <div className="absolute right-16 top-[72px] z-40 w-60 rounded-2xl bg-navy/95 backdrop-blur-lg border border-white/10 p-4 text-white shadow-2xl">
                             <div className="flex items-center justify-between text-xs font-semibold mb-2">
                                 <span>{t.vrBrightness}</span>
                                 <span className="text-amber-400">{Math.round(viewPrefs.brightness * 100)}%</span>
@@ -1185,6 +1318,90 @@ export default function PanoramaViewer({
                                     );
                                 })}
                             </div>
+                        </div>
+                    )}
+                </>
+            )}
+
+            {showVrMenu && controlsVisible && (
+                <div className="absolute inset-0 z-50 flex items-end sm:items-center justify-center bg-black/55 backdrop-blur-sm p-4" onClick={() => setShowVrMenu(false)}>
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="vr-menu-title"
+                        className="w-full max-w-sm max-h-[85%] overflow-y-auto rounded-2xl bg-navy/95 border border-white/10 p-4 text-white shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-3">
+                            <h3 id="vr-menu-title" className="font-heading text-lg font-bold">{t.vrMenuTitle}</h3>
+                            <button type="button" onClick={() => setShowVrMenu(false)} aria-label={t.vrLess} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i className="fa-solid fa-xmark" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {xrSupported && (
+                                <button type="button" onClick={() => { setShowVrMenu(false); sceneStateRef.current.enterVR?.(); }} className="w-full flex items-start gap-3 p-3 rounded-xl bg-amber-500 text-slate-900 text-left">
+                                    <i className="fa-solid fa-vr-cardboard text-lg mt-0.5" aria-hidden="true"></i>
+                                    <span><span className="block text-sm font-bold">{t.vrHeadsetHere}</span><span className="block text-xs opacity-80">{t.vrHeadsetHereDesc}</span></span>
+                                </button>
+                            )}
+                            {isPhone && (
+                                <button type="button" onClick={enterCardboard} className="w-full flex items-start gap-3 p-3 rounded-xl bg-white/[0.06] border border-white/10 text-left hover:bg-white/10">
+                                    <i className="fa-solid fa-glasses text-lg text-amber-400 mt-0.5" aria-hidden="true"></i>
+                                    <span><span className="block text-sm font-bold">{t.vrCardboard}</span><span className="block text-xs text-slate-300">{t.vrCardboardDesc}</span></span>
+                                </button>
+                            )}
+                            <a
+                                href={`https://www.oculus.com/open_url/?url=${encodeURIComponent(shareUrl)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full flex items-start gap-3 p-3 rounded-xl bg-white/[0.06] border border-white/10 text-left hover:bg-white/10"
+                            >
+                                <i className="fa-brands fa-meta text-lg text-sky-400 mt-0.5" aria-hidden="true"></i>
+                                <span><span className="block text-sm font-bold">{t.vrSendQuest}</span><span className="block text-xs text-slate-300">{t.vrSendQuestDesc}</span></span>
+                            </a>
+                        </div>
+                        {qrMarkup && (
+                            <div className="mt-4 flex items-center gap-4 p-3 rounded-xl bg-white/[0.04] border border-white/10">
+                                <div className="w-28 h-28 shrink-0 rounded-lg overflow-hidden bg-white p-1" aria-label="QR" dangerouslySetInnerHTML={{ __html: qrMarkup }} />
+                                <p className="text-xs text-slate-300 leading-relaxed">{t.vrScanQr}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {cardboard && (
+                <>
+                    {/* Нүд бүрийн голд ширтэх цэг — сум дээр ширтэхэд дугуй дүүрнэ */}
+                    {[25, 75].map((left, i) => (
+                        <div
+                            key={left}
+                            ref={(el) => (reticleRefs.current[i] = el)}
+                            className="absolute top-1/2 z-50 w-7 h-7 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+                            style={{
+                                left: `${left}%`,
+                                '--p': '0deg',
+                                background: 'conic-gradient(#f59e0b var(--p), rgba(255,255,255,0.35) 0)',
+                                WebkitMask: 'radial-gradient(circle, transparent 7px, #000 8px)',
+                                mask: 'radial-gradient(circle, transparent 7px, #000 8px)',
+                            }}
+                        />
+                    ))}
+                    <div className="absolute top-0 bottom-0 left-1/2 w-px bg-white/25 z-40 pointer-events-none" />
+                    <button
+                        type="button"
+                        onClick={exitCardboard}
+                        className="absolute top-3 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 border border-white/20 text-white text-xs font-semibold"
+                    >
+                        <i className="fa-solid fa-xmark" aria-hidden="true"></i> {t.vrExitCardboard}
+                    </button>
+                    {portrait && (
+                        <div className="absolute inset-0 z-[55] flex flex-col items-center justify-center gap-4 bg-black/85 text-white text-center p-6">
+                            <i className="fa-solid fa-mobile-screen-button text-5xl rotate-90" aria-hidden="true"></i>
+                            <p className="text-sm max-w-xs">{t.vrRotateHint}</p>
+                            <p className="text-xs text-slate-400 max-w-xs">{t.vrGazeHint}</p>
+                            <button type="button" onClick={exitCardboard} className="btn btn-secondary px-5 py-2">{t.vrExitCardboard}</button>
                         </div>
                     )}
                 </>
