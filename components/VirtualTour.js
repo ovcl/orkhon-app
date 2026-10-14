@@ -20,6 +20,11 @@ const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ),
 });
 
+// "Дараах/Буцах" гэх ерөнхий шошгын оронд сум очих байршлын нэрийг харуулна
+// ("Тэмээн чулууны амны — 2-р харагдац" → "2-р харагдац").
+const GENERIC_HOTSPOT_LABELS = new Set(['Дараах', 'Буцах']);
+const shortNodeName = (node, language) => (node ? nodeName(node, language).split(' — ').pop() : null);
+
 const topButton =
     'w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-black/45 backdrop-blur-md border border-white/15 text-white hover:bg-black/65 transition-colors';
 
@@ -83,7 +88,9 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                         models3d: node.models3d || [],
                         hotspots: (node.hotspots || []).map((h) => ({
                             ...h,
-                            label: hotspotLabel(h.label, language),
+                            label: GENERIC_HOTSPOT_LABELS.has(h.label)
+                                ? shortNodeName(s.panoramaTour[h.targetIndex], language) || hotspotLabel(h.label, language)
+                                : hotspotLabel(h.label, language),
                             targetIndex: offset + h.targetIndex,
                         })),
                     });

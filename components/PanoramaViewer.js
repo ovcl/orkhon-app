@@ -471,65 +471,64 @@ export default function PanoramaViewer({
         // camera-ийн хүүхэд биш, world space дотор тогтмол байрлалтай.
         // -----------------------------------------------------------------
         const makeHotspotMesh = (label) => {
-            // Хамгийн бага зайг эзэлдэг, бараг үл үзэгдэх "glass ring" загвар —
-            // хайрцаг, дэвсгэр фон огтхон ч байхгүй, зөвхөн нимгэн тойрог + сум +
-            // жижиг тунгалаг pill шошго. Панорама зургийг халхлахгүй байхаар зорьсон.
+            // Орчин үеийн минималист тэмдэг: бараан шилэн дугуй + цагаан хүрээ + урагш заах
+            // сум, доор нь очих газрын нэртэй pill. 2x нягтралтай canvas (VR-д тод харагдана).
+            const W = 448, H = 288;
             const canvas = document.createElement('canvas');
-            canvas.width = 200; canvas.height = 160;
+            canvas.width = W; canvas.height = H;
             const ctx = canvas.getContext('2d');
-            const cx = 100, cy = 68, radius = 34;
+            const cx = W / 2, cy = 104, radius = 46;
 
-            // Маш зөөлөн, бараг мэдрэгдэхгүй glow (дэвсгэр фон биш)
-            const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 1.3);
-            glow.addColorStop(0, 'rgba(255,255,255,0.10)');
-            glow.addColorStop(1, 'rgba(255,255,255,0)');
-            ctx.fillStyle = glow;
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.45)';
+            ctx.shadowBlur = 18;
+            ctx.fillStyle = 'rgba(15,23,42,0.55)';
             ctx.beginPath();
-            ctx.arc(cx, cy, radius * 1.3, 0, Math.PI * 2);
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.fill();
+            ctx.restore();
 
-            // Маш нимгэн ганц тойрог зураас (2 давхар зураас биш)
-            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+            ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Цорын ганц нимгэн дээш сум (өмнөхөөс нимгэн, жижиг)
-            ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 8;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.beginPath();
-            ctx.moveTo(cx - 12, cy + 7); ctx.lineTo(cx, cy - 9); ctx.lineTo(cx + 12, cy + 7);
+            ctx.moveTo(cx - 17, cy + 9); ctx.lineTo(cx, cy - 10); ctx.lineTo(cx + 17, cy + 9);
             ctx.stroke();
 
-            // Шошго — маш жижиг, зөвхөн текстийн өргөнтэй тунгалаг pill (том хайрцаг биш)
             if (label) {
-                ctx.font = '400 15px sans-serif';
-                const textWidth = ctx.measureText(label).width;
-                const pillY = cy + radius + 20;
-                const pillW = textWidth + 20;
-                const pillH = 22;
-                ctx.fillStyle = 'rgba(0,0,0,0.35)';
-                ctx.beginPath();
-                if (ctx.roundRect) {
-                    ctx.roundRect(cx - pillW / 2, pillY - pillH / 2, pillW, pillH, 11);
-                } else {
-                    ctx.rect(cx - pillW / 2, pillY - pillH / 2, pillW, pillH);
+                ctx.font = '600 26px Inter, system-ui, sans-serif';
+                const maxText = W - 48;
+                let text = label;
+                if (ctx.measureText(text).width > maxText) {
+                    while (text.length > 1 && ctx.measureText(text + '…').width > maxText) text = text.slice(0, -1);
+                    text = text.trimEnd() + '…';
                 }
+                const pillW = ctx.measureText(text).width + 36;
+                const pillH = 46;
+                const pillY = cy + radius + 22;
+                ctx.fillStyle = 'rgba(15,23,42,0.75)';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(cx - pillW / 2, pillY, pillW, pillH, pillH / 2);
+                else ctx.rect(cx - pillW / 2, pillY, pillW, pillH);
                 ctx.fill();
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                ctx.fillText(label, cx, pillY + 1);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(text, cx, pillY + pillH / 2 + 1);
             }
 
             const tex = new THREE.CanvasTexture(canvas);
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.85 });
-            // Дэлгэц дээрх бодит хэмжээ багасгав (9x9 → 5x4) — зөвхөн чиглэл заах,
-            // үзэгдэлд саад болохгүй жижиг тэмдэг байхаар
-            const geom = new THREE.PlaneGeometry(5, 4);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 4;
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, opacity: 0.95 });
+            // ~14° өргөн: утсан дээр ч тод уншигдана, үзэгдлийг халхлахгүй
+            const geom = new THREE.PlaneGeometry(10, 6.4);
             const meshObj = new THREE.Mesh(geom, mat);
             meshObj.renderOrder = 998;
             meshObj.userData.baseScale = 1;

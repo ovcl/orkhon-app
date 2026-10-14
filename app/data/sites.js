@@ -64,8 +64,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-3-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 256,
+                        "pitch": -10,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -76,8 +76,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-3-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 207,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -111,8 +111,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-4-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 265,
+                        "pitch": -34,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -123,8 +123,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-4-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 14,
+                        "pitch": -35,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -156,8 +156,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-5-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 68,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -168,8 +168,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-5-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 31,
+                        "pitch": -7,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -204,8 +204,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-6-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 5,
+                        "pitch": -35,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -222,8 +222,8 @@ export const sitesData = [
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 8,
+                        "pitch": -35,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -271,8 +271,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-7-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 9,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -284,14 +284,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-7-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 165,
+                        "pitch": -13,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 116,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -303,8 +303,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-7-4.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 350,
+                        "pitch": -20,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -337,7 +337,7 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-8-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
+                        "yaw": 360,
                         "pitch": -8,
                         "targetIndex": 1,
                         "label": "Дараах"
@@ -349,14 +349,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-8-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 106,
+                        "pitch": -4,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 179,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -367,14 +367,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-8-4-буган_чулууг_хөшөө.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 4,
+                        "pitch": -4,
                         "targetIndex": 3,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 275,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -386,8 +386,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-8-3-хүн_чулуун_хөшөө.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 207,
+                        "pitch": -4,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -422,8 +422,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-9-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 335,
+                        "pitch": -10,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -434,8 +434,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-9-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 96,
+                        "pitch": -7,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -469,8 +469,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-10-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 270,
+                        "pitch": -17,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -481,14 +481,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-10-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 48,
+                        "pitch": -4,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 23,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -499,14 +499,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-10-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 21,
+                        "pitch": -25,
                         "targetIndex": 3,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 311,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -517,8 +517,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-10-4.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 188,
+                        "pitch": -20,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -552,8 +552,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-11-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 338,
+                        "pitch": -6,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -564,14 +564,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-11-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 269,
+                        "pitch": -7,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 92,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -582,8 +582,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-11-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 64,
+                        "pitch": -7,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -616,8 +616,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-12-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 17,
+                        "pitch": -14,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -628,8 +628,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-12-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 358,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -690,8 +690,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(1).jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 236,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -702,14 +702,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 76,
+                        "pitch": -4,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 77,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -720,14 +720,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(3).jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 69,
+                        "pitch": -4,
                         "targetIndex": 3,
                         "label": "Күлтегин жанжины хөшөө рүү"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 70,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -738,14 +738,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 4,
+                        "pitch": -13,
                         "targetIndex": 4,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 237,
+                        "pitch": -4,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -756,7 +756,7 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(2).jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
+                        "yaw": 4,
                         "pitch": -8,
                         "targetIndex": 3,
                         "label": "Буцах"
@@ -787,8 +787,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-15-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 13,
+                        "pitch": -12,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -799,14 +799,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-15-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 353,
+                        "pitch": -20,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 318,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -817,14 +817,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-15-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 348,
+                        "pitch": -6,
                         "targetIndex": 3,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 346,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -835,8 +835,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-15-4.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 126,
+                        "pitch": -10,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -878,18 +878,18 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Хархорум хотын туурь", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16.JPG", "hotspots": [
-                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                    { "yaw": 194, "pitch": -4, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
                 ]
             },
             {
                 "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Туурь руу буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
+                    { "yaw": 99, "pitch": -4, "targetIndex": 0, "label": "Туурь руу буцах" },
+                    { "yaw": 58, "pitch": -4, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
                 ]
             },
             {
                 "name": "Хархорум хотын туурь — 2-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Буцах" }
+                    { "yaw": 239, "pitch": -17, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
         ],
@@ -905,8 +905,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-17-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 24,
+                        "pitch": -31,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -917,8 +917,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-17-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 303,
+                        "pitch": -33,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -974,8 +974,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-19-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 167,
+                        "pitch": -27,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -986,14 +986,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-19-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 349,
+                        "pitch": -35,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 349,
+                        "pitch": -35,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -1004,14 +1004,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-19-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 67,
+                        "pitch": -4,
                         "targetIndex": 3,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 171,
+                        "pitch": -5,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -1022,14 +1022,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-19-4.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 209,
+                        "pitch": -35,
                         "targetIndex": 4,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 248,
+                        "pitch": -35,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -1040,8 +1040,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-19-5.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 24,
+                        "pitch": -4,
                         "targetIndex": 3,
                         "label": "Буцах"
                     }
@@ -1070,8 +1070,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-20-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 54,
+                        "pitch": -17,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -1082,14 +1082,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-20-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 327,
+                        "pitch": -9,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 290,
+                        "pitch": -20,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -1100,14 +1100,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-20-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 6,
+                        "pitch": -18,
                         "targetIndex": 3,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 42,
+                        "pitch": -10,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -1118,8 +1118,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-20-4.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 328,
+                        "pitch": -6,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -1218,15 +1218,15 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Эрдэнэзуу хийд", "group": "Эрдэнэзуу хийд", "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
-                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
-                    { "yaw": 90, "pitch": -8, "targetIndex": 8, "label": "Лаврин рүү" }
+                    { "yaw": 347, "pitch": -17, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
+                    { "yaw": 15, "pitch": -18, "targetIndex": 8, "label": "Лаврин рүү" }
                 ]
             },
             {
                 "name": "Гол гурван зуу", "group": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" },
+                    { "yaw": 169, "pitch": -4, "targetIndex": 0, "label": "Хийд рүү буцах" },
                     { "yaw": 90, "pitch": -8, "targetIndex": 2, "label": "Сүм рүү орох" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 5, "label": "Алтан суварга руу" }
+                    { "yaw": 113, "pitch": -4, "targetIndex": 5, "label": "Алтан суварга руу" }
                 ]
             },
             {
@@ -1249,24 +1249,24 @@ export const sitesData = [
             },
             {
                 "name": "Алтан суварга", "group": "Алтан суварга", "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Гол гурван зуу рүү буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 6, "label": "Хөх сүм рүү" }
+                    { "yaw": 290, "pitch": -4, "targetIndex": 1, "label": "Гол гурван зуу рүү буцах" },
+                    { "yaw": 51, "pitch": -5, "targetIndex": 6, "label": "Хөх сүм рүү" }
                 ]
             },
             {
                 "name": "Хөх сүм", "group": "Хөх сүм", "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 5, "label": "Буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 7, "label": "Автай сан хааны гэрийн буурь руу" }
+                    { "yaw": 226, "pitch": -4, "targetIndex": 5, "label": "Буцах" },
+                    { "yaw": 195, "pitch": -4, "targetIndex": 7, "label": "Автай сан хааны гэрийн буурь руу" }
                 ]
             },
             {
                 "name": "Автай сан хааны гэрийн буурь", "group": "Автай сан хааны гэрийн буурь", "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 6, "label": "Буцах" }
+                    { "yaw": 24, "pitch": -6, "targetIndex": 6, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Лаврин", "group": "Лаврин", "url": "/images/panoramas/24-Лаврин.JPG", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 0, "label": "Хийд рүү буцах" }
+                    { "yaw": 192, "pitch": -4, "targetIndex": 0, "label": "Хийд рүү буцах" }
                 ]
             }
         ],
@@ -1289,8 +1289,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-25-үүд.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 360,
+                        "pitch": -14,
                         "targetIndex": 1,
                         "label": "Дараах"
                     },
@@ -1308,7 +1308,7 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
+                        "yaw": 184,
                         "pitch": -8,
                         "targetIndex": 0,
                         "label": "Буцах"
@@ -1354,8 +1354,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 3,
+                        "pitch": -33,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -1366,14 +1366,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 343,
+                        "pitch": -6,
                         "targetIndex": 2,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 152,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -1384,14 +1384,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 332,
+                        "pitch": -35,
                         "targetIndex": 3,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 239,
+                        "pitch": -22,
                         "targetIndex": 1,
                         "label": "Буцах"
                     }
@@ -1402,14 +1402,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-Хурлын_дуган.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 275,
+                        "pitch": -35,
                         "targetIndex": 4,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 84,
+                        "pitch": -35,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
@@ -1426,8 +1426,8 @@ export const sitesData = [
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 120,
+                        "pitch": -35,
                         "targetIndex": 3,
                         "label": "Буцах"
                     }
@@ -1474,8 +1474,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-хийморийн_овоо_2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 52,
+                        "pitch": -10,
                         "targetIndex": 8,
                         "label": "Дараах"
                     },
@@ -1492,14 +1492,14 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-Умай_хад.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 194,
+                        "pitch": -35,
                         "targetIndex": 9,
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 262,
+                        "pitch": -4,
                         "targetIndex": 7,
                         "label": "Буцах"
                     }
@@ -1510,8 +1510,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-26-10.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 353,
+                        "pitch": -33,
                         "targetIndex": 8,
                         "label": "Буцах"
                     }
@@ -1543,8 +1543,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-27-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 191,
+                        "pitch": -18,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -1555,8 +1555,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-27-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 2,
+                        "pitch": -19,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
@@ -1619,8 +1619,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-30-1.jpg",
                 "hotspots": [
                     {
-                        "yaw": 0,
-                        "pitch": -8,
+                        "yaw": 64,
+                        "pitch": -4,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -1631,8 +1631,8 @@ export const sitesData = [
                 "url": "/images/panoramas/pano-30-2.jpg",
                 "hotspots": [
                     {
-                        "yaw": 180,
-                        "pitch": -8,
+                        "yaw": 348,
+                        "pitch": -4,
                         "targetIndex": 0,
                         "label": "Буцах"
                     }
