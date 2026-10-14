@@ -63,24 +63,14 @@ export const sitesData = [
                 "name": "Гүмбийн дэнжийн буган — 1-р харагдац", "group": "Гүмбийн дэнжийн буган",
                 "url": "/images/panoramas/pano-3-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 256,
-                        "pitch": -10,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 182.4, "pitch": -8.5, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Гүмбийн дэнжийн буган — 2-р харагдац", "group": "Гүмбийн дэнжийн буган",
                 "url": "/images/panoramas/pano-3-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 207,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 250.4, "pitch": 1.4, "targetIndex": 0, "label": "Буцах" }
                 ]
             }
         ],
@@ -110,24 +100,14 @@ export const sitesData = [
                 "name": "Нарийны амны булш, — 1-р харагдац", "group": "Нарийны амны булш,",
                 "url": "/images/panoramas/pano-4-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 265,
-                        "pitch": -34,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 328.7, "pitch": -20.1, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Нарийны амны булш, — 2-р харагдац", "group": "Нарийны амны булш,",
                 "url": "/images/panoramas/pano-4-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 14,
-                        "pitch": -35,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 85.6, "pitch": -12.2, "targetIndex": 0, "label": "Буцах" }
                 ]
             }
         ],
@@ -155,24 +135,14 @@ export const sitesData = [
                 "name": "Тэмээн чулууны амны — 1-р харагдац", "group": "Тэмээн чулууны амны",
                 "url": "/images/panoramas/pano-5-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 68,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 33.6, "pitch": 0.7, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Тэмээн чулууны амны — 2-р харагдац", "group": "Тэмээн чулууны амны",
                 "url": "/images/panoramas/pano-5-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 31,
-                        "pitch": -7,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 73.5, "pitch": -3.8, "targetIndex": 0, "label": "Буцах" }
                 ]
             }
         ],
@@ -203,30 +173,15 @@ export const sitesData = [
                 "name": "Ширээт уулын буган — 1-р харагдац", "group": "Ширээт уулын буган",
                 "url": "/images/panoramas/pano-6-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 5,
-                        "pitch": -35,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 68.9, "pitch": -6.4, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Ширээт уулын буган — 2-р харагдац", "group": "Ширээт уулын буган",
                 "url": "/images/panoramas/pano-6-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 8,
-                        "pitch": -35,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 0, "pitch": -8, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 286.9, "pitch": -83.9, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
@@ -283,18 +238,8 @@ export const sitesData = [
                 "group": "Орхоны хөндийн хиргисүүрүүд",
                 "url": "/images/panoramas/pano-7-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 165,
-                        "pitch": -13,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 116,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 185.3, "pitch": -57.7, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 93.4, "pitch": -3.3, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
@@ -302,12 +247,7 @@ export const sitesData = [
                 "group": "Орхоны хөндийн хиргисүүрүүд",
                 "url": "/images/panoramas/pano-7-4.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 350,
-                        "pitch": -20,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 83.5, "pitch": -34.5, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
         ],
@@ -336,48 +276,23 @@ export const sitesData = [
                 "name": "Ар бөөрөг — гадна үзэмж 1", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-8-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 360,
-                        "pitch": -8,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 86.9, "pitch": -4.1, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Ар бөөрөг — гадна үзэмж 2", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-8-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 106,
-                        "pitch": -4,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 179,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 0.2, "pitch": -4.2, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 179, "pitch": -4, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Буган чулуун хөшөө", "group": "Ар бөөрөг",
                 "url": "/images/panoramas/pano-8-4-буган_чулууг_хөшөө.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 4,
-                        "pitch": -4,
-                        "targetIndex": 3,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 275,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 53.7, "pitch": -0.9, "targetIndex": 3, "label": "Дараах" },
+                    { "yaw": 275, "pitch": -4, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
@@ -421,12 +336,7 @@ export const sitesData = [
                 "name": "Бэрхийн булангийн булш — 1-р харагдац", "group": "Бэрхийн булангийн булш",
                 "url": "/images/panoramas/pano-9-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 335,
-                        "pitch": -10,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 105, "pitch": -12, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
@@ -468,48 +378,23 @@ export const sitesData = [
                 "name": "Шунхлай уулын булш — 1-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 270,
-                        "pitch": -17,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 195.1, "pitch": -20.2, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Шунхлай уулын булш — 2-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 48,
-                        "pitch": -4,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 23,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 79.2, "pitch": 15.2, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 34.3, "pitch": -1.4, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Шунхлай уулын булш — 3-р харагдац", "group": "Шунхлай уулын булш",
                 "url": "/images/panoramas/pano-10-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 21,
-                        "pitch": -25,
-                        "targetIndex": 3,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 311,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 35.1, "pitch": -1, "targetIndex": 3, "label": "Дараах" },
+                    { "yaw": 311, "pitch": -4, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
@@ -551,30 +436,15 @@ export const sitesData = [
                 "name": "Майхан толгойн булш — 1-р харагдац", "group": "Майхан толгойн булш",
                 "url": "/images/panoramas/pano-11-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 338,
-                        "pitch": -6,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 128.5, "pitch": -23.1, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Майхан толгойн булш — 2-р харагдац", "group": "Майхан толгойн булш",
                 "url": "/images/panoramas/pano-11-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 269,
-                        "pitch": -7,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 92,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 174, "pitch": -1.7, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 92, "pitch": -4, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
@@ -689,48 +559,23 @@ export const sitesData = [
                 "name": "билгэ хааны хөшөө (1)", "group": "билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(1).jpg",
                 "hotspots": [
-                    {
-                        "yaw": 236,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 96.9, "pitch": -4.4, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "билгэ хааны хөшөө (2)", "group": "билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
                 "hotspots": [
-                    {
-                        "yaw": 76,
-                        "pitch": -4,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 77,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 76, "pitch": -4, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 20.4, "pitch": -1.7, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
                 "name": "билгэ хааны хөшөө (3)", "group": "билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(3).jpg",
                 "hotspots": [
-                    {
-                        "yaw": 69,
-                        "pitch": -4,
-                        "targetIndex": 3,
-                        "label": "Күлтегин жанжины хөшөө рүү"
-                    },
-                    {
-                        "yaw": 70,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 116.3, "pitch": -17.2, "targetIndex": 3, "label": "Күлтегин жанжины хөшөө рүү" },
+                    { "yaw": 21.3, "pitch": -33.6, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
@@ -786,60 +631,30 @@ export const sitesData = [
                 "name": "Харбалгас хотын туурь — 1-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 13,
-                        "pitch": -12,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 76, "pitch": -25.9, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Харбалгас хотын туурь — 2-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 353,
-                        "pitch": -20,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 318,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 75.9, "pitch": -28.8, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 129.3, "pitch": -2.8, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Харбалгас хотын туурь — 3-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 348,
-                        "pitch": -6,
-                        "targetIndex": 3,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 346,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 90.4, "pitch": -3.3, "targetIndex": 3, "label": "Дараах" },
+                    { "yaw": 329.5, "pitch": -6.7, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Харбалгас хотын туурь — 4-р харагдац", "group": "Харбалгас хотын туурь",
                 "url": "/images/panoramas/pano-15-4.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 126,
-                        "pitch": -10,
-                        "targetIndex": 2,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 219.2, "pitch": -13.3, "targetIndex": 2, "label": "Буцах" }
                 ]
             }
         ],
@@ -883,13 +698,13 @@ export const sitesData = [
             },
             {
                 "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
-                    { "yaw": 99, "pitch": -4, "targetIndex": 0, "label": "Туурь руу буцах" },
-                    { "yaw": 58, "pitch": -4, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
+                    { "yaw": 48.5, "pitch": -1.2, "targetIndex": 0, "label": "Туурь руу буцах" },
+                    { "yaw": 338.8, "pitch": -1.6, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
                 ]
             },
             {
                 "name": "Хархорум хотын туурь — 2-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
-                    { "yaw": 239, "pitch": -17, "targetIndex": 1, "label": "Буцах" }
+                    { "yaw": 198.8, "pitch": -24.6, "targetIndex": 1, "label": "Буцах" }
                 ]
             }
         ],
@@ -973,12 +788,7 @@ export const sitesData = [
                 "name": "Дойт толгойн эртний — 1-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 167,
-                        "pitch": -27,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 280, "pitch": -40.5, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
@@ -1003,36 +813,16 @@ export const sitesData = [
                 "name": "Дойт толгойн эртний — 3-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 67,
-                        "pitch": -4,
-                        "targetIndex": 3,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 171,
-                        "pitch": -5,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 67, "pitch": -4, "targetIndex": 3, "label": "Дараах" },
+                    { "yaw": 264.9, "pitch": -26.4, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Дойт толгойн эртний — 4-р харагдац", "group": "Дойт толгойн эртний",
                 "url": "/images/panoramas/pano-19-4.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 209,
-                        "pitch": -35,
-                        "targetIndex": 4,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 248,
-                        "pitch": -35,
-                        "targetIndex": 2,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 92.5, "pitch": -55.5, "targetIndex": 4, "label": "Дараах" },
+                    { "yaw": 281.9, "pitch": -51.5, "targetIndex": 2, "label": "Буцах" }
                 ]
             },
             {
@@ -1081,36 +871,16 @@ export const sitesData = [
                 "name": "Захын булаг эртний — 2-р харагдац", "group": "Захын булаг эртний",
                 "url": "/images/panoramas/pano-20-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 327,
-                        "pitch": -9,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 290,
-                        "pitch": -20,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 38.9, "pitch": -24.1, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 139.4, "pitch": -15.4, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Захын булаг эртний — 3-р харагдац", "group": "Захын булаг эртний",
                 "url": "/images/panoramas/pano-20-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 6,
-                        "pitch": -18,
-                        "targetIndex": 3,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 42,
-                        "pitch": -10,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 143, "pitch": -29.9, "targetIndex": 3, "label": "Дараах" },
+                    { "yaw": 42, "pitch": -10, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
@@ -1218,50 +988,50 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Эрдэнэзуу хийд", "group": "Эрдэнэзуу хийд", "url": "/images/panoramas/24-Эрдэнэзуу.JPG", "hotspots": [
-                    { "yaw": 347, "pitch": -17, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
-                    { "yaw": 15, "pitch": -18, "targetIndex": 8, "label": "Лаврин рүү" }
+                    { "yaw": 101.5, "pitch": -15.4, "targetIndex": 1, "label": "Гол гурван зуу рүү" },
+                    { "yaw": 64, "pitch": -17.1, "targetIndex": 8, "label": "Лаврин рүү" }
                 ]
             },
             {
                 "name": "Гол гурван зуу", "group": "Гол гурван зуу", "url": "/images/panoramas/24-Гол гурван зуу.JPG", "hotspots": [
-                    { "yaw": 169, "pitch": -4, "targetIndex": 0, "label": "Хийд рүү буцах" },
+                    { "yaw": 259.3, "pitch": 8.6, "targetIndex": 0, "label": "Хийд рүү буцах" },
                     { "yaw": 90, "pitch": -8, "targetIndex": 2, "label": "Сүм рүү орох" },
-                    { "yaw": 113, "pitch": -4, "targetIndex": 5, "label": "Алтан суварга руу" }
+                    { "yaw": 359.2, "pitch": -8.6, "targetIndex": 5, "label": "Алтан суварга руу" }
                 ]
             },
             {
                 "name": "Гол гурван зуу дотор (1)", "group": "Гол гурван зуу дотор", "url": "/images/panoramas/24-гол_гурван_зуу_дотор_(1).jpg", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 1, "label": "Сүмээс гарах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 3, "label": "Дараах" }
+                    { "yaw": 275.2, "pitch": -22.4, "targetIndex": 1, "label": "Сүмээс гарах" },
+                    { "yaw": 13.8, "pitch": -18.7, "targetIndex": 3, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Гол гурван зуу дотор (2)", "group": "Гол гурван зуу дотор", "url": "/images/panoramas/24-гол_гурван_зуу_дотор_(2).jpg", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 2, "label": "Буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 4, "label": "Дараах" }
+                    { "yaw": 274.1, "pitch": -14.7, "targetIndex": 2, "label": "Буцах" },
+                    { "yaw": 21.1, "pitch": -19.8, "targetIndex": 4, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Гол гурван зуу дотор (3)", "group": "Гол гурван зуу дотор", "url": "/images/panoramas/24-гол_гурван_зуу_дотор_(3).jpg", "hotspots": [
-                    { "yaw": 180, "pitch": -8, "targetIndex": 3, "label": "Буцах" },
-                    { "yaw": 0, "pitch": -8, "targetIndex": 1, "label": "Сүмээс гарах" }
+                    { "yaw": 271.8, "pitch": -2.1, "targetIndex": 3, "label": "Буцах" },
+                    { "yaw": 267.4, "pitch": -24.7, "targetIndex": 1, "label": "Сүмээс гарах" }
                 ]
             },
             {
                 "name": "Алтан суварга", "group": "Алтан суварга", "url": "/images/panoramas/24-Алтан суварга.JPG", "hotspots": [
                     { "yaw": 290, "pitch": -4, "targetIndex": 1, "label": "Гол гурван зуу рүү буцах" },
-                    { "yaw": 51, "pitch": -5, "targetIndex": 6, "label": "Хөх сүм рүү" }
+                    { "yaw": 48, "pitch": -7.9, "targetIndex": 6, "label": "Хөх сүм рүү" }
                 ]
             },
             {
                 "name": "Хөх сүм", "group": "Хөх сүм", "url": "/images/panoramas/24-Хөх сүм.JPG", "hotspots": [
-                    { "yaw": 226, "pitch": -4, "targetIndex": 5, "label": "Буцах" },
-                    { "yaw": 195, "pitch": -4, "targetIndex": 7, "label": "Автай сан хааны гэрийн буурь руу" }
+                    { "yaw": 184.8, "pitch": -20.6, "targetIndex": 5, "label": "Буцах" },
+                    { "yaw": 228.1, "pitch": -6.3, "targetIndex": 7, "label": "Автай сан хааны гэрийн буурь руу" }
                 ]
             },
             {
                 "name": "Автай сан хааны гэрийн буурь", "group": "Автай сан хааны гэрийн буурь", "url": "/images/panoramas/24-Автай сан хааны гэрийн буурь.JPG", "hotspots": [
-                    { "yaw": 24, "pitch": -6, "targetIndex": 6, "label": "Буцах" }
+                    { "yaw": 67.5, "pitch": -9.3, "targetIndex": 6, "label": "Буцах" }
                 ]
             },
             {
@@ -1307,12 +1077,7 @@ export const sitesData = [
                 "group": "Хашаан дотор",
                 "url": "/images/panoramas/pano-25-хашаан_дотор.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 184,
-                        "pitch": -8,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 277.6, "pitch": -12.9, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
@@ -1320,12 +1085,7 @@ export const sitesData = [
                 "group": "Дуган дотор",
                 "url": "/images/panoramas/pano-25-дуган_дотор.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 0,
-                        "label": "Сүмээс гарах"
-                    }
+                    { "yaw": 266.6, "pitch": -26, "targetIndex": 0, "label": "Сүмээс гарах" }
                 ]
             }
         ],
@@ -1353,168 +1113,78 @@ export const sitesData = [
                 "name": "Төвхөн хийд — гадна үзэмж 1", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-1.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 3,
-                        "pitch": -33,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
+                    { "yaw": 92.2, "pitch": -36.8, "targetIndex": 1, "label": "Дараах" }
                 ]
             },
             {
                 "name": "Төвхөн хийд — гадна үзэмж 2", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 343,
-                        "pitch": -6,
-                        "targetIndex": 2,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 152,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 54.5, "pitch": 15.5, "targetIndex": 2, "label": "Дараах" },
+                    { "yaw": 267.7, "pitch": 7.8, "targetIndex": 0, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Төвхөн хийд — гадна үзэмж 3", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-3.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 332,
-                        "pitch": -35,
-                        "targetIndex": 3,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 239,
-                        "pitch": -22,
-                        "targetIndex": 1,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 98.3, "pitch": -7.7, "targetIndex": 3, "label": "Дараах" },
+                    { "yaw": 239, "pitch": -22, "targetIndex": 1, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Хурлын дуган", "group": "Хурлын дуган",
                 "url": "/images/panoramas/pano-26-Хурлын_дуган.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 275,
-                        "pitch": -35,
-                        "targetIndex": 4,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 84,
-                        "pitch": -35,
-                        "targetIndex": 2,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 149.6, "pitch": -2.8, "targetIndex": 4, "label": "Дараах" },
+                    { "yaw": 10.6, "pitch": -12, "targetIndex": 2, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Сэмчин дуган", "group": "Сэмчин дуган",
                 "url": "/images/panoramas/pano-26-Сэмчин_дуган.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 5,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 120,
-                        "pitch": -35,
-                        "targetIndex": 3,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 347.6, "pitch": -10.3, "targetIndex": 5, "label": "Дараах" },
+                    { "yaw": 228, "pitch": -41.8, "targetIndex": 3, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Хурлын дуган дотор", "group": "Хурлын дуган дотор",
                 "url": "/images/panoramas/pano-26-Хурлын_дуган_дотор.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 6,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 4,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 121.3, "pitch": 0.2, "targetIndex": 6, "label": "Дараах" },
+                    { "yaw": 270, "pitch": -20.2, "targetIndex": 4, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Хийморийн овоо (1)", "group": "Хийморийн овоо",
                 "url": "/images/panoramas/pano-26-хийморийн_овоо.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 0,
-                        "pitch": -8,
-                        "targetIndex": 7,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 5,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 135.5, "pitch": -14, "targetIndex": 7, "label": "Дараах" },
+                    { "yaw": 312, "pitch": -37.9, "targetIndex": 5, "label": "Буцах" }
                 ]
             },
             {
                 "name": "хийморийн овоо 2", "group": "хийморийн овоо 2",
                 "url": "/images/panoramas/pano-26-хийморийн_овоо_2.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 52,
-                        "pitch": -10,
-                        "targetIndex": 8,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 180,
-                        "pitch": -8,
-                        "targetIndex": 6,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 47.9, "pitch": -0.9, "targetIndex": 8, "label": "Дараах" },
+                    { "yaw": 173.6, "pitch": -18.8, "targetIndex": 6, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Умай хад", "group": "Умай хад",
                 "url": "/images/panoramas/pano-26-Умай_хад.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 194,
-                        "pitch": -35,
-                        "targetIndex": 9,
-                        "label": "Дараах"
-                    },
-                    {
-                        "yaw": 262,
-                        "pitch": -4,
-                        "targetIndex": 7,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 38.6, "pitch": 47.9, "targetIndex": 9, "label": "Дараах" },
+                    { "yaw": 182.7, "pitch": 1.3, "targetIndex": 7, "label": "Буцах" }
                 ]
             },
             {
                 "name": "Төвхөн хийд — гадна үзэмж 10", "group": "Төвхөн хийд",
                 "url": "/images/panoramas/pano-26-10.jpg",
                 "hotspots": [
-                    {
-                        "yaw": 353,
-                        "pitch": -33,
-                        "targetIndex": 8,
-                        "label": "Буцах"
-                    }
+                    { "yaw": 89.3, "pitch": -32.2, "targetIndex": 8, "label": "Буцах" }
                 ]
             }
         ],

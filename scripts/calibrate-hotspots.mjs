@@ -6,11 +6,16 @@
 // GPS-гүй (газрын камер) панорама дээрх сумыг өөрчлөхгүй.
 //
 //   node scripts/calibrate-hotspots.mjs          → зөвхөн тайлан
-//   node scripts/calibrate-hotspots.mjs --write  → app/data/sites.js-д бичнэ
+//   node scripts/calibrate-hotspots.mjs --write  → app/data/sites.js-д бичнэ (гараар тааруулсныг хадгална)
+//   node scripts/calibrate-hotspots.mjs --write --force → бүгдийг GPS-ээр дахин тооцоолно
 import { readFileSync, writeFileSync, openSync, readSync, closeSync } from 'node:fs';
 import path from 'node:path';
 
 const WRITE = process.argv.includes('--write');
+// Анхдагч (0/180°, -8°) утгатай сумыг л тооцоолно; /dev/hotspots-оор гараар тааруулсныг
+// дарж бичихгүй. Бүгдийг дахин тооцоолох бол --force.
+const FORCE = process.argv.includes('--force');
+const isDefault = (h) => (h.yaw === 0 || h.yaw === 180 || h.yaw === 90) && h.pitch === -8;
 const SITES = 'app/data/sites.js';
 // Сум хэт доош гарч харагдахгүй болох, тэнгэрт хөвөхөөс сэргийлнэ
 const PITCH_MIN = -35;
@@ -101,6 +106,7 @@ for (;;) {
         for (const h of node.hotspots || []) {
             const target = tour[h.targetIndex];
             const b = target && droneMeta(target.url);
+            if (!FORCE && !isDefault(h)) continue;
             if (!a || !b) {
                 skipped++;
                 rows.push([node.name, '→', target?.name ?? '?', 'GPS байхгүй — өөрчлөхгүй']);
