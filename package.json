@@ -8,6 +8,7 @@
     "prebuild": "node scripts/check-media.mjs && node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "build": "next build",
     "start": "next start",
+    "preview": "node scripts/preview.mjs",
     "check:media": "node scripts/check-media.mjs"
   },
   "dependencies": {
