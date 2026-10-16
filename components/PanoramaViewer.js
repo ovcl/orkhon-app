@@ -195,9 +195,17 @@ export default function PanoramaViewer({
                         }
                         diffuseColor *= sampledDiffuseColor;
                         vec3 g = pow( clamp( diffuseColor.rgb, 0.0, 1.0 ), vec3( 1.0 / 2.2 ) );
-                        g = 1.0 - pow( 1.0 - g, vec3( uLift ) );
-                        float lum = dot( g, vec3( 0.2126, 0.7152, 0.0722 ) );
-                        g = mix( vec3( lum ), g, uSat );
+                        // Гэрлийг зөвхөн гэрэлтэлтэд (luminance) өгч, өнгөний харьцааг хадгална.
+                        // Тодруулах: y·e / (1 + (e−1)·y) — сүүдэр/дунд хэсэг өсөж, цагаан 1.0-д үлдэнэ
+                        // (угаагдахгүй). Бараантуулах: y^(1/e) — цагаан хэвээр, дунд хэсэг бараантна.
+                        float y = max( dot( g, vec3( 0.2126, 0.7152, 0.0722 ) ), 1e-4 );
+                        float y2 = uLift >= 1.0 ? y * uLift / ( 1.0 + ( uLift - 1.0 ) * y ) : pow( y, 1.0 / uLift );
+                        g *= y2 / y;
+                        // Тодруулахад өнгө бүдгэрэх мэдрэмжийг нөхөж бага зэрэг өнгө нэмнэ
+                        g = mix( vec3( y2 ), g, uSat + max( 0.0, uLift - 1.0 ) * 0.1 );
+                        // Хэт ханасан өнгийг өнгөө алдахгүйгээр зөөлөн шахна
+                        float gm = max( max( g.r, g.g ), g.b );
+                        if ( gm > 1.0 ) g /= gm;
                         diffuseColor.rgb = pow( clamp( g, 0.0, 1.0 ), vec3( 2.2 ) );
                     #endif`
                 );
@@ -265,6 +273,24 @@ export default function PanoramaViewer({
         const loadImage = (url) =>
             new Promise((resolve, reject) => textureLoader.load(url, resolve, undefined, reject));
 
+        // Дараа нь очих магадлалтай байршлуудын (hotspot-ын зорилго, өмнөх/дараах) бүтэн зургийг
+        // хөтчийн кэшэд урьдчилан татна — шилжихэд бүдэг зураг харагдахгүй, шууд тод гарна.
+        // Санах ойд decode хийж хадгалахгүй (8K зураг бүр ~130 MB) — зөвхөн файлыг кэшлэнэ.
+        const prefetched = new Set();
+        const prefetchNeighbors = () => {
+            if (navigator.connection?.saveData || !navigator.onLine) return;
+            const i = currentIndexRef.current;
+            const targets = new Set((scenes[i]?.hotspots || []).map((h) => h.targetIndex));
+            targets.add(i + 1);
+            targets.add(i - 1);
+            for (const ti of targets) {
+                const u = scenes[ti]?.url;
+                if (!u || prefetched.has(u)) continue;
+                prefetched.add(u);
+                fetch(u, { priority: 'low' }).then((r) => r.blob()).catch(() => prefetched.delete(u));
+            }
+        };
+
         // Эхлээд 2048px preview-г агшин зуур харуулж, дараа нь бүрэн 8K зургийг ард нь ачаална.
         // Офлайн үед 8K кэшэд байхгүй бол preview хэвээр харагдана.
         const loadTexture = async (url, fadeIn = true) => {
@@ -275,6 +301,21 @@ export default function PanoramaViewer({
             setLoading(true);
             setHdLoading(false);
             let shown = false;
+            const fullPromise = loadImage(url);
+            fullPromise.catch(() => {});
+            // Урьдчилан татсан (кэштэй) бол бүтэн зураг хурдан ирнэ — тэгвэл бүдэг preview алгасна
+            const quick = await Promise.race([
+                fullPromise.then((tex) => tex, () => null),
+                new Promise((r) => setTimeout(() => r(null), 700)),
+            ]);
+            if (quick) {
+                if (isCancelled || token !== loadToken) return quick.dispose();
+                setMap(quick);
+                setLoading(false);
+                if (fadeIn) fadeTo(0, 400);
+                prefetchNeighbors();
+                return;
+            }
             if (preview) {
                 try {
                     const tex = await loadImage(preview);
@@ -287,7 +328,7 @@ export default function PanoramaViewer({
             }
             setHdLoading(shown);
             try {
-                const full = await loadImage(url);
+                const full = await fullPromise;
                 if (isCancelled || token !== loadToken) return full.dispose();
                 setMap(full);
                 if (!shown && fadeIn) fadeTo(0, 400);
@@ -302,6 +343,7 @@ export default function PanoramaViewer({
             if (!isCancelled && token === loadToken) {
                 setLoading(false);
                 setHdLoading(false);
+                prefetchNeighbors();
             }
         };
 
@@ -507,6 +549,15 @@ export default function PanoramaViewer({
                 ctx.moveTo(cx + s * 0.12, cy - s * 0.3); ctx.lineTo(cx - s * 0.18, cy); ctx.lineTo(cx + s * 0.12, cy + s * 0.3);
             } else if (kind === 'next') {
                 ctx.moveTo(cx - s * 0.12, cy - s * 0.3); ctx.lineTo(cx + s * 0.18, cy); ctx.lineTo(cx - s * 0.12, cy + s * 0.3);
+            } else if (kind === 'bright') {
+                ctx.arc(cx, cy, s * 0.13, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                for (let k = 0; k < 8; k++) {
+                    const a = (k * Math.PI) / 4;
+                    ctx.moveTo(cx + Math.cos(a) * s * 0.24, cy + Math.sin(a) * s * 0.24);
+                    ctx.lineTo(cx + Math.cos(a) * s * 0.33, cy + Math.sin(a) * s * 0.33);
+                }
             } else if (kind === 'zoomIn' || kind === 'zoomOut') {
                 ctx.moveTo(cx - s * 0.24, cy); ctx.lineTo(cx + s * 0.24, cy);
                 if (kind === 'zoomIn') { ctx.moveTo(cx, cy - s * 0.24); ctx.lineTo(cx, cy + s * 0.24); }
@@ -835,7 +886,7 @@ export default function PanoramaViewer({
 
         // Dock: харагчийн өмнө ~1 м, нүднээс ~27° доош, орон зайд тогтмол. Толгойгоо
         // хол эргүүлэхэд аажим дагаж ирнэ; доош харах эсвэл туяагаар онилоход тодорно.
-        const DOCK_W = 1.08, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.9;
+        const DOCK_W = 1.2, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.9;
         const DOCK_SCALE = DOCK_DIST / 0.95;
         const dock = new THREE.Group();
         dock.scale.setScalar(DOCK_SCALE);
@@ -880,9 +931,10 @@ export default function PanoramaViewer({
         const btnPrev = makeButtonMesh('prev', t.vrPrevSpot || 'Өмнөх', false, shortCap(t.vrPrevSpot) || 'Өмнөх');
         const btnNext = makeButtonMesh('next', t.vrNextSpot || 'Дараах', true, shortCap(t.vrNextSpot) || 'Дараах');
         const btnInfo = makeButtonMesh('info', t.vrMore || 'Мэдээлэл');
+        const btnBright = makeButtonMesh('bright', t.vrBrightness || 'Гэрэлтүүлэг');
         const btnExit = makeButtonMesh('exit', t.vrExitVr || 'Гарах', false, t.vrExitCardboard || 'Гарах');
         // Зүүн талд нэр (~30%), баруун талд 6 товч: [− +]  [‹ ›]  [i ✕]
-        [[btnZoomOut, -0.14], [btnZoomIn, -0.03], [btnPrev, 0.1], [btnNext, 0.21], [btnInfo, 0.335], [btnExit, 0.445]].forEach(([btn, x]) => {
+        [[btnZoomOut, -0.16], [btnZoomIn, -0.05], [btnBright, 0.05], [btnPrev, 0.16], [btnNext, 0.27], [btnInfo, 0.385], [btnExit, 0.495]].forEach(([btn, x]) => {
             btn.position.set(x, 0, 0.002);
             dock.add(btn);
         });
@@ -1020,7 +1072,9 @@ export default function PanoramaViewer({
             if (dockState.redraw) {
                 dockState.redraw = false;
                 const zoomText = vrZoom.value > 1.01 ? '  ·  ' + vrZoom.value.toFixed(1) + '×' : '';
-                drawDock(dockState.title, dockState.position + zoomText);
+                const b = viewPrefsRef.current.brightness;
+                const brightText = Math.abs(b - 1) > 0.01 ? '  ·  ☀ ' + Math.round(b * 100) + '%' : '';
+                drawDock(dockState.title, dockState.position + zoomText + brightText);
             }
         };
 
@@ -1040,6 +1094,17 @@ export default function PanoramaViewer({
         };
         btnZoomIn.userData.action = () => animateClick(btnZoomIn, () => setVrZoom(vrZoom.value * 1.4));
         btnZoomOut.userData.action = () => animateClick(btnZoomOut, () => setVrZoom(vrZoom.value / 1.4));
+        const BRIGHT_STEPS = [1, 1.25, 1.5, 0.8];
+        btnBright.userData.action = () =>
+            animateClick(btnBright, () => {
+                const cur = viewPrefsRef.current.brightness;
+                const i = BRIGHT_STEPS.findIndex((v) => Math.abs(v - cur) < 0.01);
+                const next = BRIGHT_STEPS[(i + 1) % BRIGHT_STEPS.length];
+                viewPrefsRef.current = { ...viewPrefsRef.current, brightness: next };
+                applyEnhance();
+                setViewPrefs((p) => ({ ...p, brightness: next }));
+                dockState.redraw = true;
+            });
         btnPrev.userData.action = () => animateClick(btnPrev, () => goTo(-1));
         btnNext.userData.action = () => animateClick(btnNext, () => goTo(1));
         btnInfo.userData.action = () => animateClick(btnInfo, toggleInfoPanel);
@@ -1048,7 +1113,7 @@ export default function PanoramaViewer({
 
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
-        const uiTargets = [btnZoomOut, btnZoomIn, btnPrev, btnNext, btnInfo, btnExit, btnInfoClose];
+        const uiTargets = [btnZoomOut, btnZoomIn, btnBright, btnPrev, btnNext, btnInfo, btnExit, btnInfoClose];
         const isShown = (o) => o.visible && (!o.parent || o.parent.visible);
         const controllers = [];
 
