@@ -20,8 +20,38 @@ const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ),
 });
 
+// "Дараах/Буцах" гэх ерөнхий шошгын оронд сум очих байршлын нэрийг харуулна
+// ("Тэмээн чулууны амны — 2-р харагдац" → "2-р харагдац").
+const GENERIC_HOTSPOT_LABELS = new Set(['Дараах', 'Буцах']);
+const shortNodeName = (node, language) => (node ? nodeName(node, language).split(' — ').pop() : null);
+
 const topButton =
     'w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-black/45 backdrop-blur-md border border-white/15 text-white hover:bg-black/65 transition-colors';
+
+// Дурсгал хооронд шилжих товч: чиглэл + хөрш дурсгалын нэр харагдана. Төгсгөлд идэвхгүй.
+function SiteNavButton({ dir, site, label, language, onClick }) {
+    const next = dir > 0;
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            disabled={!site}
+            title={site ? `${label}: ${localizedSiteName(site, language)}` : label}
+            className={clsx(
+                'group min-w-0 flex items-center gap-2 sm:gap-2.5 px-2 sm:px-2.5 py-2.5 transition-colors enabled:hover:bg-white/5 disabled:opacity-30',
+                next ? 'flex-row-reverse text-right' : 'text-left'
+            )}
+        >
+            <span className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center transition-colors group-enabled:group-hover:bg-amber-500 group-enabled:group-hover:text-slate-900">
+                <i className={`fa-solid fa-arrow-${next ? 'right' : 'left'} text-sm`} aria-hidden="true"></i>
+            </span>
+            <span className="min-w-0">
+                <span className="block text-[10px] font-semibold sm:uppercase sm:tracking-wider text-white/55 truncate">{label}</span>
+                <span className="text-[12px] sm:text-[13px] font-semibold leading-tight line-clamp-2 break-words">{site ? localizedSiteName(site, language) : '—'}</span>
+            </span>
+        </button>
+    );
+}
 
 export default function VirtualTour({ sites, onClose, language = 'mn', onLanguageChange, initialSiteId = null }) {
     const [currentIndex, setCurrentIndex] = useState(() => {
@@ -52,13 +82,16 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                     flat.push({
                         url: node.url,
                         name: nodeName(node, language),
-                        description: node.description,
+                        // Байршил бүрт тусдаа тайлбар ховор — VR-ийн "i" самбарт дурсгалын тайлбарыг харуулна
+                        description: node.description || localizedSiteDescription(s, language),
                         group: node.group || null,
                         siteId: s.id,
                         models3d: node.models3d || [],
                         hotspots: (node.hotspots || []).map((h) => ({
                             ...h,
-                            label: hotspotLabel(h.label, language),
+                            label: GENERIC_HOTSPOT_LABELS.has(h.label)
+                                ? shortNodeName(s.panoramaTour[h.targetIndex], language) || hotspotLabel(h.label, language)
+                                : hotspotLabel(h.label, language),
                             targetIndex: offset + h.targetIndex,
                         })),
                     });
@@ -218,28 +251,32 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
 
                     {/* Доод самбар: дурсгалын мэдээлэл + дурсгал хооронд шилжих */}
                     <section ref={sheetRef} className="absolute bottom-0 inset-x-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-                        <div className="mx-auto max-w-2xl rounded-2xl bg-navy/85 backdrop-blur-lg border border-white/10 shadow-2xl">
-                            <div className="flex items-center gap-2 p-2">
-                                <button type="button" onClick={() => goToSite(-1)} disabled={currentIndex === 0} aria-label={t.vrPrevSite} title={t.vrPrevSite} className={clsx(topButton, 'disabled:opacity-30')}>
-                                    <i className="fa-solid fa-chevron-left"></i>
-                                </button>
-                                <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded} className="min-w-0 flex-1 text-left px-1">
-                                    <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
-                                    <span className="mt-1 flex items-center gap-1.5 text-[12px] text-white/80">
-                                        {expanded ? t.vrLess : t.vrMore}
-                                        <i className={`fa-solid fa-chevron-${expanded ? 'down' : 'up'} text-[9px]`}></i>
-                                    </span>
-                                </button>
-                                <button type="button" onClick={() => goToSite(1)} disabled={currentIndex === sites.length - 1} aria-label={t.vrNextSite} title={t.vrNextSite} className={clsx(topButton, 'disabled:opacity-30')}>
-                                    <i className="fa-solid fa-chevron-right"></i>
-                                </button>
-                            </div>
+                        <div className="mx-auto max-w-2xl rounded-2xl bg-navy/85 backdrop-blur-lg border border-white/10 shadow-2xl overflow-hidden">
                             {expanded && (
-                                <div className="px-4 pb-4 max-h-[38vh] overflow-y-auto">
-                                    <h3 className="font-heading text-lg font-bold mb-2">{name}</h3>
+                                <div className="px-4 pt-4 pb-3 max-h-[38vh] overflow-y-auto border-b border-white/10">
+                                    <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
+                                    <h3 className="font-heading text-lg font-bold mt-2 mb-2">{name}</h3>
                                     <p className="text-sm leading-relaxed text-slate-200">{description}</p>
                                 </div>
                             )}
+                            <nav className="grid grid-cols-[1fr_auto_1fr] items-stretch" aria-label={`${t.vrPrevSite} / ${t.vrNextSite}`}>
+                                <SiteNavButton dir={-1} site={sites[currentIndex - 1]} label={t.vrPrevSite} language={language} onClick={() => goToSite(-1)} />
+                                <button
+                                    type="button"
+                                    onClick={() => setExpanded((v) => !v)}
+                                    aria-expanded={expanded}
+                                    aria-label={expanded ? t.vrLess : t.vrMore}
+                                    title={expanded ? t.vrLess : t.vrMore}
+                                    className={clsx(
+                                        'flex flex-col items-center justify-center gap-1 px-3.5 sm:px-4 border-x border-white/10 transition-colors',
+                                        expanded ? 'text-amber-400' : 'text-white/80 hover:bg-white/5 hover:text-white'
+                                    )}
+                                >
+                                    <i className={`fa-solid ${expanded ? 'fa-chevron-down' : 'fa-circle-info'} text-base`} aria-hidden="true"></i>
+                                    <span className="hidden sm:block text-[10px] font-semibold">{expanded ? t.vrLess : t.vrMore}</span>
+                                </button>
+                                <SiteNavButton dir={1} site={sites[currentIndex + 1]} label={t.vrNextSite} language={language} onClick={() => goToSite(1)} />
+                            </nav>
                         </div>
                     </section>
             </div>
