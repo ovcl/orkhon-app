@@ -441,7 +441,8 @@ export default function PanoramaViewer({
             canvas.width = W; canvas.height = H;
             const ctx = canvas.getContext('2d');
             roundRectPath(ctx, 4, 4, W - 8, H - 8, 48);
-            ctx.fillStyle = 'rgba(12,18,32,0.92)';
+            // Арын дэвсгэр бага зэрэг тунгалаг — ард нь дурсгал үл ялиг харагдана, бичиг тод хэвээр
+            ctx.fillStyle = 'rgba(12,18,32,0.72)';
             ctx.fill();
             ctx.strokeStyle = 'rgba(255,255,255,0.14)';
             ctx.lineWidth = 3;
