@@ -926,6 +926,10 @@ export default function PanoramaViewer({
         infoPanel.visible = false;
         infoPanel.renderOrder = 999;
         scene.add(infoPanel);
+        const btnInfoClose = makeButtonMesh('exit', t.vrLess || 'Хаах', false, '');
+        btnInfoClose.position.set(0.53, 0.53, 0.002);
+        btnInfoClose.renderOrder = 1003;
+        infoPanel.add(btnInfoClose);
 
         const headPos = new THREE.Vector3();
         const headDir = new THREE.Vector3();
@@ -934,6 +938,7 @@ export default function PanoramaViewer({
         const wrapAngle = (x) => Math.atan2(Math.sin(x), Math.cos(x));
 
         const updateInfoPanelText = (title, text) => {
+            infoPanel.visible = false;
             const oldMap = infoPanelMat.map;
             infoPanelMat.map = createInfoTexture(title, text);
             infoPanelMat.needsUpdate = true;
@@ -958,9 +963,14 @@ export default function PanoramaViewer({
             infoPanel.visible = true;
         };
 
+        const infoDir = new THREE.Vector3();
         const updateDock = () => {
             camera.getWorldPosition(headPos);
             camera.getWorldDirection(headDir);
+            if (infoPanel.visible) {
+                infoDir.subVectors(infoPanel.position, headPos).normalize();
+                if (infoDir.dot(headDir) < 0.34) infoPanel.visible = false;
+            }
             const yaw = Math.atan2(headDir.x, headDir.z);
             const pitch = Math.asin(THREE.MathUtils.clamp(headDir.y, -1, 1));
             const diff = wrapAngle(yaw - dockState.yaw);
@@ -1032,11 +1042,12 @@ export default function PanoramaViewer({
         btnPrev.userData.action = () => animateClick(btnPrev, () => goTo(-1));
         btnNext.userData.action = () => animateClick(btnNext, () => goTo(1));
         btnInfo.userData.action = () => animateClick(btnInfo, toggleInfoPanel);
+        btnInfoClose.userData.action = () => { infoPanel.visible = false; };
         btnExit.userData.action = () => animateClick(btnExit, () => renderer.xr.getSession()?.end());
 
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
-        const uiTargets = [btnZoomOut, btnZoomIn, btnPrev, btnNext, btnInfo, btnExit];
+        const uiTargets = [btnZoomOut, btnZoomIn, btnPrev, btnNext, btnInfo, btnExit, btnInfoClose];
         const isShown = (o) => o.visible && (!o.parent || o.parent.visible);
         const controllers = [];
 
@@ -1263,7 +1274,7 @@ export default function PanoramaViewer({
                     if (btn.scale.x < 0.9) return;
                     btn.scale.setScalar(on ? 1.12 : 1.0);
                 });
-                dockState.hover = Boolean(dockHover) || hoveredObj === dockBg;
+                dockState.hover = dockHover?.parent === dock || hoveredObj === dockBg;
                 setTip(dockHover);
                 hotspotMeshes.forEach((h) => {
                     h.userData.xrHover = h === hoveredObj;
