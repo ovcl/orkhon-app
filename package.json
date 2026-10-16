@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "preview": "node scripts/preview.mjs",
+    "quest": "node scripts/quest-https.mjs",
     "check:media": "node scripts/check-media.mjs"
   },
   "dependencies": {
