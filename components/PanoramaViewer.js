@@ -152,18 +152,42 @@ export default function PanoramaViewer({
             uSat: { value: 1 },
             uSharpen: { value: 0 },
             uTexel: { value: new THREE.Vector2(1 / 8192, 1 / 4096) },
+            // VR-д камерын fov-ыг өөрчилж болдоггүй тул томруулалтыг shader-т хийнэ
+            uZoom: { value: 1 },
+            uViewDir: { value: new THREE.Vector3(0, 0, -1) },
         };
         material.onBeforeCompile = (shader) => {
             Object.assign(shader.uniforms, enhanceUniforms);
+            shader.vertexShader = 'varying vec3 vPanoDir;\n' + shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                '#include <begin_vertex>\nvPanoDir = position;'
+            );
             shader.fragmentShader =
-                'uniform float uLift;\nuniform float uSat;\nuniform float uSharpen;\nuniform vec2 uTexel;\n' +
+                'uniform float uLift;\nuniform float uSat;\nuniform float uSharpen;\nuniform vec2 uTexel;\nuniform float uZoom;\nuniform vec3 uViewDir;\nvarying vec3 vPanoDir;\n' +
                 shader.fragmentShader.replace(
                     '#include <map_fragment>',
                     `#ifdef USE_MAP
-                        vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+                        vec2 pUv = vMapUv;
+                        vec2 gx = dFdx( vMapUv );
+                        vec2 gy = dFdy( vMapUv );
+                        if ( uZoom > 1.001 ) {
+                            // Харах чиглэлээс θ өнцөгт буй цэгт θ/zoom өнцгийн дүрсийг харуулна
+                            vec3 d = normalize( vPanoDir );
+                            float c = clamp( dot( d, uViewDir ), -1.0, 1.0 );
+                            vec3 perp = d - uViewDir * c;
+                            float pl = length( perp );
+                            if ( pl > 1e-5 ) {
+                                float th = acos( c ) / uZoom;
+                                d = uViewDir * cos( th ) + ( perp / pl ) * sin( th );
+                            }
+                            pUv = vec2( fract( atan( d.z, d.x ) / 6.2831853 ), 1.0 - acos( clamp( d.y, -1.0, 1.0 ) ) / 3.14159265 );
+                            gx /= uZoom;
+                            gy /= uZoom;
+                        }
+                        vec4 sampledDiffuseColor = textureGrad( map, pUv, gx, gy );
                         if ( uSharpen > 0.0 ) {
-                            vec3 nb = texture2D( map, vMapUv + vec2( uTexel.x, 0.0 ) ).rgb + texture2D( map, vMapUv - vec2( uTexel.x, 0.0 ) ).rgb
-                                + texture2D( map, vMapUv + vec2( 0.0, uTexel.y ) ).rgb + texture2D( map, vMapUv - vec2( 0.0, uTexel.y ) ).rgb;
+                            vec3 nb = texture2D( map, pUv + vec2( uTexel.x, 0.0 ) ).rgb + texture2D( map, pUv - vec2( uTexel.x, 0.0 ) ).rgb
+                                + texture2D( map, pUv + vec2( 0.0, uTexel.y ) ).rgb + texture2D( map, pUv - vec2( 0.0, uTexel.y ) ).rgb;
                             sampledDiffuseColor.rgb = max( sampledDiffuseColor.rgb + ( sampledDiffuseColor.rgb - nb * 0.25 ) * uSharpen, 0.0 );
                         }
                         diffuseColor *= sampledDiffuseColor;
@@ -459,6 +483,9 @@ export default function PanoramaViewer({
                 ctx.moveTo(cx + s * 0.12, cy - s * 0.3); ctx.lineTo(cx - s * 0.18, cy); ctx.lineTo(cx + s * 0.12, cy + s * 0.3);
             } else if (kind === 'next') {
                 ctx.moveTo(cx - s * 0.12, cy - s * 0.3); ctx.lineTo(cx + s * 0.18, cy); ctx.lineTo(cx - s * 0.12, cy + s * 0.3);
+            } else if (kind === 'zoomIn' || kind === 'zoomOut') {
+                ctx.moveTo(cx - s * 0.24, cy); ctx.lineTo(cx + s * 0.24, cy);
+                if (kind === 'zoomIn') { ctx.moveTo(cx, cy - s * 0.24); ctx.lineTo(cx, cy + s * 0.24); }
             } else if (kind === 'exit') {
                 ctx.moveTo(cx - s * 0.22, cy - s * 0.22); ctx.lineTo(cx + s * 0.22, cy + s * 0.22);
                 ctx.moveTo(cx + s * 0.22, cy - s * 0.22); ctx.lineTo(cx - s * 0.22, cy + s * 0.22);
@@ -473,20 +500,29 @@ export default function PanoramaViewer({
             ctx.stroke();
         };
 
-        const makeButtonMesh = (kind, label, accent = false) => {
-            const S = 256;
+        // Dock-ийн товч: дугуй icon + доор нь үргэлж харагдах богино нэр
+        const BTN_W = 0.11, BTN_H = 0.14;
+        const makeButtonMesh = (kind, label, accent = false, caption = label) => {
+            const CW = 256, CH = Math.round((256 * BTN_H) / BTN_W);
             const canvas = document.createElement('canvas');
-            canvas.width = S; canvas.height = S;
+            canvas.width = CW; canvas.height = CH;
             const ctx = canvas.getContext('2d');
+            const r = 92;
             ctx.beginPath();
-            ctx.arc(S / 2, S / 2, 116, 0, Math.PI * 2);
-            ctx.fillStyle = accent ? '#f59e0b' : 'rgba(255,255,255,0.14)';
+            ctx.arc(CW / 2, r + 14, r, 0, Math.PI * 2);
+            ctx.fillStyle = accent ? '#f59e0b' : 'rgba(255,255,255,0.16)';
             ctx.fill();
-            drawIcon(ctx, kind, S / 2, S / 2, S * 0.7, accent ? '#1c1300' : '#ffffff');
+            drawIcon(ctx, kind, CW / 2, r + 14, r * 1.5, accent ? '#1c1300' : '#ffffff');
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.font = '600 40px Inter, system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(fitText(ctx, caption, CW - 8), CW / 2, CH - 34);
             const tex = new THREE.CanvasTexture(canvas);
             tex.colorSpace = THREE.SRGBColorSpace;
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, color: 0xd6d6d6 });
-            const meshObj = new THREE.Mesh(new THREE.PlaneGeometry(0.085, 0.085), mat);
+            tex.anisotropy = 4;
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, color: 0xdedede });
+            const meshObj = new THREE.Mesh(new THREE.PlaneGeometry(BTN_W, BTN_H), mat);
             meshObj.renderOrder = 1001;
             meshObj.userData.label = label;
             return meshObj;
@@ -596,6 +632,7 @@ export default function PanoramaViewer({
             hs.forEach((h) => {
                 const hm = makeHotspotMesh(h.label);
                 hm.position.copy(hotspotPosition(h.yaw, h.pitch));
+                hm.userData.baseDir = hm.position.clone().normalize();
                 hm.userData.action = () => {
                     fadeTo(1, 250);
                     setTimeout(() => {
@@ -774,7 +811,7 @@ export default function PanoramaViewer({
 
         // Dock: харагчийн өмнө ~1 м, нүднээс ~27° доош, орон зайд тогтмол. Толгойгоо
         // хол эргүүлэхэд аажим дагаж ирнэ; доош харах эсвэл туяагаар онилоход тодорно.
-        const DOCK_W = 0.84, DOCK_H = 0.15, DOCK_DIST = 1.0, DOCK_DROP = 0.5;
+        const DOCK_W = 1.08, DOCK_H = 0.19, DOCK_DIST = 0.95, DOCK_DROP = 0.42;
         const dock = new THREE.Group();
         dock.visible = false;
         scene.add(dock);
@@ -804,18 +841,22 @@ export default function PanoramaViewer({
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
             ctx.font = '600 38px Inter, system-ui, sans-serif';
-            ctx.fillText(fitText(ctx, title, W * 0.36), 64, H * 0.4);
+            ctx.fillText(fitText(ctx, title, W * 0.25), 56, H * 0.4);
             ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.font = '30px Inter, system-ui, sans-serif';
-            ctx.fillText(position, 64, H * 0.72);
+            ctx.fillText(position, 56, H * 0.7);
             dockTex.needsUpdate = true;
         };
 
-        const btnPrev = makeButtonMesh('prev', t.vrPrevSpot || 'Өмнөх');
-        const btnNext = makeButtonMesh('next', t.vrNextSpot || 'Дараах', true);
+        const shortCap = (txt) => (txt || '').split(' ')[0];
+        const btnZoomOut = makeButtonMesh('zoomOut', t.vrZoomOut || 'Жижигрүүлэх', false, '−');
+        const btnZoomIn = makeButtonMesh('zoomIn', t.vrZoomIn || 'Томруулах', false, '+');
+        const btnPrev = makeButtonMesh('prev', t.vrPrevSpot || 'Өмнөх', false, shortCap(t.vrPrevSpot) || 'Өмнөх');
+        const btnNext = makeButtonMesh('next', t.vrNextSpot || 'Дараах', true, shortCap(t.vrNextSpot) || 'Дараах');
         const btnInfo = makeButtonMesh('info', t.vrMore || 'Мэдээлэл');
-        const btnExit = makeButtonMesh('exit', t.vrExitVr || 'Гарах');
-        [[btnPrev, 0.06], [btnNext, 0.16], [btnInfo, 0.265], [btnExit, 0.355]].forEach(([btn, x]) => {
+        const btnExit = makeButtonMesh('exit', t.vrExitVr || 'Гарах', false, t.vrExitCardboard || 'Гарах');
+        // Зүүн талд нэр (~30%), баруун талд 6 товч: [− +]  [‹ ›]  [i ✕]
+        [[btnZoomOut, -0.14], [btnZoomIn, -0.03], [btnPrev, 0.1], [btnNext, 0.21], [btnInfo, 0.335], [btnExit, 0.445]].forEach(([btn, x]) => {
             btn.position.set(x, 0, 0.002);
             dock.add(btn);
         });
@@ -864,7 +905,7 @@ export default function PanoramaViewer({
         const headPos = new THREE.Vector3();
         const headDir = new THREE.Vector3();
         const dockTarget = new THREE.Vector3();
-        const dockState = { yaw: 0, place: true, opacity: 0, hover: false };
+        const dockState = { yaw: 0, place: true, opacity: 0, hover: false, title: '', position: '', redraw: false };
         const wrapAngle = (x) => Math.atan2(Math.sin(x), Math.cos(x));
 
         const updateInfoPanelText = (title, text) => {
@@ -875,7 +916,10 @@ export default function PanoramaViewer({
             const current = scenes[currentIndexRef.current];
             const siteScenes = scenes.filter((sc) => sc.siteId === current?.siteId);
             const pos = siteScenes.indexOf(current) + 1;
-            drawDock(title, siteScenes.length > 1 ? pos + ' / ' + siteScenes.length : '360°');
+            // Dock-д богино нэр ("Тэмээн чулууны амны — 1-р харагдац" → "1-р харагдац"); бүтэн нэр мэдээллийн самбарт
+            dockState.title = (title || '').split(' — ').pop();
+            dockState.position = siteScenes.length > 1 ? pos + ' / ' + siteScenes.length : '360°';
+            dockState.redraw = true;
         };
 
         const toggleInfoPanel = () => {
@@ -903,9 +947,43 @@ export default function PanoramaViewer({
             dockState.place = false;
             dock.lookAt(headPos);
             // Урагш харж байхад бүдэг (үзэгдэлд саад болохгүй), доош харах/онилоход бүрэн тод
-            const want = pitch < -0.2 || dockState.hover ? 1 : 0.35;
+            const want = pitch < -0.2 || dockState.hover ? 1 : 0.6;
             dockState.opacity += (want - dockState.opacity) * 0.15;
             dock.children.forEach((m) => { m.material.opacity = dockState.opacity; });
+
+            // Жойстик дээш = томруулах, доош = жижигрүүлэх
+            const session = renderer.xr.getSession();
+            if (session) {
+                for (const src of session.inputSources) {
+                    const ax = src.gamepad?.axes;
+                    const y = ax && ax.length >= 4 ? ax[3] : 0;
+                    if (Math.abs(y) > 0.4) setVrZoom(vrZoom.value * (1 - y * 0.025));
+                }
+            }
+            enhanceUniforms.uViewDir.value.copy(headDir);
+            // Томруулсан үед hotspot-уудыг зурагтай хамт шилжүүлнэ (θ → θ·zoom)
+            hotspotMeshes.forEach((h) => {
+                const base = h.userData.baseDir;
+                if (!base) return;
+                if (vrZoom.value <= 1.001) {
+                    h.position.copy(base).multiplyScalar(40);
+                    h.visible = true;
+                    return;
+                }
+                const c = THREE.MathUtils.clamp(base.dot(headDir), -1, 1);
+                const th = Math.acos(c) * vrZoom.value;
+                h.visible = th < Math.PI * 0.95;
+                if (!h.visible) return;
+                hotspotDir.copy(base).addScaledVector(headDir, -c);
+                if (hotspotDir.lengthSq() < 1e-8) return;
+                hotspotDir.normalize();
+                h.position.copy(headDir).multiplyScalar(Math.cos(th)).addScaledVector(hotspotDir, Math.sin(th)).multiplyScalar(40);
+            });
+            if (dockState.redraw) {
+                dockState.redraw = false;
+                const zoomText = vrZoom.value > 1.01 ? '  ·  ' + vrZoom.value.toFixed(1) + '×' : '';
+                drawDock(dockState.title, dockState.position + zoomText);
+            }
         };
 
         const animateClick = (btn, action) => {
@@ -914,6 +992,16 @@ export default function PanoramaViewer({
             if (action) action();
         };
 
+        // VR томруулалт (1×–4×): товч эсвэл контроллерын жойстик (дээш/доош)
+        const vrZoom = { value: 1 };
+        const VR_ZOOM_MAX = 4;
+        const setVrZoom = (z) => {
+            vrZoom.value = THREE.MathUtils.clamp(z, 1, VR_ZOOM_MAX);
+            enhanceUniforms.uZoom.value = vrZoom.value;
+            dockState.redraw = true;
+        };
+        btnZoomIn.userData.action = () => animateClick(btnZoomIn, () => setVrZoom(vrZoom.value * 1.4));
+        btnZoomOut.userData.action = () => animateClick(btnZoomOut, () => setVrZoom(vrZoom.value / 1.4));
         btnPrev.userData.action = () => animateClick(btnPrev, () => goTo(-1));
         btnNext.userData.action = () => animateClick(btnNext, () => goTo(1));
         btnInfo.userData.action = () => animateClick(btnInfo, toggleInfoPanel);
@@ -921,7 +1009,7 @@ export default function PanoramaViewer({
 
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
-        const uiTargets = [btnPrev, btnNext, btnInfo, btnExit];
+        const uiTargets = [btnZoomOut, btnZoomIn, btnPrev, btnNext, btnInfo, btnExit];
         const controllers = [];
 
         const makeController = (index) => {
@@ -993,6 +1081,11 @@ export default function PanoramaViewer({
             dock.visible = false;
             infoPanel.visible = false;
             setTip(null);
+            setVrZoom(1);
+            hotspotMeshes.forEach((h) => {
+                if (h.userData.baseDir) h.position.copy(h.userData.baseDir).multiplyScalar(40);
+                h.visible = true;
+            });
         };
         renderer.xr.addEventListener('sessionstart', onSessionStart);
         renderer.xr.addEventListener('sessionend', onSessionEnd);
