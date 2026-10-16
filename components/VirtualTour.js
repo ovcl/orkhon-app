@@ -82,7 +82,8 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                     flat.push({
                         url: node.url,
                         name: nodeName(node, language),
-                        description: node.description,
+                        // Байршил бүрт тусдаа тайлбар ховор — VR-ийн "i" самбарт дурсгалын тайлбарыг харуулна
+                        description: node.description || localizedSiteDescription(s, language),
                         group: node.group || null,
                         siteId: s.id,
                         models3d: node.models3d || [],

@@ -134,7 +134,7 @@ export const translations = {
         vrHintTitle: "Хэрхэн үзэх вэ",
         vrHintDrag: "Чирж эсвэл утсаа эргүүлж тойрон харна",
         vrHintZoom: "Чимхэж эсвэл хулганы дугуйгаар томруулна",
-        vrHintHotspot: "Цагаан сум дээр дарж дараагийн байршил руу шилжинэ",
+        vrHintHotspot: "Цагаан цэг дээр дарж дараагийн байршил руу шилжинэ",
         vrHintGotIt: "Ойлголоо",
         vrZoomIn: "Томруулах",
         vrZoomOut: "Жижигрүүлэх",
@@ -196,7 +196,7 @@ export const translations = {
         vrScanQr: "Pico, Quest 3 шилний камераар эсвэл өөр утсаар уншуулж энэ аялалыг шууд нээнэ.",
         vrExitCardboard: "Гарах",
         vrRotateHint: "Утсаа хэвтээ эргүүлээд VR хайрцагт хийнэ үү",
-        vrGazeHint: "Цагаан сум руу 2 секунд ширтэхэд дараагийн байршил руу шилжинэ",
+        vrGazeHint: "Цагаан цэг рүү 2 секунд ширтэхэд дараагийн байршил руу шилжинэ",
         language: "Хэл"
     },
     en: {
@@ -332,7 +332,7 @@ export const translations = {
         vrHintTitle: "How to explore",
         vrHintDrag: "Drag or turn your phone to look around",
         vrHintZoom: "Pinch or use the mouse wheel to zoom",
-        vrHintHotspot: "Tap a white arrow to move to the next spot",
+        vrHintHotspot: "Tap a white dot to move to the next spot",
         vrHintGotIt: "Got it",
         vrZoomIn: "Zoom in",
         vrZoomOut: "Zoom out",
@@ -394,7 +394,7 @@ export const translations = {
         vrScanQr: "Scan with a Pico or Quest 3 camera, or with another phone, to open this tour directly.",
         vrExitCardboard: "Exit",
         vrRotateHint: "Turn your phone sideways and place it in the VR box",
-        vrGazeHint: "Look at a white arrow for 2 seconds to move to the next spot",
+        vrGazeHint: "Look at a white dot for 2 seconds to move to the next spot",
         language: "Language"
     }
 };

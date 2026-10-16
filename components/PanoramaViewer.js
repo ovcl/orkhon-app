@@ -436,39 +436,59 @@ export default function PanoramaViewer({
         };
 
         const createInfoTexture = (title, text) => {
-            const W = 1024, H = 768;
+            const W = 1024, H = 1024, PAD = 72;
             const canvas = document.createElement('canvas');
             canvas.width = W; canvas.height = H;
             const ctx = canvas.getContext('2d');
             roundRectPath(ctx, 4, 4, W - 8, H - 8, 48);
-            ctx.fillStyle = 'rgba(12,18,32,0.9)';
+            ctx.fillStyle = 'rgba(12,18,32,0.92)';
             ctx.fill();
             ctx.strokeStyle = 'rgba(255,255,255,0.14)';
             ctx.lineWidth = 3;
             ctx.stroke();
             ctx.fillStyle = '#ffffff';
             ctx.textBaseline = 'top';
-            ctx.font = '600 52px Inter, system-ui, sans-serif';
-            ctx.fillText(fitText(ctx, title, W - 144), 72, 64);
+            ctx.font = '600 50px Inter, system-ui, sans-serif';
+            ctx.fillText(fitText(ctx, title, W - PAD * 2), PAD, 60);
             ctx.fillStyle = '#f59e0b';
-            ctx.fillRect(72, 140, 64, 5);
-            ctx.fillStyle = 'rgba(226,232,240,0.92)';
-            ctx.font = '36px Inter, system-ui, sans-serif';
-            const words = (text || '').split(/\s+/);
-            let line = '';
-            let y = 180;
-            for (const w of words) {
-                const test = line ? line + ' ' + w : w;
-                if (ctx.measureText(test).width > W - 144 && line) {
-                    ctx.fillText(line, 72, y);
-                    line = w;
-                    y += 52;
-                    if (y > H - 110) { line += ' …'; break; }
-                } else line = test;
+            ctx.fillRect(PAD, 132, 64, 5);
+
+            // Тайлбарыг бүтнээр нь багтаана: багтахгүй бол үсгийн хэмжээг аажим багасгана
+            const top = 172, bottom = H - 64, maxW = W - PAD * 2;
+            const wrap = (size) => {
+                ctx.font = size + 'px Inter, system-ui, sans-serif';
+                const lines = [];
+                for (const para of (text || '').split(/\n+/)) {
+                    let line = '';
+                    for (const w of para.split(/\s+/).filter(Boolean)) {
+                        const test = line ? line + ' ' + w : w;
+                        if (ctx.measureText(test).width > maxW && line) {
+                            lines.push(line);
+                            line = w;
+                        } else line = test;
+                    }
+                    if (line) lines.push(line);
+                }
+                return lines;
+            };
+            let size = 38;
+            let lines = wrap(size);
+            while (size > 24 && lines.length * size * 1.42 > bottom - top) {
+                size -= 2;
+                lines = wrap(size);
             }
-            ctx.fillText(line, 72, y);
+            const lh = size * 1.42;
+            const maxLines = Math.floor((bottom - top) / lh);
+            if (lines.length > maxLines) {
+                lines = lines.slice(0, maxLines);
+                lines[maxLines - 1] = fitText(ctx, lines[maxLines - 1] + '…', maxW);
+            }
+            ctx.fillStyle = 'rgba(226,232,240,0.94)';
+            lines.forEach((l, i) => ctx.fillText(l, PAD, top + i * lh));
+
             const tex = new THREE.CanvasTexture(canvas);
             tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 4;
             tex.generateMipmaps = true;
             tex.minFilter = THREE.LinearMipmapLinearFilter;
             return tex;
@@ -902,7 +922,7 @@ export default function PanoramaViewer({
 
         // Мэдээллийн самбар: нээх үед нүдний түвшинд, харагчийн өмнө тогтоно
         const infoPanelMat = new THREE.MeshBasicMaterial({ transparent: true, depthTest: false, side: THREE.DoubleSide });
-        const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.975), infoPanelMat);
+        const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.25, 1.25), infoPanelMat);
         infoPanel.visible = false;
         infoPanel.renderOrder = 999;
         scene.add(infoPanel);
