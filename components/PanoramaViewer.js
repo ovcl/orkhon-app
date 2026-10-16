@@ -834,7 +834,7 @@ export default function PanoramaViewer({
 
         // Dock: харагчийн өмнө ~1 м, нүднээс ~27° доош, орон зайд тогтмол. Толгойгоо
         // хол эргүүлэхэд аажим дагаж ирнэ; доош харах эсвэл туяагаар онилоход тодорно.
-        const DOCK_W = 1.08, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.58;
+        const DOCK_W = 1.08, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.9;
         const DOCK_SCALE = DOCK_DIST / 0.95;
         const dock = new THREE.Group();
         dock.scale.setScalar(DOCK_SCALE);
@@ -930,7 +930,7 @@ export default function PanoramaViewer({
         const headPos = new THREE.Vector3();
         const headDir = new THREE.Vector3();
         const dockTarget = new THREE.Vector3();
-        const dockState = { yaw: 0, place: true, opacity: 0, hover: false, title: '', position: '', redraw: false };
+        const dockState = { yaw: 0, place: true, opacity: 0, hover: false, pinned: false, title: '', position: '', redraw: false };
         const wrapAngle = (x) => Math.atan2(Math.sin(x), Math.cos(x));
 
         const updateInfoPanelText = (title, text) => {
@@ -972,8 +972,10 @@ export default function PanoramaViewer({
             dockState.place = false;
             dock.lookAt(headPos);
             // Урагш харж байхад бүдэг (үзэгдэлд саад болохгүй), доош харах/онилоход бүрэн тод
-            const want = pitch < -0.2 || dockState.hover ? 1 : 0.6;
-            dockState.opacity += (want - dockState.opacity) * 0.15;
+            // Зураг үзэхэд саад болохгүйн тулд урагш харж байхад бүрэн нуугдана
+            const want = pitch < -0.42 || dockState.hover || dockState.pinned ? 1 : 0;
+            dockState.opacity += (want - dockState.opacity) * 0.18;
+            dock.visible = dockState.opacity > 0.03;
             dock.children.forEach((m) => { m.material.opacity = dockState.opacity; });
 
             // Жойстик дээш = томруулах, доош = жижигрүүлэх
@@ -1035,16 +1037,20 @@ export default function PanoramaViewer({
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
         const uiTargets = [btnZoomOut, btnZoomIn, btnPrev, btnNext, btnInfo, btnExit];
+        const isShown = (o) => o.visible && (!o.parent || o.parent.visible);
         const controllers = [];
 
         const makeController = (index) => {
             const controller = renderer.xr.getController(index);
+            controller.addEventListener('squeeze', () => {
+                dockState.pinned = !dockState.pinned;
+            });
             controller.addEventListener('select', () => {
                 scene.updateMatrixWorld(true);
                 tempMatrix.identity().extractRotation(controller.matrixWorld);
                 raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
                 raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-                const allTargets = uiTargets.concat(hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
+                const allTargets = uiTargets.concat(hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []).filter(isShown);
                 const hits = raycaster.intersectObjects(allTargets, false);
                 if (hits.length > 0) hits[0].object.userData.action?.();
             });
@@ -1095,9 +1101,11 @@ export default function PanoramaViewer({
             setIsPresenting(true);
             isPresentingRef.current = true;
             controls.enabled = false;
-            dock.visible = true;
             dockState.place = true;
             dockState.opacity = 0;
+            // Эхэнд 4 секунд харуулж, самбар доор байгааг сануулаад нууна
+            dockState.pinned = true;
+            setTimeout(() => { dockState.pinned = false; }, 4000);
         };
         const onSessionEnd = () => {
             setIsPresenting(false);
@@ -1234,12 +1242,12 @@ export default function PanoramaViewer({
                 h.scale.set(s, s, s);
             });
 
-            if (dock.visible) updateDock();
+            if (renderer.xr.isPresenting) updateDock();
 
-            if (dock.visible && controllers.length > 0) {
+            if (renderer.xr.isPresenting && controllers.length > 0) {
                 let hoveredObj = null;
                 scene.updateMatrixWorld(true);
-                const hoverTargets = uiTargets.concat([dockBg], hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
+                const hoverTargets = uiTargets.concat([dockBg], hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []).filter(isShown);
                 for (let c of controllers) {
                     tempMatrix.identity().extractRotation(c.matrixWorld);
                     raycaster.ray.origin.setFromMatrixPosition(c.matrixWorld);
