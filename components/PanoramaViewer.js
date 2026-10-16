@@ -395,68 +395,100 @@ export default function PanoramaViewer({
             camera.quaternion.multiply(q0.setFromAxisAngle(zee, -screenAngle()));
         };
 
-        // ---------- VR: 3D navigation UI (camera-т наасан, харах чиглэлээс үл хамаарна) ----------
+        // ---------- VR: орон зайд тогтсон "dock" хяналт (Quest-ийн системийн UI шиг) ----------
+        const roundRectPath = (ctx, x, y, w, h, r) => {
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+            else ctx.rect(x, y, w, h);
+        };
+        const fitText = (ctx, text, maxW) => {
+            let out = text || '';
+            if (ctx.measureText(out).width <= maxW) return out;
+            while (out.length > 1 && ctx.measureText(out + '…').width > maxW) out = out.slice(0, -1);
+            return out.trimEnd() + '…';
+        };
+
         const createInfoTexture = (title, text) => {
+            const W = 1024, H = 768;
             const canvas = document.createElement('canvas');
-            canvas.width = 1024; canvas.height = 768;
+            canvas.width = W; canvas.height = H;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = 'rgba(10,14,26,0.92)';
-            ctx.fillRect(0, 0, 1024, 768);
-            ctx.strokeStyle = 'rgba(245,158,11,0.8)';
-            ctx.lineWidth = 10;
-            ctx.strokeRect(5, 5, 1014, 758);
+            roundRectPath(ctx, 4, 4, W - 8, H - 8, 48);
+            ctx.fillStyle = 'rgba(12,18,32,0.9)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
             ctx.fillStyle = '#ffffff';
-            ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
-            ctx.font = 'bold 50px sans-serif';
-            ctx.fillText(title || '', 512, 60);
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.fillRect(100, 140, 824, 2);
-            ctx.fillStyle = '#e2e8f0';
-            ctx.font = '36px sans-serif';
-            ctx.textAlign = 'left';
-            const words = (text || '').split(' ');
-            let line = ''; let y = 180;
-            for (let i = 0; i < words.length; i++) {
-                const testLine = line + words[i] + ' ';
-                if (ctx.measureText(testLine).width > 880 && i > 0) {
+            ctx.font = '600 52px Inter, system-ui, sans-serif';
+            ctx.fillText(fitText(ctx, title, W - 144), 72, 64);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(72, 140, 64, 5);
+            ctx.fillStyle = 'rgba(226,232,240,0.92)';
+            ctx.font = '36px Inter, system-ui, sans-serif';
+            const words = (text || '').split(/\s+/);
+            let line = '';
+            let y = 180;
+            for (const w of words) {
+                const test = line ? line + ' ' + w : w;
+                if (ctx.measureText(test).width > W - 144 && line) {
                     ctx.fillText(line, 72, y);
-                    line = words[i] + ' ';
-                    y += 50;
-                } else {
-                    line = testLine;
-                }
+                    line = w;
+                    y += 52;
+                    if (y > H - 110) { line += ' …'; break; }
+                } else line = test;
             }
             ctx.fillText(line, 72, y);
             const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
             tex.generateMipmaps = true;
             tex.minFilter = THREE.LinearMipmapLinearFilter;
             return tex;
         };
 
-        const makeButtonMesh = (label, icon) => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 256; canvas.height = 256;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = 'rgba(10,10,14,0.75)';
+        // Вектор icon (unicode тэмдэгт Quest-ийн фонтод янз бүр харагддаг)
+        const drawIcon = (ctx, kind, cx, cy, s, color) => {
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = s * 0.13;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.beginPath();
-            ctx.arc(128, 128, 118, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(245,158,11,0.9)';
-            ctx.lineWidth = 6;
+            if (kind === 'prev') {
+                ctx.moveTo(cx + s * 0.12, cy - s * 0.3); ctx.lineTo(cx - s * 0.18, cy); ctx.lineTo(cx + s * 0.12, cy + s * 0.3);
+            } else if (kind === 'next') {
+                ctx.moveTo(cx - s * 0.12, cy - s * 0.3); ctx.lineTo(cx + s * 0.18, cy); ctx.lineTo(cx - s * 0.12, cy + s * 0.3);
+            } else if (kind === 'exit') {
+                ctx.moveTo(cx - s * 0.22, cy - s * 0.22); ctx.lineTo(cx + s * 0.22, cy + s * 0.22);
+                ctx.moveTo(cx + s * 0.22, cy - s * 0.22); ctx.lineTo(cx - s * 0.22, cy + s * 0.22);
+            } else if (kind === 'info') {
+                ctx.moveTo(cx, cy - s * 0.04); ctx.lineTo(cx, cy + s * 0.3);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(cx, cy - s * 0.26, s * 0.085, 0, Math.PI * 2);
+                ctx.fill();
+                return;
+            }
             ctx.stroke();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 90px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(icon, 128, 120);
-            ctx.font = '28px sans-serif';
-            ctx.fillText(label, 128, 200);
+        };
+
+        const makeButtonMesh = (kind, label, accent = false) => {
+            const S = 256;
+            const canvas = document.createElement('canvas');
+            canvas.width = S; canvas.height = S;
+            const ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.arc(S / 2, S / 2, 116, 0, Math.PI * 2);
+            ctx.fillStyle = accent ? '#f59e0b' : 'rgba(255,255,255,0.14)';
+            ctx.fill();
+            drawIcon(ctx, kind, S / 2, S / 2, S * 0.7, accent ? '#1c1300' : '#ffffff');
             const tex = new THREE.CanvasTexture(canvas);
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide });
-            const geom = new THREE.PlaneGeometry(0.3, 0.3);
-            const meshObj = new THREE.Mesh(geom, mat);
-            meshObj.renderOrder = 1000;
+            tex.colorSpace = THREE.SRGBColorSpace;
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, side: THREE.DoubleSide, color: 0xd6d6d6 });
+            const meshObj = new THREE.Mesh(new THREE.PlaneGeometry(0.085, 0.085), mat);
+            meshObj.renderOrder = 1001;
+            meshObj.userData.label = label;
             return meshObj;
         };
 
@@ -740,31 +772,141 @@ export default function PanoramaViewer({
             });
         };
 
-        const vrUiGroup = new THREE.Group();
-        vrUiGroup.visible = false;
+        // Dock: харагчийн өмнө ~1 м, нүднээс ~27° доош, орон зайд тогтмол. Толгойгоо
+        // хол эргүүлэхэд аажим дагаж ирнэ; доош харах эсвэл туяагаар онилоход тодорно.
+        const DOCK_W = 0.84, DOCK_H = 0.15, DOCK_DIST = 1.0, DOCK_DROP = 0.5;
+        const dock = new THREE.Group();
+        dock.visible = false;
+        scene.add(dock);
 
+        const dockCanvas = document.createElement('canvas');
+        dockCanvas.width = 1024; dockCanvas.height = Math.round((1024 * DOCK_H) / DOCK_W);
+        const dockTex = new THREE.CanvasTexture(dockCanvas);
+        dockTex.colorSpace = THREE.SRGBColorSpace;
+        const dockBg = new THREE.Mesh(
+            new THREE.PlaneGeometry(DOCK_W, DOCK_H),
+            new THREE.MeshBasicMaterial({ map: dockTex, transparent: true, depthTest: false, side: THREE.DoubleSide })
+        );
+        dockBg.renderOrder = 1000;
+        dock.add(dockBg);
+
+        const drawDock = (title, position) => {
+            const ctx = dockCanvas.getContext('2d');
+            const W = dockCanvas.width, H = dockCanvas.height;
+            ctx.clearRect(0, 0, W, H);
+            roundRectPath(ctx, 2, 2, W - 4, H - 4, (H - 4) / 2);
+            ctx.fillStyle = 'rgba(12,18,32,0.82)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            // Байршлын нэр + дугаар (зүүн тал; товчнууд баруун талд)
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '600 38px Inter, system-ui, sans-serif';
+            ctx.fillText(fitText(ctx, title, W * 0.36), 64, H * 0.4);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '30px Inter, system-ui, sans-serif';
+            ctx.fillText(position, 64, H * 0.72);
+            dockTex.needsUpdate = true;
+        };
+
+        const btnPrev = makeButtonMesh('prev', t.vrPrevSpot || 'Өмнөх');
+        const btnNext = makeButtonMesh('next', t.vrNextSpot || 'Дараах', true);
+        const btnInfo = makeButtonMesh('info', t.vrMore || 'Мэдээлэл');
+        const btnExit = makeButtonMesh('exit', t.vrExitVr || 'Гарах');
+        [[btnPrev, 0.06], [btnNext, 0.16], [btnInfo, 0.265], [btnExit, 0.355]].forEach(([btn, x]) => {
+            btn.position.set(x, 0, 0.002);
+            dock.add(btn);
+        });
+
+        // Онилсон товчны нэр — dock-ийн дээр жижиг шошго
+        const tipCanvas = document.createElement('canvas');
+        tipCanvas.width = 512; tipCanvas.height = 96;
+        const tipTex = new THREE.CanvasTexture(tipCanvas);
+        tipTex.colorSpace = THREE.SRGBColorSpace;
+        const tip = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.32, 0.06),
+            new THREE.MeshBasicMaterial({ map: tipTex, transparent: true, depthTest: false, side: THREE.DoubleSide })
+        );
+        tip.renderOrder = 1002;
+        tip.visible = false;
+        dock.add(tip);
+        let tipFor = null;
+        const setTip = (btn) => {
+            if (btn === tipFor) return;
+            tipFor = btn;
+            tip.visible = Boolean(btn);
+            if (!btn) return;
+            const ctx = tipCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 512, 96);
+            ctx.font = '600 40px Inter, system-ui, sans-serif';
+            const label = fitText(ctx, btn.userData.label, 440);
+            const w = ctx.measureText(label).width + 56;
+            roundRectPath(ctx, 256 - w / 2, 12, w, 72, 36);
+            ctx.fillStyle = 'rgba(12,18,32,0.9)';
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, 256, 49);
+            tipTex.needsUpdate = true;
+            tip.position.set(btn.position.x, DOCK_H / 2 + 0.045, 0.003);
+        };
+
+        // Мэдээллийн самбар: нээх үед нүдний түвшинд, харагчийн өмнө тогтоно
         const infoPanelMat = new THREE.MeshBasicMaterial({ transparent: true, depthTest: false, side: THREE.DoubleSide });
-        const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.9), infoPanelMat);
-        infoPanel.position.set(0, 0.35, -1.2);
+        const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.75), infoPanelMat);
         infoPanel.visible = false;
         infoPanel.renderOrder = 999;
+        scene.add(infoPanel);
+
+        const headPos = new THREE.Vector3();
+        const headDir = new THREE.Vector3();
+        const dockTarget = new THREE.Vector3();
+        const dockState = { yaw: 0, place: true, opacity: 0, hover: false };
+        const wrapAngle = (x) => Math.atan2(Math.sin(x), Math.cos(x));
 
         const updateInfoPanelText = (title, text) => {
             const oldMap = infoPanelMat.map;
             infoPanelMat.map = createInfoTexture(title, text);
             infoPanelMat.needsUpdate = true;
             if (oldMap) oldMap.dispose();
+            const current = scenes[currentIndexRef.current];
+            const siteScenes = scenes.filter((sc) => sc.siteId === current?.siteId);
+            const pos = siteScenes.indexOf(current) + 1;
+            drawDock(title, siteScenes.length > 1 ? pos + ' / ' + siteScenes.length : '360°');
         };
 
-        const btnPrev = makeButtonMesh('Өмнөх', '◀');
-        const btnInfo = makeButtonMesh('Мэдээлэл', 'i');
-        const btnNext = makeButtonMesh('Дараах', '▶');
-        const btnExit = makeButtonMesh('Гарах', '✕');
+        const toggleInfoPanel = () => {
+            if (infoPanel.visible) {
+                infoPanel.visible = false;
+                return;
+            }
+            camera.getWorldPosition(headPos);
+            infoPanel.position.set(headPos.x + Math.sin(dockState.yaw) * 1.3, headPos.y + 0.05, headPos.z + Math.cos(dockState.yaw) * 1.3);
+            infoPanel.lookAt(headPos);
+            infoPanel.visible = true;
+        };
 
-        btnPrev.position.set(-0.6, -0.35, -1.2);
-        btnInfo.position.set(-0.2, -0.35, -1.2);
-        btnExit.position.set(0.2, -0.35, -1.2);
-        btnNext.position.set(0.6, -0.35, -1.2);
+        const updateDock = () => {
+            camera.getWorldPosition(headPos);
+            camera.getWorldDirection(headDir);
+            const yaw = Math.atan2(headDir.x, headDir.z);
+            const pitch = Math.asin(THREE.MathUtils.clamp(headDir.y, -1, 1));
+            const diff = wrapAngle(yaw - dockState.yaw);
+            if (dockState.place) dockState.yaw = yaw;
+            else if (Math.abs(diff) > 0.75) dockState.yaw = wrapAngle(dockState.yaw + diff * 0.05);
+            dockTarget.set(headPos.x + Math.sin(dockState.yaw) * DOCK_DIST, headPos.y - DOCK_DROP, headPos.z + Math.cos(dockState.yaw) * DOCK_DIST);
+            if (dockState.place) dock.position.copy(dockTarget);
+            else dock.position.lerp(dockTarget, 0.12);
+            dockState.place = false;
+            dock.lookAt(headPos);
+            // Урагш харж байхад бүдэг (үзэгдэлд саад болохгүй), доош харах/онилоход бүрэн тод
+            const want = pitch < -0.2 || dockState.hover ? 1 : 0.35;
+            dockState.opacity += (want - dockState.opacity) * 0.15;
+            dock.children.forEach((m) => { m.material.opacity = dockState.opacity; });
+        };
 
         const animateClick = (btn, action) => {
             btn.scale.set(0.8, 0.8, 0.8);
@@ -774,14 +916,12 @@ export default function PanoramaViewer({
 
         btnPrev.userData.action = () => animateClick(btnPrev, () => goTo(-1));
         btnNext.userData.action = () => animateClick(btnNext, () => goTo(1));
-        btnInfo.userData.action = () => animateClick(btnInfo, () => { infoPanel.visible = !infoPanel.visible; });
+        btnInfo.userData.action = () => animateClick(btnInfo, toggleInfoPanel);
         btnExit.userData.action = () => animateClick(btnExit, () => renderer.xr.getSession()?.end());
-        vrUiGroup.add(infoPanel, btnPrev, btnInfo, btnExit, btnNext);
-        camera.add(vrUiGroup);
 
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
-        const uiTargets = [btnPrev, btnInfo, btnNext, btnExit];
+        const uiTargets = [btnPrev, btnNext, btnInfo, btnExit];
         const controllers = [];
 
         const makeController = (index) => {
@@ -842,13 +982,17 @@ export default function PanoramaViewer({
             setIsPresenting(true);
             isPresentingRef.current = true;
             controls.enabled = false;
-            vrUiGroup.visible = true;
+            dock.visible = true;
+            dockState.place = true;
+            dockState.opacity = 0;
         };
         const onSessionEnd = () => {
             setIsPresenting(false);
             isPresentingRef.current = false;
             controls.enabled = true;
-            vrUiGroup.visible = false;
+            dock.visible = false;
+            infoPanel.visible = false;
+            setTip(null);
         };
         renderer.xr.addEventListener('sessionstart', onSessionStart);
         renderer.xr.addEventListener('sessionend', onSessionEnd);
@@ -972,10 +1116,12 @@ export default function PanoramaViewer({
                 h.scale.set(s, s, s);
             });
 
-            if (vrUiGroup.visible && controllers.length > 0) {
+            if (dock.visible) updateDock();
+
+            if (dock.visible && controllers.length > 0) {
                 let hoveredObj = null;
                 scene.updateMatrixWorld(true);
-                const hoverTargets = uiTargets.concat(hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
+                const hoverTargets = uiTargets.concat([dockBg], hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []);
                 for (let c of controllers) {
                     tempMatrix.identity().extractRotation(c.matrixWorld);
                     raycaster.ray.origin.setFromMatrixPosition(c.matrixWorld);
@@ -983,11 +1129,16 @@ export default function PanoramaViewer({
                     const hits = raycaster.intersectObjects(hoverTargets, false);
                     if (hits.length > 0) { hoveredObj = hits[0].object; break; }
                 }
+                let dockHover = null;
                 uiTargets.forEach((btn) => {
+                    const on = btn === hoveredObj;
+                    if (on) dockHover = btn;
+                    btn.material.color.setHex(on ? 0xffffff : 0xd6d6d6);
                     if (btn.scale.x < 0.9) return;
-                    if (btn === hoveredObj) { btn.scale.setScalar(1.15); btn.material.color.setHex(0xffffff); }
-                    else { btn.scale.setScalar(1.0); btn.material.color.setHex(0xb0b0b0); }
+                    btn.scale.setScalar(on ? 1.12 : 1.0);
                 });
+                dockState.hover = Boolean(dockHover) || hoveredObj === dockBg;
+                setTip(dockHover);
                 hotspotMeshes.forEach((h) => {
                     h.userData.xrHover = h === hoveredObj;
                 });
