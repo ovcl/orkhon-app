@@ -137,6 +137,8 @@ export default function PanoramaViewer({
         renderer.setSize(initWidth, initHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.xr.enabled = true;
+        // Хөдөлгөөнгүй 360° зураг тул GPU-д хөнгөн — шилний дэлгэцийн бодит нягтралаар рендерлэнэ
+        renderer.xr.setFramebufferScaleFactor(1.5);
 
         while (container.firstChild) container.removeChild(container.firstChild);
         container.appendChild(renderer.domElement);
@@ -185,10 +187,11 @@ export default function PanoramaViewer({
                             gy /= uZoom;
                         }
                         vec4 sampledDiffuseColor = textureGrad( map, pUv, gx, gy );
-                        if ( uSharpen > 0.0 ) {
+                        float sharpen = uSharpen + min( 0.45, ( uZoom - 1.0 ) * 0.3 );
+                        if ( sharpen > 0.0 ) {
                             vec3 nb = texture2D( map, pUv + vec2( uTexel.x, 0.0 ) ).rgb + texture2D( map, pUv - vec2( uTexel.x, 0.0 ) ).rgb
                                 + texture2D( map, pUv + vec2( 0.0, uTexel.y ) ).rgb + texture2D( map, pUv - vec2( 0.0, uTexel.y ) ).rgb;
-                            sampledDiffuseColor.rgb = max( sampledDiffuseColor.rgb + ( sampledDiffuseColor.rgb - nb * 0.25 ) * uSharpen, 0.0 );
+                            sampledDiffuseColor.rgb = max( sampledDiffuseColor.rgb + ( sampledDiffuseColor.rgb - nb * 0.25 ) * sharpen, 0.0 );
                         }
                         diffuseColor *= sampledDiffuseColor;
                         vec3 g = pow( clamp( diffuseColor.rgb, 0.0, 1.0 ), vec3( 1.0 / 2.2 ) );
@@ -811,8 +814,10 @@ export default function PanoramaViewer({
 
         // Dock: харагчийн өмнө ~1 м, нүднээс ~27° доош, орон зайд тогтмол. Толгойгоо
         // хол эргүүлэхэд аажим дагаж ирнэ; доош харах эсвэл туяагаар онилоход тодорно.
-        const DOCK_W = 1.08, DOCK_H = 0.19, DOCK_DIST = 0.95, DOCK_DROP = 0.42;
+        const DOCK_W = 1.08, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.58;
+        const DOCK_SCALE = DOCK_DIST / 0.95;
         const dock = new THREE.Group();
+        dock.scale.setScalar(DOCK_SCALE);
         dock.visible = false;
         scene.add(dock);
 
@@ -897,7 +902,7 @@ export default function PanoramaViewer({
 
         // Мэдээллийн самбар: нээх үед нүдний түвшинд, харагчийн өмнө тогтоно
         const infoPanelMat = new THREE.MeshBasicMaterial({ transparent: true, depthTest: false, side: THREE.DoubleSide });
-        const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.75), infoPanelMat);
+        const infoPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.975), infoPanelMat);
         infoPanel.visible = false;
         infoPanel.renderOrder = 999;
         scene.add(infoPanel);
@@ -928,7 +933,7 @@ export default function PanoramaViewer({
                 return;
             }
             camera.getWorldPosition(headPos);
-            infoPanel.position.set(headPos.x + Math.sin(dockState.yaw) * 1.3, headPos.y + 0.05, headPos.z + Math.cos(dockState.yaw) * 1.3);
+            infoPanel.position.set(headPos.x + Math.sin(dockState.yaw) * 1.7, headPos.y + 0.05, headPos.z + Math.cos(dockState.yaw) * 1.7);
             infoPanel.lookAt(headPos);
             infoPanel.visible = true;
         };
@@ -994,7 +999,7 @@ export default function PanoramaViewer({
 
         // VR томруулалт (1×–4×): товч эсвэл контроллерын жойстик (дээш/доош)
         const vrZoom = { value: 1 };
-        const VR_ZOOM_MAX = 4;
+        const VR_ZOOM_MAX = 2.5;
         const setVrZoom = (z) => {
             vrZoom.value = THREE.MathUtils.clamp(z, 1, VR_ZOOM_MAX);
             enhanceUniforms.uZoom.value = vrZoom.value;
