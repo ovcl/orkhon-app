@@ -1266,6 +1266,13 @@ export const sitesData = [
     },
     {
         "id": 29,
+        "panoramaTour": [
+            {
+                "name": "Мэлхийт толгой дээрх — 1-р харагдац", "group": "Мэлхийт толгой дээрх",
+                "url": "/images/panoramas/pano-30-1.jpg",
+                "hotspots": []
+            }
+        ],
         "model3d": "/models/melhiit_tolgoin_ordnii_tuuri_dahi_melhvv_chuluu_3.glb",
         "name": "Мэлхийт толгой дээрх чулуун яст мэлхий",
         "nameEn": "Melkhiit Tolgoi Stone Turtle",
@@ -1286,27 +1293,8 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Тариан талбайд орших — 1-р харагдац", "group": "Тариан талбайд орших",
-                "url": "/images/panoramas/pano-30-1.jpg",
-                "hotspots": [
-                    {
-                        "yaw": 64,
-                        "pitch": -4,
-                        "targetIndex": 1,
-                        "label": "Дараах"
-                    }
-                ]
-            },
-            {
-                "name": "Тариан талбайд орших — 2-р харагдац", "group": "Тариан талбайд орших",
                 "url": "/images/panoramas/pano-30-2.jpg",
-                "hotspots": [
-                    {
-                        "yaw": 348,
-                        "pitch": -4,
-                        "targetIndex": 0,
-                        "label": "Буцах"
-                    }
-                ]
+                "hotspots": []
             }
         ],
         "name": "Тариан талбайд орших чулуун яст мэлхий",
