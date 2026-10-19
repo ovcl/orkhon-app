@@ -82,8 +82,10 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                     flat.push({
                         url: node.url,
                         name: nodeName(node, language),
-                        // Байршил бүрт тусдаа тайлбар ховор — VR-ийн "i" самбарт дурсгалын тайлбарыг харуулна
-                        description: node.description || localizedSiteDescription(s, language),
+                        // Харагдац өөрийн мэдээлэлтэй бол (нэгтгэсэн дурсгалын яст мэлхий г.м.) түүнийг,
+                        // үгүй бол дурсгалын тайлбарыг VR-ийн "i" самбар болон "Дэлгэрэнгүй"-д харуулна
+                        infoTitle: node.info?.[language]?.title || null,
+                        description: node.info?.[language]?.text || node.description || localizedSiteDescription(s, language),
                         group: node.group || null,
                         siteId: s.id,
                         models3d: node.models3d || [],
@@ -169,7 +171,8 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     if (!currentSite) return null;
 
     const name = localizedSiteName(currentSite, language);
-    const description = localizedSiteDescription(currentSite, language);
+    const sceneInfo = isPanorama && activeScene?.infoTitle ? activeScene : null;
+    const description = sceneInfo ? sceneInfo.description : localizedSiteDescription(currentSite, language);
     const category = t[currentSite.category] || currentSite.category;
     const images = currentSite.images?.length ? currentSite.images : [getPlaceHolder(currentSite.id)];
     const currentImage = images[currentImageIndex] || images[0];
@@ -255,7 +258,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                             {expanded && (
                                 <div className="px-4 pt-4 pb-3 max-h-[38vh] overflow-y-auto border-b border-white/10">
                                     <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
-                                    <h3 className="font-heading text-lg font-bold mt-2 mb-2">{name}</h3>
+                                    <h3 className="font-heading text-lg font-bold mt-2 mb-2">{sceneInfo ? sceneInfo.infoTitle : name}</h3>
                                     <p className="text-sm leading-relaxed text-slate-200 whitespace-pre-line">{description}</p>
                                 </div>
                             )}

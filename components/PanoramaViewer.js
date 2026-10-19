@@ -1425,7 +1425,7 @@ export default function PanoramaViewer({
         if (isFirstRun.current) {
             isFirstRun.current = false;
             if (sceneStateRef.current?.updateInfoPanelText) {
-                sceneStateRef.current.updateInfoPanelText(scenes[currentIndex]?.name, scenes[currentIndex]?.description);
+                sceneStateRef.current.updateInfoPanelText(scenes[currentIndex]?.infoTitle || scenes[currentIndex]?.name, scenes[currentIndex]?.description);
             }
             return;
         }
@@ -1439,7 +1439,7 @@ export default function PanoramaViewer({
             state.buildHotspots?.(currentIndex);
             state.buildModels3d?.(currentIndex);
             if (state.updateInfoPanelText) {
-                state.updateInfoPanelText(scenes[currentIndex]?.name, scenes[currentIndex]?.description);
+                state.updateInfoPanelText(scenes[currentIndex]?.infoTitle || scenes[currentIndex]?.name, scenes[currentIndex]?.description);
             }
             state.fadeTo(0, 300);
         }, 260);
