@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { sitesData } from "../data/sites";
+import { buildTourSites, tourSiteId } from "../../lib/tour-sites";
 import VirtualTour from "../../components/VirtualTour";
 import UnityPlayer from "../../components/UnityPlayer";
 import { translations } from "../data/translations";
@@ -29,7 +30,7 @@ export default function ToursPage() {
         // /tours?site=ID — дурсгалын хуудаснаас шууд тухайн дурсгалын VR аялал руу
         const siteParam = Number(new URLSearchParams(window.location.search).get('site'));
         if (siteParam && sitesData.some((s) => s.id === siteParam)) {
-            setInitialSiteId(siteParam);
+            setInitialSiteId(tourSiteId(siteParam));
             setIsTourActive(true);
         }
 
@@ -48,7 +49,8 @@ export default function ToursPage() {
         setIsTourActive(true);
     };
 
-    const vrSites = sitesData.filter(site => site.panoramaUrl || (site.panoramaTour && site.panoramaTour.length > 0));
+    // Панорамтай дурсгалууд; дөрвөн чулуун яст мэлхий зэргийг нэг дурсгал болгон нэгтгэнэ
+    const vrSites = buildTourSites(sitesData);
 
     const closeTour = () => {
         setIsTourActive(false);

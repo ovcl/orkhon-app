@@ -256,7 +256,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                                 <div className="px-4 pt-4 pb-3 max-h-[38vh] overflow-y-auto border-b border-white/10">
                                     <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
                                     <h3 className="font-heading text-lg font-bold mt-2 mb-2">{name}</h3>
-                                    <p className="text-sm leading-relaxed text-slate-200">{description}</p>
+                                    <p className="text-sm leading-relaxed text-slate-200 whitespace-pre-line">{description}</p>
                                 </div>
                             )}
                             <nav className="grid grid-cols-[1fr_auto_1fr] items-stretch" aria-label={`${t.vrPrevSite} / ${t.vrNextSite}`}>
