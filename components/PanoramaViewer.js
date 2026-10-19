@@ -77,6 +77,7 @@ export default function PanoramaViewer({
     uiHidden = false,
     onToggleUi,
     bottomInset = 20,
+    siteList = [],
 }) {
     const containerRef = useRef(null);
     const stripRef = useRef(null);
@@ -101,6 +102,9 @@ export default function PanoramaViewer({
     viewPrefsRef.current = viewPrefs;
 
     const currentIndexRef = useRef(initialIndex);
+    // VR доторх "Бүх дурсгал" самбарт — [{ siteId, name, firstIndex, thumb }]
+    const siteListRef = useRef(siteList);
+    siteListRef.current = siteList;
     const sceneStateRef = useRef({});
     const isFirstRun = useRef(true);
 
@@ -549,6 +553,17 @@ export default function PanoramaViewer({
                 ctx.moveTo(cx + s * 0.12, cy - s * 0.3); ctx.lineTo(cx - s * 0.18, cy); ctx.lineTo(cx + s * 0.12, cy + s * 0.3);
             } else if (kind === 'next') {
                 ctx.moveTo(cx - s * 0.12, cy - s * 0.3); ctx.lineTo(cx + s * 0.18, cy); ctx.lineTo(cx - s * 0.12, cy + s * 0.3);
+            } else if (kind === 'list') {
+                for (let k = -1; k <= 1; k++) {
+                    ctx.moveTo(cx - s * 0.12, cy + k * s * 0.18); ctx.lineTo(cx + s * 0.26, cy + k * s * 0.18);
+                }
+                ctx.stroke();
+                for (let k = -1; k <= 1; k++) {
+                    ctx.beginPath();
+                    ctx.arc(cx - s * 0.25, cy + k * s * 0.18, s * 0.055, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                return;
             } else if (kind === 'bright') {
                 ctx.arc(cx, cy, s * 0.13, 0, Math.PI * 2);
                 ctx.fill();
@@ -886,7 +901,7 @@ export default function PanoramaViewer({
 
         // Dock: харагчийн өмнө ~1 м, нүднээс ~27° доош, орон зайд тогтмол. Толгойгоо
         // хол эргүүлэхэд аажим дагаж ирнэ; доош харах эсвэл туяагаар онилоход тодорно.
-        const DOCK_W = 1.2, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.9;
+        const DOCK_W = 1.32, DOCK_H = 0.19, DOCK_DIST = 1.3, DOCK_DROP = 0.9;
         const DOCK_SCALE = DOCK_DIST / 0.95;
         const dock = new THREE.Group();
         dock.scale.setScalar(DOCK_SCALE);
@@ -918,7 +933,7 @@ export default function PanoramaViewer({
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
             ctx.font = '600 38px Inter, system-ui, sans-serif';
-            ctx.fillText(fitText(ctx, title, W * 0.25), 56, H * 0.4);
+            ctx.fillText(fitText(ctx, title, W * 0.22), 56, H * 0.4);
             ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.font = '30px Inter, system-ui, sans-serif';
             ctx.fillText(position, 56, H * 0.7);
@@ -933,8 +948,9 @@ export default function PanoramaViewer({
         const btnInfo = makeButtonMesh('info', t.vrMore || 'Мэдээлэл');
         const btnBright = makeButtonMesh('bright', t.vrBrightness || 'Гэрэлтүүлэг');
         const btnExit = makeButtonMesh('exit', t.vrExitVr || 'Гарах', false, t.vrExitCardboard || 'Гарах');
+        const btnList = makeButtonMesh('list', t.vrSiteList || 'Бүх дурсгал', false, (t.vrSiteList || 'Дурсгал').split(' ').pop());
         // Зүүн талд нэр (~30%), баруун талд 6 товч: [− +]  [‹ ›]  [i ✕]
-        [[btnZoomOut, -0.16], [btnZoomIn, -0.05], [btnBright, 0.05], [btnPrev, 0.16], [btnNext, 0.27], [btnInfo, 0.385], [btnExit, 0.495]].forEach(([btn, x]) => {
+        [[btnZoomOut, -0.21], [btnZoomIn, -0.1], [btnBright, 0], [btnPrev, 0.11], [btnNext, 0.22], [btnList, 0.335], [btnInfo, 0.445], [btnExit, 0.555]].forEach(([btn, x]) => {
             btn.position.set(x, 0, 0.002);
             dock.add(btn);
         });
@@ -1005,11 +1021,169 @@ export default function PanoramaViewer({
             dockState.redraw = true;
         };
 
+        // ---------- VR: "Бүх дурсгал" самбар (2×4 хуудаслагдсан жагсаалт) ----------
+        const LIST_S = 1.2, LIST_PX = 1024, COLS = 2, ROWS = 4, PER = COLS * ROWS;
+        const listCanvas = document.createElement('canvas');
+        listCanvas.width = LIST_PX; listCanvas.height = LIST_PX;
+        const listTex = new THREE.CanvasTexture(listCanvas);
+        listTex.colorSpace = THREE.SRGBColorSpace;
+        listTex.anisotropy = 4;
+        const listPanel = new THREE.Mesh(
+            new THREE.PlaneGeometry(LIST_S, LIST_S),
+            new THREE.MeshBasicMaterial({ map: listTex, transparent: true, depthTest: false, side: THREE.DoubleSide })
+        );
+        listPanel.renderOrder = 999;
+        listPanel.visible = false;
+        scene.add(listPanel);
+        const listState = { page: 0, latched: false };
+        const CELL = { x0: 48, y0: 150, w: 456, h: 168, gx: 16, gy: 14 };
+        const cellRect = (k) => {
+            const col = k % COLS, row = Math.floor(k / COLS);
+            return { x: CELL.x0 + col * (CELL.w + CELL.gx), y: CELL.y0 + row * (CELL.h + CELL.gy), w: CELL.w, h: CELL.h };
+        };
+        const px2m = (v) => (v / LIST_PX) * LIST_S;
+        // Мөр бүрийн дарах талбай — үл үзэгдэх plane, онилоход бага зэрэг гэрэлтэнэ
+        const listItems = Array.from({ length: PER }, (_, k) => {
+            const r = cellRect(k);
+            const m = new THREE.Mesh(
+                new THREE.PlaneGeometry(px2m(r.w), px2m(r.h)),
+                new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthTest: false, side: THREE.DoubleSide })
+            );
+            m.position.set(px2m(r.x + r.w / 2) - LIST_S / 2, LIST_S / 2 - px2m(r.y + r.h / 2), 0.002);
+            m.renderOrder = 1003;
+            listPanel.add(m);
+            return m;
+        });
+        const btnListPrev = makeButtonMesh('prev', '', false, '');
+        const btnListNext = makeButtonMesh('next', '', false, '');
+        const btnListClose = makeButtonMesh('exit', t.vrLess || 'Хаах', false, '');
+        btnListPrev.position.set(-0.22, -0.53, 0.002);
+        btnListNext.position.set(0.22, -0.53, 0.002);
+        btnListClose.position.set(0.53, 0.53, 0.002);
+        [btnListPrev, btnListNext, btnListClose].forEach((b) => { b.renderOrder = 1004; listPanel.add(b); });
+
+        const thumbCache = new Map();
+        const thumbImage = (url) => {
+            if (!url) return null;
+            let img = thumbCache.get(url);
+            if (!img) {
+                img = new Image();
+                img.onload = () => { if (listPanel.visible) drawList(); };
+                img.src = url;
+                thumbCache.set(url, img);
+            }
+            return img.complete && img.naturalWidth ? img : null;
+        };
+        const pageCount = () => Math.max(1, Math.ceil(siteListRef.current.length / PER));
+
+        const drawList = () => {
+            const ctx = listCanvas.getContext('2d');
+            const W = LIST_PX;
+            const items = siteListRef.current;
+            const currentSite = scenes[currentIndexRef.current]?.siteId;
+            ctx.clearRect(0, 0, W, W);
+            roundRectPath(ctx, 4, 4, W - 8, W - 8, 48);
+            ctx.fillStyle = 'rgba(12,18,32,0.88)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.textBaseline = 'middle';
+            ctx.font = '600 48px Inter, system-ui, sans-serif';
+            ctx.fillText((t.vrSiteList || 'Бүх дурсгал') + '  ·  ' + items.length, 56, 82);
+            for (let k = 0; k < PER; k++) {
+                const idx = listState.page * PER + k;
+                const it = items[idx];
+                listItems[k].visible = Boolean(it);
+                listItems[k].userData.item = it || null;
+                if (!it) continue;
+                const r = cellRect(k);
+                const active = it.siteId === currentSite;
+                roundRectPath(ctx, r.x, r.y, r.w, r.h, 22);
+                ctx.fillStyle = active ? 'rgba(245,158,11,0.18)' : 'rgba(255,255,255,0.06)';
+                ctx.fill();
+                if (active) { ctx.strokeStyle = 'rgba(251,191,36,0.85)'; ctx.lineWidth = 4; ctx.stroke(); }
+                const tw = 170, th = r.h - 28;
+                const img = thumbImage(it.thumb);
+                ctx.save();
+                roundRectPath(ctx, r.x + 14, r.y + 14, tw, th, 14);
+                ctx.clip();
+                ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                ctx.fillRect(r.x + 14, r.y + 14, tw, th);
+                if (img) {
+                    // 2:1 эскизийг төв хэсгээр нь тайрч дүүргэнэ
+                    const sh = img.naturalHeight, sw = Math.min(img.naturalWidth, sh * (tw / th));
+                    ctx.drawImage(img, (img.naturalWidth - sw) / 2, 0, sw, sh, r.x + 14, r.y + 14, tw, th);
+                }
+                ctx.restore();
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                roundRectPath(ctx, r.x + 20, r.y + 20, 52, 34, 8);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '700 24px Inter, system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(String(idx + 1), r.x + 46, r.y + 38);
+                ctx.textAlign = 'left';
+                // Нэр — 3 мөр хүртэл
+                ctx.fillStyle = active ? '#fcd34d' : '#ffffff';
+                ctx.font = '600 28px Inter, system-ui, sans-serif';
+                const maxW = r.w - tw - 48;
+                const words = (it.name || '').split(/\s+/);
+                const lines = [];
+                let line = '';
+                for (const w of words) {
+                    const test = line ? line + ' ' + w : w;
+                    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test;
+                }
+                if (line) lines.push(line);
+                if (lines.length > 3) { lines.length = 3; lines[2] = fitText(ctx, lines[2] + '…', maxW); }
+                const ty = r.y + r.h / 2 - ((lines.length - 1) * 36) / 2;
+                lines.forEach((l, i) => ctx.fillText(l, r.x + tw + 32, ty + i * 36));
+            }
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.font = '600 34px Inter, system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(listState.page + 1 + ' / ' + pageCount(), W / 2, W - 62);
+            ctx.textAlign = 'left';
+            btnListPrev.visible = listState.page > 0;
+            btnListNext.visible = listState.page < pageCount() - 1;
+            listTex.needsUpdate = true;
+        };
+        const setListPage = (p) => {
+            listState.page = THREE.MathUtils.clamp(p, 0, pageCount() - 1);
+            drawList();
+        };
+        const openList = () => {
+            infoPanel.visible = false;
+            const currentSite = scenes[currentIndexRef.current]?.siteId;
+            const ci = siteListRef.current.findIndex((it) => it.siteId === currentSite);
+            listState.page = ci >= 0 ? Math.floor(ci / PER) : 0;
+            camera.getWorldPosition(headPos);
+            listPanel.position.set(headPos.x + Math.sin(dockState.yaw) * 1.6, headPos.y + 0.05, headPos.z + Math.cos(dockState.yaw) * 1.6);
+            listPanel.lookAt(headPos);
+            drawList();
+            listPanel.visible = true;
+        };
+        listItems.forEach((m) => {
+            m.userData.action = () => {
+                const it = m.userData.item;
+                if (!it) return;
+                listPanel.visible = false;
+                fadeTo(1, 250);
+                setTimeout(() => navigateTo(it.firstIndex), 260);
+            };
+        });
+        btnListPrev.userData.action = () => setListPage(listState.page - 1);
+        btnListNext.userData.action = () => setListPage(listState.page + 1);
+        btnListClose.userData.action = () => { listPanel.visible = false; };
+
         const toggleInfoPanel = () => {
             if (infoPanel.visible) {
                 infoPanel.visible = false;
                 return;
             }
+            listPanel.visible = false;
             camera.getWorldPosition(headPos);
             infoPanel.position.set(headPos.x + Math.sin(dockState.yaw) * 1.7, headPos.y + 0.05, headPos.z + Math.cos(dockState.yaw) * 1.7);
             infoPanel.lookAt(headPos);
@@ -1023,6 +1197,10 @@ export default function PanoramaViewer({
             if (infoPanel.visible) {
                 infoDir.subVectors(infoPanel.position, headPos).normalize();
                 if (infoDir.dot(headDir) < 0.34) infoPanel.visible = false;
+            }
+            if (listPanel.visible) {
+                infoDir.subVectors(listPanel.position, headPos).normalize();
+                if (infoDir.dot(headDir) < 0.34) listPanel.visible = false;
             }
             const yaw = Math.atan2(headDir.x, headDir.z);
             const pitch = Math.asin(THREE.MathUtils.clamp(headDir.y, -1, 1));
@@ -1044,10 +1222,19 @@ export default function PanoramaViewer({
             // Жойстик дээш = томруулах, доош = жижигрүүлэх
             const session = renderer.xr.getSession();
             if (session) {
+                let stickX = 0;
                 for (const src of session.inputSources) {
                     const ax = src.gamepad?.axes;
                     const y = ax && ax.length >= 4 ? ax[3] : 0;
-                    if (Math.abs(y) > 0.4) setVrZoom(vrZoom.value * (1 - y * 0.025));
+                    if (ax && ax.length >= 4 && Math.abs(ax[2]) > Math.abs(stickX)) stickX = ax[2];
+                    // Жагсаалт нээлттэй үед жойстик зүүн/баруун = хуудас солих (томруулалт хэвээр)
+                    if (Math.abs(y) > 0.4 && !listPanel.visible) setVrZoom(vrZoom.value * (1 - y * 0.025));
+                }
+                if (listPanel.visible) {
+                    if (!listState.latched && Math.abs(stickX) > 0.7) {
+                        listState.latched = true;
+                        setListPage(listState.page + (stickX > 0 ? 1 : -1));
+                    } else if (Math.abs(stickX) < 0.3) listState.latched = false;
                 }
             }
             enhanceUniforms.uViewDir.value.copy(headDir);
@@ -1109,11 +1296,12 @@ export default function PanoramaViewer({
         btnNext.userData.action = () => animateClick(btnNext, () => goTo(1));
         btnInfo.userData.action = () => animateClick(btnInfo, toggleInfoPanel);
         btnInfoClose.userData.action = () => { infoPanel.visible = false; };
+        btnList.userData.action = () => animateClick(btnList, () => (listPanel.visible ? (listPanel.visible = false) : openList()));
         btnExit.userData.action = () => animateClick(btnExit, () => renderer.xr.getSession()?.end());
 
         const raycaster = new THREE.Raycaster();
         const tempMatrix = new THREE.Matrix4();
-        const uiTargets = [btnZoomOut, btnZoomIn, btnBright, btnPrev, btnNext, btnInfo, btnExit, btnInfoClose];
+        const uiTargets = [btnZoomOut, btnZoomIn, btnBright, btnPrev, btnNext, btnList, btnInfo, btnExit, btnInfoClose, btnListPrev, btnListNext, btnListClose];
         const isShown = (o) => o.visible && (!o.parent || o.parent.visible);
         const controllers = [];
 
@@ -1127,7 +1315,7 @@ export default function PanoramaViewer({
                 tempMatrix.identity().extractRotation(controller.matrixWorld);
                 raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
                 raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-                const allTargets = uiTargets.concat(hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []).filter(isShown);
+                const allTargets = uiTargets.concat(listItems, hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []).filter(isShown);
                 const hits = raycaster.intersectObjects(allTargets, false);
                 if (hits.length > 0) hits[0].object.userData.action?.();
             });
@@ -1190,6 +1378,7 @@ export default function PanoramaViewer({
             controls.enabled = true;
             dock.visible = false;
             infoPanel.visible = false;
+            listPanel.visible = false;
             setTip(null);
             setVrZoom(1);
             hotspotMeshes.forEach((h) => {
@@ -1324,7 +1513,7 @@ export default function PanoramaViewer({
             if (renderer.xr.isPresenting && controllers.length > 0) {
                 let hoveredObj = null;
                 scene.updateMatrixWorld(true);
-                const hoverTargets = uiTargets.concat([dockBg], hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []).filter(isShown);
+                const hoverTargets = uiTargets.concat([dockBg], listItems, hotspotMeshes, modelTriggerMeshes, active3dCloseBtn ? [active3dCloseBtn] : []).filter(isShown);
                 for (let c of controllers) {
                     tempMatrix.identity().extractRotation(c.matrixWorld);
                     raycaster.ray.origin.setFromMatrixPosition(c.matrixWorld);
@@ -1341,7 +1530,9 @@ export default function PanoramaViewer({
                     btn.scale.setScalar(on ? 1.12 : 1.0);
                 });
                 dockState.hover = dockHover?.parent === dock || hoveredObj === dockBg;
-                setTip(dockHover);
+                // Шошго зөвхөн dock-ийн товчинд (самбаруудын товчинд биш)
+                setTip(dockHover?.parent === dock ? dockHover : null);
+                listItems.forEach((m) => { m.material.opacity = m === hoveredObj ? 0.12 : 0; });
                 hotspotMeshes.forEach((h) => {
                     h.userData.xrHover = h === hoveredObj;
                 });

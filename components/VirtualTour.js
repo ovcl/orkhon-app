@@ -197,6 +197,19 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     }, [sites, language]);
 
     const isPanorama = Boolean(currentSite?.panoramaUrl || currentSite?.panoramaTour?.length);
+
+    // VR шил доторх "Бүх дурсгал" самбарт: дурсгал бүрийн эхний харагдац + эскиз
+    const vrSiteList = useMemo(
+        () =>
+            sites
+                .map((s) => {
+                    const firstIndex = panoramaScenes.findIndex((sc) => sc.siteId === s.id);
+                    const url = panoramaScenes[firstIndex]?.url;
+                    return { siteId: s.id, name: localizedSiteName(s, language), firstIndex, thumb: panoramaMeta[url]?.thumb || null };
+                })
+                .filter((it) => it.firstIndex >= 0),
+        [sites, panoramaScenes, language]
+    );
     const firstSceneOfSite = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
     const activeScene = sceneIndex != null && panoramaScenes[sceneIndex]?.siteId === currentSite?.id ? panoramaScenes[sceneIndex] : panoramaScenes[firstSceneOfSite];
 
@@ -295,6 +308,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                         uiHidden={uiHidden}
                         onToggleUi={() => setUiHidden((v) => !v)}
                         bottomInset={uiHidden ? 16 : sheetHeight + 12}
+                        siteList={vrSiteList}
                     />
                 ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
