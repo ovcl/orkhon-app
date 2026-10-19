@@ -9,6 +9,7 @@ import { translations } from '../app/data/translations';
 import { siteName as localizedSiteName, siteDescription as localizedSiteDescription, nodeName, hotspotLabel } from '../lib/i18n';
 import BackgroundAudio from './BackgroundAudio';
 import LanguageSwitcher from './LanguageSwitcher';
+import panoramaMeta from '../app/data/panorama-manifest.json';
 
 // Three.js (VR/3D) том bundle тул зөвхөн панорама хэрэгтэй үед ачаална
 const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
@@ -27,6 +28,95 @@ const shortNodeName = (node, language) => (node ? nodeName(node, language).split
 
 const topButton =
     'w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-black/45 backdrop-blur-md border border-white/15 text-white hover:bg-black/65 transition-colors';
+
+// Бүх дурсгалын жагсаалт: хайлттай, одоогийн дурсгал тодорсон, дарахад тэр дурсгал руу шилжинэ
+function SiteListPanel({ sites, currentIndex, language, t, onPick, onClose }) {
+    const [query, setQuery] = useState('');
+    const listRef = useRef(null);
+    const inputRef = useRef(null);
+    const q = query.trim().toLowerCase();
+    const items = sites
+        .map((s, i) => ({ s, i, name: localizedSiteName(s, language) }))
+        .filter(({ s, name }) => !q || name.toLowerCase().includes(q) || (s.name || '').toLowerCase().includes(q));
+
+    useEffect(() => {
+        listRef.current?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'center' });
+        // Утсан дээр гар гаргахгүйн тулд зөвхөн хулганатай төхөөрөмжид хайлтад шууд фокуслана
+        if (window.matchMedia?.('(pointer: fine)').matches) inputRef.current?.focus();
+    }, []);
+
+    return (
+        <div className="absolute inset-0 z-[70] flex justify-end bg-black/50 backdrop-blur-sm" onClick={onClose}>
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={t.vrSiteList}
+                className="w-full sm:w-[380px] h-full flex flex-col bg-navy/95 border-l border-white/10 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex items-center gap-2 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3 border-b border-white/10">
+                    <h3 className="flex-1 font-heading text-lg font-bold">
+                        {t.vrSiteList} <span className="text-white/45 text-sm font-sans font-semibold">· {sites.length}</span>
+                    </h3>
+                    <button type="button" onClick={onClose} aria-label={t.vrLess} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center">
+                        <i className="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div className="px-4 py-3">
+                    <label className="flex items-center gap-2 h-10 px-3 rounded-xl bg-white/[0.07] border border-white/10 focus-within:border-amber-400/60">
+                        <i className="fa-solid fa-magnifying-glass text-white/45 text-sm" aria-hidden="true"></i>
+                        <input
+                            ref={inputRef}
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Escape') onClose();
+                                if (e.key === 'Enter' && items[0]) onPick(items[0].i);
+                            }}
+                            placeholder={t.vrSearchSites}
+                            aria-label={t.vrSearchSites}
+                            className="flex-1 bg-transparent text-sm outline-none placeholder:text-white/40"
+                        />
+                    </label>
+                </div>
+                <ul ref={listRef} className="flex-1 overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                    {items.map(({ s, i, name }) => {
+                        const active = i === currentIndex;
+                        const firstUrl = s.panoramaTour?.[0]?.url || s.panoramaUrl;
+                        const thumb = panoramaMeta[firstUrl]?.thumb;
+                        const views = s.panoramaTour?.length || 1;
+                        return (
+                            <li key={s.id}>
+                                <button
+                                    type="button"
+                                    onClick={() => onPick(i)}
+                                    aria-current={active ? 'true' : undefined}
+                                    className={clsx(
+                                        'w-full flex items-center gap-3 p-2 rounded-xl text-left transition-colors',
+                                        active ? 'bg-amber-500/15 ring-1 ring-amber-400/50' : 'hover:bg-white/5'
+                                    )}
+                                >
+                                    <span className="relative w-16 h-11 shrink-0 rounded-lg overflow-hidden bg-white/10">
+                                        {thumb && <img src={thumb} alt="" loading="lazy" className="w-full h-full object-cover" />}
+                                        <span className="absolute left-1 top-1 px-1 rounded bg-black/60 text-[9px] font-bold leading-4">{i + 1}</span>
+                                    </span>
+                                    <span className="min-w-0 flex-1">
+                                        <span className={clsx('block text-[13px] font-semibold leading-snug line-clamp-2', active && 'text-amber-300')}>{name}</span>
+                                        <span className="block mt-0.5 text-[11px] text-white/50 truncate">
+                                            {t[s.category] || s.category} · {views} {t.vrViews}
+                                        </span>
+                                    </span>
+                                </button>
+                            </li>
+                        );
+                    })}
+                    {items.length === 0 && <li className="px-3 py-6 text-center text-sm text-white/50">—</li>}
+                </ul>
+            </div>
+        </div>
+    );
+}
 
 // Дурсгал хооронд шилжих товч: чиглэл + хөрш дурсгалын нэр харагдана. Төгсгөлд идэвхгүй.
 function SiteNavButton({ dir, site, label, language, onClick }) {
@@ -61,6 +151,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [sceneIndex, setSceneIndex] = useState(null);
     const [expanded, setExpanded] = useState(false);
+    const [listOpen, setListOpen] = useState(false);
     const [uiHidden, setUiHidden] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [canFullscreen, setCanFullscreen] = useState(false);
@@ -121,6 +212,13 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
         [sites, panoramaScenes, currentIndex]
     );
 
+    const jumpToSite = useCallback((index) => {
+        setCurrentIndex(index);
+        setCurrentImageIndex(0);
+        setSceneIndex(null);
+        setListOpen(false);
+    }, []);
+
     const goToSite = useCallback(
         (delta) => {
             const next = currentIndex + delta;
@@ -158,15 +256,20 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     useEffect(() => {
         const onKey = (e) => {
             if (e.target.closest?.('input, textarea, select')) return;
-            if (e.key === 'Escape') onClose();
+            if (e.key === 'Escape') {
+                // Жагсаалт нээлттэй бол эхлээд түүнийг хаана
+                if (listOpen) setListOpen(false);
+                else onClose();
+            }
             if (e.key === 'i' || e.key === 'I') setExpanded((v) => !v);
+            if (e.key === 'l' || e.key === 'L') setListOpen((v) => !v);
             // Панорама горимд ←/→-г харагч өөрөө (байршил хооронд) зохицуулна
             if (!isPanorama && e.key === 'ArrowRight') goToSite(1);
             if (!isPanorama && e.key === 'ArrowLeft') goToSite(-1);
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [isPanorama, goToSite, onClose]);
+    }, [isPanorama, goToSite, onClose, listOpen]);
 
     if (!currentSite) return null;
 
@@ -234,7 +337,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                         <button type="button" onClick={onClose} aria-label={t.shortcutsExit} className={clsx(topButton, 'pointer-events-auto')}>
                             <i className="fa-solid fa-xmark"></i>
                         </button>
-                        <div className="min-w-0 flex-1 pt-0.5 pr-[176px]">
+                        <div className="min-w-0 flex-1 pt-0.5 pr-[224px]">
                             <h2 className="font-heading text-base font-bold leading-tight truncate drop-shadow">{name}</h2>
                             <p className="text-[11px] text-white/75 truncate drop-shadow">
                                 {sceneTitle || category}
@@ -242,6 +345,9 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                             </p>
                         </div>
                         <div className="absolute right-3 top-3 flex items-center gap-2 pointer-events-auto">
+                            <button type="button" onClick={() => setListOpen(true)} aria-label={t.vrSiteList} title={t.vrSiteList} className={topButton}>
+                                <i className="fa-solid fa-list-ul"></i>
+                            </button>
                             <BackgroundAudio className={topButton} />
                             {canFullscreen && (
                                 <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? t.vrExitFullscreen : t.vrFullscreen} title={isFullscreen ? t.vrExitFullscreen : t.vrFullscreen} className={topButton}>
@@ -283,6 +389,10 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                         </div>
                     </section>
             </div>
+
+            {listOpen && (
+                <SiteListPanel sites={sites} currentIndex={currentIndex} language={language} t={t} onPick={jumpToSite} onClose={() => setListOpen(false)} />
+            )}
         </div>
     );
 }
