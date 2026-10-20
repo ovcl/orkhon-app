@@ -153,7 +153,7 @@ export default function InfoPage() {
                 scrolled ? "bg-[#070b14]/95 backdrop-blur-xl border-b border-white/5 shadow-lg" : "bg-transparent"
             )}>
                 <div className="flex items-center gap-3">
-                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
+                    <Link href="/" aria-label={translations[language].back} title={translations[language].back} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
                         <i className="fa-solid fa-arrow-left text-sm"></i>
                     </Link>
                     <h1 className={clsx("font-heading font-bold text-lg text-white transition-all", scrolled ? "opacity-100" : "opacity-0")}>

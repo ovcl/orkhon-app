@@ -1022,6 +1022,7 @@ export const sitesData = [
     },
     {
         "id": 24,
+        "protectionStatus": "Улсын хамгаалалтад",
         "name": "Эрдэнэ Зуу хийд",
         "nameEn": "Erdene Zuu Monastery",
         "category": "Сүм хийд",
