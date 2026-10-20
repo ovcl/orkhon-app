@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { sitesData } from "../data/sites";
+import { buildTourSites, tourSiteId } from "../../lib/tour-sites";
+import { DonateButton, DonateDialog } from "../../components/Donate";
 import VirtualTour from "../../components/VirtualTour";
 import UnityPlayer from "../../components/UnityPlayer";
 import { translations } from "../data/translations";
@@ -29,7 +31,7 @@ export default function ToursPage() {
         // /tours?site=ID — дурсгалын хуудаснаас шууд тухайн дурсгалын VR аялал руу
         const siteParam = Number(new URLSearchParams(window.location.search).get('site'));
         if (siteParam && sitesData.some((s) => s.id === siteParam)) {
-            setInitialSiteId(siteParam);
+            setInitialSiteId(tourSiteId(siteParam));
             setIsTourActive(true);
         }
 
@@ -48,7 +50,18 @@ export default function ToursPage() {
         setIsTourActive(true);
     };
 
-    const vrSites = sitesData.filter(site => site.panoramaUrl || (site.panoramaTour && site.panoramaTour.length > 0));
+    // "VR 360 Аялал" дарахад эхлээд хандивын цонх гарна; "Аялал эхлүүлэх" эсвэл хаахад аялал эхэлнэ
+    const [donateGate, setDonateGate] = useState(false);
+    const startVrTour = () => setDonateGate(true);
+    const closeDonateGate = () => {
+        setDonateGate(false);
+        startTour(false);
+    };
+
+    // Панорамтай дурсгалууд; дөрвөн чулуун яст мэлхий зэргийг нэг дурсгал болгон нэгтгэнэ
+    const vrSites = buildTourSites(sitesData);
+    // Давхардалгүй панорамын тоо (нэгтгэсэн дурсгал өөр дурсгалын зургийг давтан ашигладаг)
+    const vrViewCount = new Set(vrSites.flatMap((s) => (s.panoramaTour || []).map((n) => n.url).concat(s.panoramaUrl || []))).size;
 
     const closeTour = () => {
         setIsTourActive(false);
@@ -72,7 +85,7 @@ export default function ToursPage() {
                 )}
             >
                 <div className="flex items-center gap-4">
-                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors border border-white/5">
+                    <Link href="/" aria-label={t.back} title={t.back} className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors border border-white/5">
                         <i className="fa-solid fa-arrow-left text-sm"></i>
                     </Link>
                     <h1 className={clsx("font-heading font-bold text-lg text-white transition-all", scrolled ? "opacity-100" : "opacity-0")}>
@@ -107,11 +120,14 @@ export default function ToursPage() {
                     <div className="grid grid-cols-1 gap-3 relative z-20">
                         <button
                             className="btn btn-primary w-full shadow-lg shadow-amber-500/20"
-                            onClick={() => startTour(false)}
+                            onClick={startVrTour}
                         >
                             <i className="fa-solid fa-vr-cardboard"></i>
                             {t.vr360Tour}
                         </button>
+
+                        <DonateButton t={t} className="btn btn-secondary w-full border-rose-500/25 text-rose-200 hover:bg-rose-500/10" />
+                        {donateGate && <DonateDialog t={t} onClose={closeDonateGate} actionLabel={t.donateStartTour} onAction={closeDonateGate} />}
 
                         {UNITY_ENABLED && (
                             <button
@@ -135,14 +151,14 @@ export default function ToursPage() {
                             <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatSites}</p>
                         </div>
                         <div className="card-simple p-3 flex flex-col items-center justify-center text-center h-24 bg-slate-800/50">
-                            <i className="fa-solid fa-clock text-blue-500 mb-2"></i>
-                            <h3 className="text-white font-bold text-lg leading-none mb-1">60+</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatDuration}</p>
+                            <i className="fa-solid fa-street-view text-blue-500 mb-2"></i>
+                            <h3 className="text-white font-bold text-lg leading-none mb-1">{vrViewCount}</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatViews}</p>
                         </div>
                         <div className="card-simple p-3 flex flex-col items-center justify-center text-center h-24 bg-slate-800/50">
                             <i className="fa-solid fa-images text-emerald-500 mb-2"></i>
-                            <h3 className="text-white font-bold text-lg leading-none mb-1">HD</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatGallery}</p>
+                            <h3 className="text-white font-bold text-lg leading-none mb-1">8K</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatResolution}</p>
                         </div>
                     </div>
 
@@ -154,11 +170,12 @@ export default function ToursPage() {
                         </h3>
                         <div className="card-simple p-5 space-y-3 bg-slate-800/30">
                             {[
-                                { icon: "fa-solid fa-compress", text: t.tourFeatureFullscreen },
+                                { icon: "fa-solid fa-vr-cardboard", text: t.tourFeatureVr },
+                                { icon: "fa-solid fa-list-ul", text: t.tourFeatureList },
+                                { icon: "fa-solid fa-magnifying-glass-plus", text: t.tourFeatureZoom },
                                 { icon: "fa-solid fa-circle-info", text: t.tourFeatureDetail },
-                                { icon: "fa-solid fa-keyboard", text: t.tourFeatureShortcuts },
-                                { icon: "fa-solid fa-camera", text: t.tourFeatureGallery },
-                                { icon: "fa-solid fa-robot", text: t.aiGuideVrMode }
+                                { icon: "fa-solid fa-cloud-arrow-down", text: t.tourFeatureOffline },
+                                { icon: "fa-solid fa-keyboard", text: t.tourFeatureShortcuts }
                             ].map((feature, idx) => (
                                 <div key={idx} className="flex items-center gap-3 text-sm text-slate-300">
                                     <div className="w-6 h-6 rounded-full bg-slate-700/50 flex items-center justify-center text-amber-500/80 text-xs">

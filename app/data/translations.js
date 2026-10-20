@@ -8,7 +8,7 @@ export const translations = {
         // Hero
         heroBadge: "ЮНЕСКО-гийн дэлхийн өв",
         heroTitle: "Түмэн дурсгалт Орхоны хөндий",
-        heroSubtitle: "1000 жилийн нүүдэлчдийн түүхийг судлаарай",
+        heroSubtitle: "Чулуун зэвсгийн үеэс Монголын эзэнт гүрэн хүртэлх түүхийг судлаарай",
 
         // Navigation
         navSites: "Дурсгалууд",
@@ -19,7 +19,7 @@ export const translations = {
         navInfo: "Мэдээлэл",
 
         // Popular section
-        popularTitle: "Алдартай",
+        popularTitle: "Онцлох дурсгал",
         seeAll: "Бүгдийг үзэх",
 
         // Bottom nav
@@ -81,7 +81,6 @@ export const translations = {
         tourFeaturesTitle: "Онцлог",
         tourFeatureFullscreen: "Fullscreen дэлгэц дээр үзэх",
         tourFeatureDetail: "Дурсгал бүрийн дэлгэрэнгүй мэдээлэл",
-        tourFeatureShortcuts: "Keyboard shortcuts (← → ESC I)",
         tourFeatureGallery: "Зургийн галлерей",
 
         // Additional
@@ -134,7 +133,7 @@ export const translations = {
         vrHintTitle: "Хэрхэн үзэх вэ",
         vrHintDrag: "Чирж эсвэл утсаа эргүүлж тойрон харна",
         vrHintZoom: "Чимхэж эсвэл хулганы дугуйгаар томруулна",
-        vrHintHotspot: "Цагаан сум дээр дарж дараагийн байршил руу шилжинэ",
+        vrHintHotspot: "Цагаан цэг дээр дарж дараагийн байршил руу шилжинэ",
         vrHintGotIt: "Ойлголоо",
         vrZoomIn: "Томруулах",
         vrZoomOut: "Жижигрүүлэх",
@@ -183,6 +182,39 @@ export const translations = {
         seasonLimited: "Хязгаарлагдмал",
         prevImage: "Өмнөх зураг",
         nextImage: "Дараах зураг",
+        vrPrevSpot: "Өмнөх байршил",
+        vrNextSpot: "Дараах байршил",
+        vrExitVr: "VR-ээс гарах",
+        vrSiteList: "Бүх дурсгал",
+        vrSearchSites: "Дурсгал хайх",
+        vrViews: "харагдац",
+        donateStartTour: "Аялал эхлүүлэх",
+        donateButton: "Дэмжих",
+        donateTitle: "Дэмжих",
+        donateText: "Орхоны хөндийн өвийг хадгалах, энэ аппыг хөгжүүлэхэд хандиваар дэмжээрэй.",
+        donateScan: "Банкны аппаараа QR кодыг уншуулж, хүссэн дүнгээ оруулна уу.",
+        donateThanks: "Баярлалаа!",
+        donateQrAlt: "Хандивын QR код",
+        tourStatViews: "360° харагдац",
+        tourStatResolution: "нягтрал",
+        tourFeatureVr: "VR шил (Quest), утасны VR хайрцгаар үзэх",
+        tourFeatureList: "Бүх дурсгалын жагсаалт, хайлт",
+        tourFeatureZoom: "Томруулах, гэрэлтүүлэг тохируулах",
+        tourFeatureOffline: "Интернэтгүй үзэхээр хадгалах",
+        tourFeatureShortcuts: "Гарын товчлол (← → Esc I L)",
+        viewList: "Жагсаалтаар",
+        viewGrid: "Тороор",
+        vrMenuTitle: "VR шилээр үзэх",
+        vrHeadsetHere: "Энэ VR шилээр үзэх",
+        vrHeadsetHereDesc: "Quest, Pico, Vision Pro зэрэг шилний браузерт ажиллана",
+        vrCardboard: "Утас + VR хайрцаг (Cardboard)",
+        vrCardboardDesc: "Утсаа хэвтээ эргүүлж VR Box-д хийнэ. Сум руу 2 секунд ширтэж шилжинэ.",
+        vrSendQuest: "Meta Quest шил рүү илгээх",
+        vrSendQuestDesc: "Meta бүртгэлээрээ нэвтэрсэн Quest шил дээр энэ хуудас нээгдэнэ",
+        vrScanQr: "Pico, Quest 3 шилний камераар эсвэл өөр утсаар уншуулж энэ аялалыг шууд нээнэ.",
+        vrExitCardboard: "Гарах",
+        vrRotateHint: "Утсаа хэвтээ эргүүлээд VR хайрцагт хийнэ үү",
+        vrGazeHint: "Цагаан цэг рүү 2 секунд ширтэхэд дараагийн байршил руу шилжинэ",
         language: "Хэл"
     },
     en: {
@@ -192,7 +224,7 @@ export const translations = {
         // Hero
         heroBadge: "UNESCO World Heritage",
         heroTitle: "Orkhon Valley: Land of Ten Thousand Monuments",
-        heroSubtitle: "Explore 1000 years of nomadic history",
+        heroSubtitle: "Explore history from the Stone Age to the Mongol Empire",
 
         // Navigation
         navSites: "Sites",
@@ -203,7 +235,7 @@ export const translations = {
         navInfo: "Info",
 
         // Popular section
-        popularTitle: "Popular",
+        popularTitle: "Featured sites",
         seeAll: "See All",
 
         // Bottom nav
@@ -265,7 +297,6 @@ export const translations = {
         tourFeaturesTitle: "Features",
         tourFeatureFullscreen: "View in full screen",
         tourFeatureDetail: "Detailed info for each site",
-        tourFeatureShortcuts: "Keyboard shortcuts (← → ESC I)",
         tourFeatureGallery: "Photo gallery integration",
 
         // Additional
@@ -318,7 +349,7 @@ export const translations = {
         vrHintTitle: "How to explore",
         vrHintDrag: "Drag or turn your phone to look around",
         vrHintZoom: "Pinch or use the mouse wheel to zoom",
-        vrHintHotspot: "Tap a white arrow to move to the next spot",
+        vrHintHotspot: "Tap a white dot to move to the next spot",
         vrHintGotIt: "Got it",
         vrZoomIn: "Zoom in",
         vrZoomOut: "Zoom out",
@@ -367,6 +398,39 @@ export const translations = {
         seasonLimited: "Limited",
         prevImage: "Previous image",
         nextImage: "Next image",
+        vrPrevSpot: "Previous spot",
+        vrNextSpot: "Next spot",
+        vrExitVr: "Exit VR",
+        vrSiteList: "All sites",
+        vrSearchSites: "Search sites",
+        vrViews: "views",
+        donateStartTour: "Start the tour",
+        donateButton: "Support",
+        donateTitle: "Support us",
+        donateText: "Help preserve the Orkhon Valley heritage and keep this app growing with a donation.",
+        donateScan: "Scan the QR code with your Mongolian banking app and enter any amount.",
+        donateThanks: "Thank you!",
+        donateQrAlt: "Donation QR code",
+        tourStatViews: "360° views",
+        tourStatResolution: "resolution",
+        tourFeatureVr: "View in a VR headset (Quest) or phone VR box",
+        tourFeatureList: "List and search of all sites",
+        tourFeatureZoom: "Zoom and brightness controls",
+        tourFeatureOffline: "Save for offline viewing",
+        tourFeatureShortcuts: "Keyboard shortcuts (← → Esc I L)",
+        viewList: "List view",
+        viewGrid: "Grid view",
+        vrMenuTitle: "View in VR",
+        vrHeadsetHere: "View in this headset",
+        vrHeadsetHereDesc: "Works in the browser of Quest, Pico, Vision Pro and similar headsets",
+        vrCardboard: "Phone + VR box (Cardboard)",
+        vrCardboardDesc: "Turn your phone sideways and put it in a VR box. Look at an arrow for 2 seconds to move.",
+        vrSendQuest: "Send to Meta Quest",
+        vrSendQuestDesc: "Opens this page on the Quest headset signed in to your Meta account",
+        vrScanQr: "Scan with a Pico or Quest 3 camera, or with another phone, to open this tour directly.",
+        vrExitCardboard: "Exit",
+        vrRotateHint: "Turn your phone sideways and place it in the VR box",
+        vrGazeHint: "Look at a white dot for 2 seconds to move to the next spot",
         language: "Language"
     }
 };

@@ -31,6 +31,8 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     poweredByHeader: false,
+    // Локал production шалгалт (`npm run preview`) dev серверийн .next-ийг эвдэхгүйн тулд тусдаа фолдерт
+    distDir: process.env.NEXT_DIST_DIR || '.next',
     // `*.dev.js` файлууд (hotspot редактор) зөвхөн dev горимд маршрут болно
     pageExtensions: process.env.NODE_ENV === 'development' ? ['dev.js', 'js', 'jsx'] : ['js', 'jsx'],
     // Docker / офлайн киоск серверт зориулсан бие даасан build (Vercel үүнийг үл тооно)

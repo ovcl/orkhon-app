@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
+    "predev": "node scripts/dev-sw-reset.mjs && node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/check-media.mjs && node scripts/copy-maplibre-worker.mjs && node scripts/build-images.mjs && node scripts/build-panoramas.mjs && node scripts/build-media-manifest.mjs",
     "build": "next build",
     "start": "next start",
+    "preview": "node scripts/preview.mjs",
+    "quest": "node scripts/quest-https.mjs",
     "check:media": "node scripts/check-media.mjs"
   },
   "dependencies": {
@@ -18,6 +20,7 @@
     "framer-motion": "^12.26.1",
     "maplibre-gl": "^6.11.2",
     "next": "^15.5.27",
+    "qrcode-generator": "^2.0.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-unity-webgl": "^10.1.6",

@@ -75,7 +75,7 @@ export default function SitesPage() {
                     : "bg-transparent"
             )}>
                 <div className="flex items-center gap-3">
-                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
+                    <Link href="/" aria-label={t.back} title={t.back} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
                         <i className="fa-solid fa-arrow-left text-sm"></i>
                     </Link>
                     <div>
@@ -90,7 +90,11 @@ export default function SitesPage() {
                     <div className="flex rounded-lg overflow-hidden border border-white/8 p-0.5 gap-0.5 bg-white/[0.04]">
                         {['list', 'grid'].map(m => (
                             <button key={m}
+                                type="button"
                                 onClick={() => setViewMode(m)}
+                                aria-label={m === 'list' ? t.viewList : t.viewGrid}
+                                title={m === 'list' ? t.viewList : t.viewGrid}
+                                aria-pressed={viewMode === m}
                                 className={clsx(
                                     "w-7 h-7 flex items-center justify-center rounded-md transition-all text-xs",
                                     viewMode === m ? "bg-white/15 text-white" : "text-slate-500 hover:text-slate-300"

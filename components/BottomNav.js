@@ -11,7 +11,7 @@ export default function BottomNav({ t }) {
         { href: '/sites', icon: 'fa-solid fa-landmark', label: t?.navSitesShort || 'Дурсгал' },
         { href: '/map', icon: 'fa-solid fa-map', label: t?.navMapShort || 'Зураг' },
         { href: '/tours', icon: 'fa-solid fa-vr-cardboard', label: t?.navTours || 'Аялал' },
-        { href: '/info', icon: 'fa-solid fa-circle-info', label: t?.profile || 'Мэдээлэл' },
+        { href: '/info', icon: 'fa-solid fa-circle-info', label: t?.navInfo || 'Мэдээлэл' },
     ];
 
     return (

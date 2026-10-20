@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { DonateContent } from '../../components/Donate';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
@@ -152,7 +153,7 @@ export default function InfoPage() {
                 scrolled ? "bg-[#070b14]/95 backdrop-blur-xl border-b border-white/5 shadow-lg" : "bg-transparent"
             )}>
                 <div className="flex items-center gap-3">
-                    <Link href="/" className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
+                    <Link href="/" aria-label={translations[language].back} title={translations[language].back} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white transition-colors border border-white/8 bg-white/5">
                         <i className="fa-solid fa-arrow-left text-sm"></i>
                     </Link>
                     <h1 className={clsx("font-heading font-bold text-lg text-white transition-all", scrolled ? "opacity-100" : "opacity-0")}>
@@ -286,20 +287,28 @@ export default function InfoPage() {
                                     </div>
                                 ))}
                             </div>
+                            {/* TODO: Facebook/Instagram-ын жинхэнэ хаяг өгөхөөр нээх */}
+                            {SOCIAL_LINKS.length > 0 && (
                             <div className="pt-4 border-t border-white/5">
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-3 font-semibold">{t.contact.social}</p>
                                 <div className="flex gap-2">
-                                    {[
-                                        { icon: "fa-brands fa-facebook", color: "text-blue-400", hover: "hover:bg-blue-600" },
-                                        { icon: "fa-brands fa-instagram", color: "text-pink-400", hover: "hover:bg-pink-600" },
-                                    ].map((s, i) => (
-                                        <a key={i} href="#"
+                                    {SOCIAL_LINKS.map((s, i) => (
+                                        <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
                                             className={`w-10 h-10 rounded-full flex items-center justify-center ${s.color} ${s.hover} hover:text-white transition-all border border-white/8 bg-white/5`}>
                                             <i className={`${s.icon} text-lg`}></i>
                                         </a>
                                     ))}
                                 </div>
                             </div>
+                            )}
+                        </div>
+                    </motion.section>
+
+                    {/* Donate */}
+                    <motion.section variants={itemVariants} id="donate">
+                        <SectionTitle icon="fa-solid fa-heart" color="border-rose-500" iconColor="text-rose-400" title={translations[language].donateTitle} />
+                        <div className={`rounded-2xl p-5 ${CARD}`}>
+                            <DonateContent t={translations[language]} />
                         </div>
                     </motion.section>
 
@@ -330,6 +339,9 @@ export default function InfoPage() {
         </div>
     );
 }
+
+// Facebook, Instagram — жинхэнэ хаяг өгвөл энд нэмнэ: { icon, color, hover, href }
+const SOCIAL_LINKS = [];
 
 function SectionTitle({ icon, color, iconColor, title }) {
     return (

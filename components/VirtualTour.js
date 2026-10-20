@@ -9,6 +9,7 @@ import { translations } from '../app/data/translations';
 import { siteName as localizedSiteName, siteDescription as localizedSiteDescription, nodeName, hotspotLabel } from '../lib/i18n';
 import BackgroundAudio from './BackgroundAudio';
 import LanguageSwitcher from './LanguageSwitcher';
+import panoramaMeta from '../app/data/panorama-manifest.json';
 
 // Three.js (VR/3D) том bundle тул зөвхөн панорама хэрэгтэй үед ачаална
 const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
@@ -20,8 +21,127 @@ const PanoramaViewer = dynamic(() => import('./PanoramaViewer'), {
     ),
 });
 
+// "Дараах/Буцах" гэх ерөнхий шошгын оронд сум очих байршлын нэрийг харуулна
+// ("Тэмээн чулууны амны — 2-р харагдац" → "2-р харагдац").
+const GENERIC_HOTSPOT_LABELS = new Set(['Дараах', 'Буцах']);
+const shortNodeName = (node, language) => (node ? nodeName(node, language).split(' — ').pop() : null);
+
 const topButton =
     'w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-black/45 backdrop-blur-md border border-white/15 text-white hover:bg-black/65 transition-colors';
+
+// Бүх дурсгалын жагсаалт: хайлттай, одоогийн дурсгал тодорсон, дарахад тэр дурсгал руу шилжинэ
+function SiteListPanel({ sites, currentIndex, language, t, onPick, onClose }) {
+    const [query, setQuery] = useState('');
+    const listRef = useRef(null);
+    const inputRef = useRef(null);
+    const q = query.trim().toLowerCase();
+    const items = sites
+        .map((s, i) => ({ s, i, name: localizedSiteName(s, language) }))
+        .filter(({ s, name }) => !q || name.toLowerCase().includes(q) || (s.name || '').toLowerCase().includes(q));
+
+    useEffect(() => {
+        listRef.current?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'center' });
+        // Утсан дээр гар гаргахгүйн тулд зөвхөн хулганатай төхөөрөмжид хайлтад шууд фокуслана
+        if (window.matchMedia?.('(pointer: fine)').matches) inputRef.current?.focus();
+    }, []);
+
+    return (
+        <div className="absolute inset-0 z-[70] flex justify-end bg-black/50 backdrop-blur-sm" onClick={onClose}>
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={t.vrSiteList}
+                className="w-full sm:w-[380px] h-full flex flex-col bg-navy/95 border-l border-white/10 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex items-center gap-2 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3 border-b border-white/10">
+                    <h3 className="flex-1 font-heading text-lg font-bold">
+                        {t.vrSiteList} <span className="text-white/45 text-sm font-sans font-semibold">· {sites.length}</span>
+                    </h3>
+                    <button type="button" onClick={onClose} aria-label={t.vrLess} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center">
+                        <i className="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div className="px-4 py-3">
+                    <label className="flex items-center gap-2 h-10 px-3 rounded-xl bg-white/[0.07] border border-white/10 focus-within:border-amber-400/60">
+                        <i className="fa-solid fa-magnifying-glass text-white/45 text-sm" aria-hidden="true"></i>
+                        <input
+                            ref={inputRef}
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Escape') onClose();
+                                if (e.key === 'Enter' && items[0]) onPick(items[0].i);
+                            }}
+                            placeholder={t.vrSearchSites}
+                            aria-label={t.vrSearchSites}
+                            className="flex-1 bg-transparent text-sm outline-none placeholder:text-white/40"
+                        />
+                    </label>
+                </div>
+                <ul ref={listRef} className="flex-1 overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                    {items.map(({ s, i, name }) => {
+                        const active = i === currentIndex;
+                        const firstUrl = s.panoramaTour?.[0]?.url || s.panoramaUrl;
+                        const thumb = panoramaMeta[firstUrl]?.thumb;
+                        const views = s.panoramaTour?.length || 1;
+                        return (
+                            <li key={s.id}>
+                                <button
+                                    type="button"
+                                    onClick={() => onPick(i)}
+                                    aria-current={active ? 'true' : undefined}
+                                    className={clsx(
+                                        'w-full flex items-center gap-3 p-2 rounded-xl text-left transition-colors',
+                                        active ? 'bg-amber-500/15 ring-1 ring-amber-400/50' : 'hover:bg-white/5'
+                                    )}
+                                >
+                                    <span className="relative w-16 h-11 shrink-0 rounded-lg overflow-hidden bg-white/10">
+                                        {thumb && <img src={thumb} alt="" loading="lazy" className="w-full h-full object-cover" />}
+                                        <span className="absolute left-1 top-1 px-1 rounded bg-black/60 text-[9px] font-bold leading-4">{i + 1}</span>
+                                    </span>
+                                    <span className="min-w-0 flex-1">
+                                        <span className={clsx('block text-[13px] font-semibold leading-snug line-clamp-2', active && 'text-amber-300')}>{name}</span>
+                                        <span className="block mt-0.5 text-[11px] text-white/50 truncate">
+                                            {t[s.category] || s.category} · {views} {t.vrViews}
+                                        </span>
+                                    </span>
+                                </button>
+                            </li>
+                        );
+                    })}
+                    {items.length === 0 && <li className="px-3 py-6 text-center text-sm text-white/50">—</li>}
+                </ul>
+            </div>
+        </div>
+    );
+}
+
+// Дурсгал хооронд шилжих товч: чиглэл + хөрш дурсгалын нэр харагдана. Төгсгөлд идэвхгүй.
+function SiteNavButton({ dir, site, label, language, onClick }) {
+    const next = dir > 0;
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            disabled={!site}
+            title={site ? `${label}: ${localizedSiteName(site, language)}` : label}
+            className={clsx(
+                'group min-w-0 flex items-center gap-2 sm:gap-2.5 px-2 sm:px-2.5 py-2.5 transition-colors enabled:hover:bg-white/5 disabled:opacity-30',
+                next ? 'flex-row-reverse text-right' : 'text-left'
+            )}
+        >
+            <span className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center transition-colors group-enabled:group-hover:bg-amber-500 group-enabled:group-hover:text-slate-900">
+                <i className={`fa-solid fa-arrow-${next ? 'right' : 'left'} text-sm`} aria-hidden="true"></i>
+            </span>
+            <span className="min-w-0">
+                <span className="block text-[10px] font-semibold sm:uppercase sm:tracking-wider text-white/55 truncate">{label}</span>
+                <span className="text-[12px] sm:text-[13px] font-semibold leading-tight line-clamp-2 break-words">{site ? localizedSiteName(site, language) : '—'}</span>
+            </span>
+        </button>
+    );
+}
 
 export default function VirtualTour({ sites, onClose, language = 'mn', onLanguageChange, initialSiteId = null }) {
     const [currentIndex, setCurrentIndex] = useState(() => {
@@ -31,6 +151,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [sceneIndex, setSceneIndex] = useState(null);
     const [expanded, setExpanded] = useState(false);
+    const [listOpen, setListOpen] = useState(false);
     const [uiHidden, setUiHidden] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [canFullscreen, setCanFullscreen] = useState(false);
@@ -52,13 +173,18 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                     flat.push({
                         url: node.url,
                         name: nodeName(node, language),
-                        description: node.description,
+                        // Харагдац өөрийн мэдээлэлтэй бол (нэгтгэсэн дурсгалын яст мэлхий г.м.) түүнийг,
+                        // үгүй бол дурсгалын тайлбарыг VR-ийн "i" самбар болон "Дэлгэрэнгүй"-д харуулна
+                        infoTitle: node.info?.[language]?.title || null,
+                        description: node.info?.[language]?.text || node.description || localizedSiteDescription(s, language),
                         group: node.group || null,
                         siteId: s.id,
                         models3d: node.models3d || [],
                         hotspots: (node.hotspots || []).map((h) => ({
                             ...h,
-                            label: hotspotLabel(h.label, language),
+                            label: GENERIC_HOTSPOT_LABELS.has(h.label)
+                                ? shortNodeName(s.panoramaTour[h.targetIndex], language) || hotspotLabel(h.label, language)
+                                : hotspotLabel(h.label, language),
                             targetIndex: offset + h.targetIndex,
                         })),
                     });
@@ -71,6 +197,19 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     }, [sites, language]);
 
     const isPanorama = Boolean(currentSite?.panoramaUrl || currentSite?.panoramaTour?.length);
+
+    // VR шил доторх "Бүх дурсгал" самбарт: дурсгал бүрийн эхний харагдац + эскиз
+    const vrSiteList = useMemo(
+        () =>
+            sites
+                .map((s) => {
+                    const firstIndex = panoramaScenes.findIndex((sc) => sc.siteId === s.id);
+                    const url = panoramaScenes[firstIndex]?.url;
+                    return { siteId: s.id, name: localizedSiteName(s, language), firstIndex, thumb: panoramaMeta[url]?.thumb || null };
+                })
+                .filter((it) => it.firstIndex >= 0),
+        [sites, panoramaScenes, language]
+    );
     const firstSceneOfSite = panoramaScenes.findIndex((s) => s.siteId === currentSite?.id);
     const activeScene = sceneIndex != null && panoramaScenes[sceneIndex]?.siteId === currentSite?.id ? panoramaScenes[sceneIndex] : panoramaScenes[firstSceneOfSite];
 
@@ -85,6 +224,13 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
         },
         [sites, panoramaScenes, currentIndex]
     );
+
+    const jumpToSite = useCallback((index) => {
+        setCurrentIndex(index);
+        setCurrentImageIndex(0);
+        setSceneIndex(null);
+        setListOpen(false);
+    }, []);
 
     const goToSite = useCallback(
         (delta) => {
@@ -123,20 +269,26 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
     useEffect(() => {
         const onKey = (e) => {
             if (e.target.closest?.('input, textarea, select')) return;
-            if (e.key === 'Escape') onClose();
+            if (e.key === 'Escape') {
+                // Жагсаалт нээлттэй бол эхлээд түүнийг хаана
+                if (listOpen) setListOpen(false);
+                else onClose();
+            }
             if (e.key === 'i' || e.key === 'I') setExpanded((v) => !v);
+            if (e.key === 'l' || e.key === 'L') setListOpen((v) => !v);
             // Панорама горимд ←/→-г харагч өөрөө (байршил хооронд) зохицуулна
             if (!isPanorama && e.key === 'ArrowRight') goToSite(1);
             if (!isPanorama && e.key === 'ArrowLeft') goToSite(-1);
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [isPanorama, goToSite, onClose]);
+    }, [isPanorama, goToSite, onClose, listOpen]);
 
     if (!currentSite) return null;
 
     const name = localizedSiteName(currentSite, language);
-    const description = localizedSiteDescription(currentSite, language);
+    const sceneInfo = isPanorama && activeScene?.infoTitle ? activeScene : null;
+    const description = sceneInfo ? sceneInfo.description : localizedSiteDescription(currentSite, language);
     const category = t[currentSite.category] || currentSite.category;
     const images = currentSite.images?.length ? currentSite.images : [getPlaceHolder(currentSite.id)];
     const currentImage = images[currentImageIndex] || images[0];
@@ -156,6 +308,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                         uiHidden={uiHidden}
                         onToggleUi={() => setUiHidden((v) => !v)}
                         bottomInset={uiHidden ? 16 : sheetHeight + 12}
+                        siteList={vrSiteList}
                     />
                 ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
@@ -198,7 +351,7 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                         <button type="button" onClick={onClose} aria-label={t.shortcutsExit} className={clsx(topButton, 'pointer-events-auto')}>
                             <i className="fa-solid fa-xmark"></i>
                         </button>
-                        <div className="min-w-0 flex-1 pt-0.5 pr-[176px]">
+                        <div className="min-w-0 flex-1 pt-0.5 pr-[224px]">
                             <h2 className="font-heading text-base font-bold leading-tight truncate drop-shadow">{name}</h2>
                             <p className="text-[11px] text-white/75 truncate drop-shadow">
                                 {sceneTitle || category}
@@ -206,6 +359,9 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
                             </p>
                         </div>
                         <div className="absolute right-3 top-3 flex items-center gap-2 pointer-events-auto">
+                            <button type="button" onClick={() => setListOpen(true)} aria-label={t.vrSiteList} title={t.vrSiteList} className={topButton}>
+                                <i className="fa-solid fa-list-ul"></i>
+                            </button>
                             <BackgroundAudio className={topButton} />
                             {canFullscreen && (
                                 <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? t.vrExitFullscreen : t.vrFullscreen} title={isFullscreen ? t.vrExitFullscreen : t.vrFullscreen} className={topButton}>
@@ -218,31 +374,39 @@ export default function VirtualTour({ sites, onClose, language = 'mn', onLanguag
 
                     {/* Доод самбар: дурсгалын мэдээлэл + дурсгал хооронд шилжих */}
                     <section ref={sheetRef} className="absolute bottom-0 inset-x-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-                        <div className="mx-auto max-w-2xl rounded-2xl bg-navy/85 backdrop-blur-lg border border-white/10 shadow-2xl">
-                            <div className="flex items-center gap-2 p-2">
-                                <button type="button" onClick={() => goToSite(-1)} disabled={currentIndex === 0} aria-label={t.vrPrevSite} title={t.vrPrevSite} className={clsx(topButton, 'disabled:opacity-30')}>
-                                    <i className="fa-solid fa-chevron-left"></i>
-                                </button>
-                                <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded} className="min-w-0 flex-1 text-left px-1">
-                                    <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
-                                    <span className="mt-1 flex items-center gap-1.5 text-[12px] text-white/80">
-                                        {expanded ? t.vrLess : t.vrMore}
-                                        <i className={`fa-solid fa-chevron-${expanded ? 'down' : 'up'} text-[9px]`}></i>
-                                    </span>
-                                </button>
-                                <button type="button" onClick={() => goToSite(1)} disabled={currentIndex === sites.length - 1} aria-label={t.vrNextSite} title={t.vrNextSite} className={clsx(topButton, 'disabled:opacity-30')}>
-                                    <i className="fa-solid fa-chevron-right"></i>
-                                </button>
-                            </div>
+                        <div className="mx-auto max-w-2xl rounded-2xl bg-navy/85 backdrop-blur-lg border border-white/10 shadow-2xl overflow-hidden">
                             {expanded && (
-                                <div className="px-4 pb-4 max-h-[38vh] overflow-y-auto">
-                                    <h3 className="font-heading text-lg font-bold mb-2">{name}</h3>
-                                    <p className="text-sm leading-relaxed text-slate-200">{description}</p>
+                                <div className="px-4 pt-4 pb-3 max-h-[38vh] overflow-y-auto border-b border-white/10">
+                                    <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500 text-slate-900 text-[9px] font-bold uppercase tracking-wider">{category}</span>
+                                    <h3 className="font-heading text-lg font-bold mt-2 mb-2">{sceneInfo ? sceneInfo.infoTitle : name}</h3>
+                                    <p className="text-sm leading-relaxed text-slate-200 whitespace-pre-line">{description}</p>
                                 </div>
                             )}
+                            <nav className="grid grid-cols-[1fr_auto_1fr] items-stretch" aria-label={`${t.vrPrevSite} / ${t.vrNextSite}`}>
+                                <SiteNavButton dir={-1} site={sites[currentIndex - 1]} label={t.vrPrevSite} language={language} onClick={() => goToSite(-1)} />
+                                <button
+                                    type="button"
+                                    onClick={() => setExpanded((v) => !v)}
+                                    aria-expanded={expanded}
+                                    aria-label={expanded ? t.vrLess : t.vrMore}
+                                    title={expanded ? t.vrLess : t.vrMore}
+                                    className={clsx(
+                                        'flex flex-col items-center justify-center gap-1 px-3.5 sm:px-4 border-x border-white/10 transition-colors',
+                                        expanded ? 'text-amber-400' : 'text-white/80 hover:bg-white/5 hover:text-white'
+                                    )}
+                                >
+                                    <i className={`fa-solid ${expanded ? 'fa-chevron-down' : 'fa-circle-info'} text-base`} aria-hidden="true"></i>
+                                    <span className="hidden sm:block text-[10px] font-semibold">{expanded ? t.vrLess : t.vrMore}</span>
+                                </button>
+                                <SiteNavButton dir={1} site={sites[currentIndex + 1]} label={t.vrNextSite} language={language} onClick={() => goToSite(1)} />
+                            </nav>
                         </div>
                     </section>
             </div>
+
+            {listOpen && (
+                <SiteListPanel sites={sites} currentIndex={currentIndex} language={language} t={t} onPick={jumpToSite} onClose={() => setListOpen(false)} />
+            )}
         </div>
     );
 }
