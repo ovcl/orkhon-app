@@ -572,30 +572,59 @@ export const sitesData = [
         "id": 14,
         "panoramaTour": [
             {
-                "name": "билгэ хааны хөшөө (1)", "group": "билгэ хааны хөшөө",
+                "name": "Билгэ хааны хөшөө (1)",
+                "group": "Билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(1).jpg",
                 "hotspots": [
-                    { "yaw": 96.9, "pitch": -4.4, "targetIndex": 1, "label": "Дараах" }
+                    {
+                        "yaw": 359,
+                        "pitch": -14,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
                 ]
             },
             {
-                "name": "билгэ хааны хөшөө (2)", "group": "билгэ хааны хөшөө",
-                "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
-                "hotspots": [
-                    { "yaw": 76, "pitch": -4, "targetIndex": 2, "label": "Дараах" },
-                    { "yaw": 20.4, "pitch": -1.7, "targetIndex": 0, "label": "Буцах" }
-                ]
-            },
-            {
-                "name": "билгэ хааны хөшөө (3)", "group": "билгэ хааны хөшөө",
+                "name": "Билгэ хааны хөшөө (2)",
+                "group": "Билгэ хааны хөшөө",
                 "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(3).jpg",
                 "hotspots": [
-                    { "yaw": 116.3, "pitch": -17.2, "targetIndex": 3, "label": "Күлтегин жанжины хөшөө рүү" },
-                    { "yaw": 21.3, "pitch": -33.6, "targetIndex": 1, "label": "Буцах" }
+                    {
+                        "yaw": 70,
+                        "pitch": -4,
+                        "targetIndex": 2,
+                        "label": "Күлтегин жанжины хөшөө рүү"
+                    },
+                    {
+                        "yaw": 14,
+                        "pitch": -13,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
                 ]
             },
             {
-                "name": "културген жанжины хөшөө (1)", "group": "културген жанжины хөшөө",
+                "name": "Күлтегин жанжины хөшөө (1)",
+                "group": "Күлтегин жанжины хөшөө",
+                "url": "/images/panoramas/pano-14-билгэ_хааны_хөшөө_(2).jpg",
+                "hotspots": [
+                    {
+                        "yaw": 175,
+                        "pitch": -35,
+                        "targetIndex": 3,
+                        "label": "Дараах"
+                    },
+                    {
+                        "yaw": 76,
+                        "pitch": -4,
+                        "targetIndex": 1,
+                        "label": "Буцах"
+                    }
+                ]
+            },
+            {
+                "name": "Күлтегин жанжины хөшөө (2)",
+                "group": "Күлтегин жанжины хөшөө",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(1).jpg",
                 "hotspots": [
                     {
@@ -605,15 +634,16 @@ export const sitesData = [
                         "label": "Дараах"
                     },
                     {
-                        "yaw": 237,
-                        "pitch": -4,
+                        "yaw": 157,
+                        "pitch": -14,
                         "targetIndex": 2,
                         "label": "Буцах"
                     }
                 ]
             },
             {
-                "name": "културген жанжины хөшөө (2)", "group": "културген жанжины хөшөө",
+                "name": "Күлтегин жанжины хөшөө (3)",
+                "group": "Күлтегин жанжины хөшөө",
                 "url": "/images/panoramas/pano-14-културген_жанжины_хөшөө_(2).jpg",
                 "hotspots": [
                     {
