@@ -287,20 +287,20 @@ export default function InfoPage() {
                                     </div>
                                 ))}
                             </div>
+                            {/* TODO: Facebook/Instagram-ын жинхэнэ хаяг өгөхөөр нээх */}
+                            {SOCIAL_LINKS.length > 0 && (
                             <div className="pt-4 border-t border-white/5">
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-3 font-semibold">{t.contact.social}</p>
                                 <div className="flex gap-2">
-                                    {[
-                                        { icon: "fa-brands fa-facebook", color: "text-blue-400", hover: "hover:bg-blue-600" },
-                                        { icon: "fa-brands fa-instagram", color: "text-pink-400", hover: "hover:bg-pink-600" },
-                                    ].map((s, i) => (
-                                        <a key={i} href="#"
+                                    {SOCIAL_LINKS.map((s, i) => (
+                                        <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
                                             className={`w-10 h-10 rounded-full flex items-center justify-center ${s.color} ${s.hover} hover:text-white transition-all border border-white/8 bg-white/5`}>
                                             <i className={`${s.icon} text-lg`}></i>
                                         </a>
                                     ))}
                                 </div>
                             </div>
+                            )}
                         </div>
                     </motion.section>
 
@@ -339,6 +339,9 @@ export default function InfoPage() {
         </div>
     );
 }
+
+// Facebook, Instagram — жинхэнэ хаяг өгвөл энд нэмнэ: { icon, color, hover, href }
+const SOCIAL_LINKS = [];
 
 function SectionTitle({ icon, color, iconColor, title }) {
     return (

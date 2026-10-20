@@ -81,7 +81,6 @@ export const translations = {
         tourFeaturesTitle: "Онцлог",
         tourFeatureFullscreen: "Fullscreen дэлгэц дээр үзэх",
         tourFeatureDetail: "Дурсгал бүрийн дэлгэрэнгүй мэдээлэл",
-        tourFeatureShortcuts: "Keyboard shortcuts (← → ESC I)",
         tourFeatureGallery: "Зургийн галлерей",
 
         // Additional
@@ -196,6 +195,13 @@ export const translations = {
         donateScan: "Банкны аппаараа QR кодыг уншуулж, хүссэн дүнгээ оруулна уу.",
         donateThanks: "Баярлалаа!",
         donateQrAlt: "Хандивын QR код",
+        tourStatViews: "360° харагдац",
+        tourStatResolution: "нягтрал",
+        tourFeatureVr: "VR шил (Quest), утасны VR хайрцгаар үзэх",
+        tourFeatureList: "Бүх дурсгалын жагсаалт, хайлт",
+        tourFeatureZoom: "Томруулах, гэрэлтүүлэг тохируулах",
+        tourFeatureOffline: "Интернэтгүй үзэхээр хадгалах",
+        tourFeatureShortcuts: "Гарын товчлол (← → Esc I L)",
         vrMenuTitle: "VR шилээр үзэх",
         vrHeadsetHere: "Энэ VR шилээр үзэх",
         vrHeadsetHereDesc: "Quest, Pico, Vision Pro зэрэг шилний браузерт ажиллана",
@@ -289,7 +295,6 @@ export const translations = {
         tourFeaturesTitle: "Features",
         tourFeatureFullscreen: "View in full screen",
         tourFeatureDetail: "Detailed info for each site",
-        tourFeatureShortcuts: "Keyboard shortcuts (← → ESC I)",
         tourFeatureGallery: "Photo gallery integration",
 
         // Additional
@@ -404,6 +409,13 @@ export const translations = {
         donateScan: "Scan the QR code with your Mongolian banking app and enter any amount.",
         donateThanks: "Thank you!",
         donateQrAlt: "Donation QR code",
+        tourStatViews: "360° views",
+        tourStatResolution: "resolution",
+        tourFeatureVr: "View in a VR headset (Quest) or phone VR box",
+        tourFeatureList: "List and search of all sites",
+        tourFeatureZoom: "Zoom and brightness controls",
+        tourFeatureOffline: "Save for offline viewing",
+        tourFeatureShortcuts: "Keyboard shortcuts (← → Esc I L)",
         vrMenuTitle: "View in VR",
         vrHeadsetHere: "View in this headset",
         vrHeadsetHereDesc: "Works in the browser of Quest, Pico, Vision Pro and similar headsets",

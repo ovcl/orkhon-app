@@ -186,7 +186,6 @@ export default function Home() {
                     <Link href="/map" className="block group">
                         <div className="relative rounded-2xl overflow-hidden h-28 border border-white/6 transition-all duration-300 group-hover:border-white/12 group-hover:shadow-lg"
                             style={{ background: 'linear-gradient(135deg, rgba(10,15,30,0.95), rgba(25,35,55,0.8))' }}>
-                            <div className="absolute inset-0 opacity-15 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center"></div>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-[60px]"></div>
                             <div className="absolute inset-0 z-10 flex items-center justify-between px-6">
                                 <div>

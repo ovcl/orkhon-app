@@ -60,6 +60,8 @@ export default function ToursPage() {
 
     // Панорамтай дурсгалууд; дөрвөн чулуун яст мэлхий зэргийг нэг дурсгал болгон нэгтгэнэ
     const vrSites = buildTourSites(sitesData);
+    // Давхардалгүй панорамын тоо (нэгтгэсэн дурсгал өөр дурсгалын зургийг давтан ашигладаг)
+    const vrViewCount = new Set(vrSites.flatMap((s) => (s.panoramaTour || []).map((n) => n.url).concat(s.panoramaUrl || []))).size;
 
     const closeTour = () => {
         setIsTourActive(false);
@@ -149,14 +151,14 @@ export default function ToursPage() {
                             <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatSites}</p>
                         </div>
                         <div className="card-simple p-3 flex flex-col items-center justify-center text-center h-24 bg-slate-800/50">
-                            <i className="fa-solid fa-clock text-blue-500 mb-2"></i>
-                            <h3 className="text-white font-bold text-lg leading-none mb-1">60+</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatDuration}</p>
+                            <i className="fa-solid fa-street-view text-blue-500 mb-2"></i>
+                            <h3 className="text-white font-bold text-lg leading-none mb-1">{vrViewCount}</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatViews}</p>
                         </div>
                         <div className="card-simple p-3 flex flex-col items-center justify-center text-center h-24 bg-slate-800/50">
                             <i className="fa-solid fa-images text-emerald-500 mb-2"></i>
-                            <h3 className="text-white font-bold text-lg leading-none mb-1">HD</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatGallery}</p>
+                            <h3 className="text-white font-bold text-lg leading-none mb-1">8K</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">{t.tourStatResolution}</p>
                         </div>
                     </div>
 
@@ -168,11 +170,12 @@ export default function ToursPage() {
                         </h3>
                         <div className="card-simple p-5 space-y-3 bg-slate-800/30">
                             {[
-                                { icon: "fa-solid fa-compress", text: t.tourFeatureFullscreen },
+                                { icon: "fa-solid fa-vr-cardboard", text: t.tourFeatureVr },
+                                { icon: "fa-solid fa-list-ul", text: t.tourFeatureList },
+                                { icon: "fa-solid fa-magnifying-glass-plus", text: t.tourFeatureZoom },
                                 { icon: "fa-solid fa-circle-info", text: t.tourFeatureDetail },
-                                { icon: "fa-solid fa-keyboard", text: t.tourFeatureShortcuts },
-                                { icon: "fa-solid fa-camera", text: t.tourFeatureGallery },
-                                { icon: "fa-solid fa-robot", text: t.aiGuideVrMode }
+                                { icon: "fa-solid fa-cloud-arrow-down", text: t.tourFeatureOffline },
+                                { icon: "fa-solid fa-keyboard", text: t.tourFeatureShortcuts }
                             ].map((feature, idx) => (
                                 <div key={idx} className="flex items-center gap-3 text-sm text-slate-300">
                                     <div className="w-6 h-6 rounded-full bg-slate-700/50 flex items-center justify-center text-amber-500/80 text-xs">
