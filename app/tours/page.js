@@ -25,6 +25,8 @@ export default function ToursPage() {
     const [scrolled, setScrolled] = useState(false);
 
     const [initialSiteId, setInitialSiteId] = useState(null);
+    // Аялал эхлэхийн өмнө гарах хандивын цонх ("VR 360 Аялал" товч болон дурсгалын хуудаснаас ирэхэд)
+    const [donateGate, setDonateGate] = useState(false);
 
     useEffect(() => {
 
@@ -32,7 +34,7 @@ export default function ToursPage() {
         const siteParam = Number(new URLSearchParams(window.location.search).get('site'));
         if (siteParam && sitesData.some((s) => s.id === siteParam)) {
             setInitialSiteId(tourSiteId(siteParam));
-            setIsTourActive(true);
+            setDonateGate(true);
         }
 
         const handleScroll = () => {
@@ -51,7 +53,6 @@ export default function ToursPage() {
     };
 
     // "VR 360 Аялал" дарахад эхлээд хандивын цонх гарна; "Аялал эхлүүлэх" эсвэл хаахад аялал эхэлнэ
-    const [donateGate, setDonateGate] = useState(false);
     const startVrTour = () => setDonateGate(true);
     const closeDonateGate = () => {
         setDonateGate(false);

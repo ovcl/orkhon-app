@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import qrcode from 'qrcode-generator';
 import { DONATION_QR } from '../lib/donation';
 
@@ -39,13 +40,14 @@ export function DonateDialog({ t, onClose, actionLabel, onAction }) {
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
     }, [onClose]);
-    return (
+    // body руу portal — хөдөлгөөнт (transform) эх элемент дотор fixed байрлал зөв ажилладаггүй
+    return createPortal(
         <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-label={t.donateTitle}
-                className="w-full max-w-sm rounded-2xl bg-navy/95 border border-white/10 p-5 text-white shadow-2xl"
+                className="w-full max-w-sm max-h-full overflow-y-auto rounded-2xl bg-navy/95 border border-white/10 p-5 text-white shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center justify-between mb-3">
@@ -63,7 +65,8 @@ export function DonateDialog({ t, onClose, actionLabel, onAction }) {
                     </button>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 
