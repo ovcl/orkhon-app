@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { sitesData } from "../data/sites";
 import { buildTourSites, tourSiteId } from "../../lib/tour-sites";
+import { DonateButton } from "../../components/Donate";
 import VirtualTour from "../../components/VirtualTour";
 import UnityPlayer from "../../components/UnityPlayer";
 import { translations } from "../data/translations";
@@ -114,6 +115,8 @@ export default function ToursPage() {
                             <i className="fa-solid fa-vr-cardboard"></i>
                             {t.vr360Tour}
                         </button>
+
+                        <DonateButton t={t} className="btn btn-secondary w-full border-rose-500/25 text-rose-200 hover:bg-rose-500/10" />
 
                         {UNITY_ENABLED && (
                             <button

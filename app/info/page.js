@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { DonateContent } from '../../components/Donate';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
@@ -300,6 +301,14 @@ export default function InfoPage() {
                                     ))}
                                 </div>
                             </div>
+                        </div>
+                    </motion.section>
+
+                    {/* Donate */}
+                    <motion.section variants={itemVariants} id="donate">
+                        <SectionTitle icon="fa-solid fa-heart" color="border-rose-500" iconColor="text-rose-400" title={translations[language].donateTitle} />
+                        <div className={`rounded-2xl p-5 ${CARD}`}>
+                            <DonateContent t={translations[language]} />
                         </div>
                     </motion.section>
 
