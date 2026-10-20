@@ -314,7 +314,7 @@ export const sitesData = [
         "altitude": "1574м",
         "nameEn": "Ar Boorog Ancient Burials",
         "category": "Булш хиргисүүр",
-        "description": "Өвөрхангай аймгийн Хужирт сумын нутаг Ар бөөргийн зүүн хөндий Таван булгийн дэнжид өвөрмөц хэлбэрийн дагуул байгууламж бүхий 1 том хиргисүүр, зүүн урд хөндийд Түрэгийн үеийн тахилын онгон, хүн чулуун хөшөө, буган чулуун хөшөө зэрэг дурсгалууд оршдог.\n\nХүн чулуун хөшөө\nДурсгалыг шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Түүний өндөр газрын хөрснөөс дээш 0.60 орчим метр, мөрний өргөн 0.29 метр, зузаан нь 0.20–0.22 метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
+        "description": "Өвөрхангай аймгийн Хужирт сумын нутаг Ар бөөргийн зүүн хөндий Таван булгийн дэнжид өвөрмөц хэлбэрийн дагуул байгууламж бүхий 1 том хиргисүүр, зүүн урд хөндийд Түрэгийн үеийн тахилын онгон, хүн чулуун хөшөө, буган чулуун хөшөө зэрэг дурсгалууд оршдог.\n\nХүн чулуун хөшөөг шаравтар өнгийн боржингоор толгой, цээжин биеийн тойм гарган дүрсэлж, нүүр ам огт хийгээгүй, мөлгөр гадаргуутай. Түүний өндөр газрын хөрснөөс дээш 0.60 орчим метр, мөрний өргөн 0.29 метр, зузаан нь 0.20–0.22 метр бөгөөд жижиг дөрвөлжин хашлага хавтанг налуулсан байдалтай байна.",
         "descriptionEn": "Situated in the Ar Boorog valley. The site features a large khirigsuur with unique satellite structures. Additionally, the southeastern valley houses Turkic-era sacrificial sites, balbals (anthropomorphic stone statues), and deer stones. One notable 0.6m granite balbal exhibits a smoothed surface with a stylized head and torso but without facial features, placed against a small square slab enclosure.",
         "images": [
             "/images/sites/8.jpg",
@@ -1305,8 +1305,8 @@ export const sitesData = [
             "lat": 47.206931,
             "lng": 102.840953
         },
-        "description": "Энэхүү чулуун яст мэлхий нь Эрдэнэ Зуу хийдийн хойд орших Хархорум хотын туурийн (ID 16) ил музейн урд бий. Дурсгал нь 1,10 метр өндөр, 1,25 метр өргөн, 2,6 метр урт хэмжээтэй. Энэхүү чулуун яст мэлхий нь бусад чулуун яст мэлхийнүүдээс ур хийцийн хувьд сайн бөгөөд хэмжээгээрээ хамгийн том нь юм.",
-        "descriptionEn": "The largest and most finely crafted of the surviving stone turtles in the valley. Located south of the Karakorum Museum (ID 16), this monument (2.6m long, 1.25m wide) originally served as a supportive base for an imperial commemorative stele, symbolizing longevity and stability in the Mongol tradition.",
+        "description": "Энэхүү чулуун яст мэлхий нь Эрдэнэ Зуу хийдийн хойд орших Хархорум хотын туурийн ил музейн урд бий. Дурсгал нь 1,10 метр өндөр, 1,25 метр өргөн, 2,6 метр урт хэмжээтэй. Энэхүү чулуун яст мэлхий нь бусад чулуун яст мэлхийнүүдээс ур хийцийн хувьд сайн бөгөөд хэмжээгээрээ хамгийн том нь юм.",
+        "descriptionEn": "The largest and most finely crafted of the surviving stone turtles in the valley. Located south of the Karakorum Museum, this monument (2.6m long, 1.25m wide) originally served as a supportive base for an imperial commemorative stele, symbolizing longevity and stability in the Mongol tradition.",
         "images": [
             "/images/sites/28.jpg"
         ]
@@ -1328,8 +1328,8 @@ export const sitesData = [
             "lat": 47.18108,
             "lng": 102.8521
         },
-        "description": "Энэхүү дурсгал нь XIII зууны үеийн Хархорум хотыг үер усны аюул, дайсны довтолгооноос хамгаалж, он удаан жил амгалан тогтнохыг бэлгэдэн хотын дөрвөн зүгт байрлуулсан боржин чулуун дөрвөн яст мэлхийн нэг юм. Чулуун яст мэлхий нь Өвөрхангай аймгийн Хархорин сумын төвөөс урагш 1 км зайд, Мэлхийт толгойн ордны туурьд (ID 18) байрладаг.",
-        "descriptionEn": "One of four granite turtles originally placed at the cardinal points of Karakorum to symbolize everlasting stability and protect the capital from flood and invasion. Located on Melkhiit Tolgoi hill (ID 18), 1km south of modern Kharkhorin.",
+        "description": "Энэхүү дурсгал нь XIII зууны үеийн Хархорум хотыг үер усны аюул, дайсны довтолгооноос хамгаалж, он удаан жил амгалан тогтнохыг бэлгэдэн хотын дөрвөн зүгт байрлуулсан боржин чулуун дөрвөн яст мэлхийн нэг юм. Чулуун яст мэлхий нь Өвөрхангай аймгийн Хархорин сумын төвөөс урагш 1 км зайд, Мэлхийт толгойн ордны туурьд байрладаг.",
+        "descriptionEn": "One of four granite turtles originally placed at the cardinal points of Karakorum to symbolize everlasting stability and protect the capital from flood and invasion. Located on Melkhiit Tolgoi hill, 1km south of modern Kharkhorin.",
         "images": [
             "/images/sites/29.jpg"
         ]
