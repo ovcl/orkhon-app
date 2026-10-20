@@ -8,7 +8,7 @@ export const translations = {
         // Hero
         heroBadge: "ЮНЕСКО-гийн дэлхийн өв",
         heroTitle: "Түмэн дурсгалт Орхоны хөндий",
-        heroSubtitle: "1000 жилийн нүүдэлчдийн түүхийг судлаарай",
+        heroSubtitle: "Чулуун зэвсгийн үеэс Монголын эзэнт гүрэн хүртэлх түүхийг судлаарай",
 
         // Navigation
         navSites: "Дурсгалууд",
@@ -216,7 +216,7 @@ export const translations = {
         // Hero
         heroBadge: "UNESCO World Heritage",
         heroTitle: "Orkhon Valley: Land of Ten Thousand Monuments",
-        heroSubtitle: "Explore 1000 years of nomadic history",
+        heroSubtitle: "Explore history from the Stone Age to the Mongol Empire",
 
         // Navigation
         navSites: "Sites",
