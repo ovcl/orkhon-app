@@ -223,11 +223,11 @@ export const sitesData = [
             {
                 "name": "Орхоны хөндийн хиргисүүрүүд — 1-р харагдац",
                 "group": "Орхоны хөндийн хиргисүүрүүд",
-                "url": "/images/panoramas/pano-7-2.jpg",
+                "url": "/images/panoramas/pano-7-3.jpg",
                 "hotspots": [
                     {
-                        "yaw": 9,
-                        "pitch": -4,
+                        "yaw": 185.3,
+                        "pitch": -57.7,
                         "targetIndex": 1,
                         "label": "Дараах"
                     }
@@ -236,18 +236,14 @@ export const sitesData = [
             {
                 "name": "Орхоны хөндийн хиргисүүрүүд — 2-р харагдац",
                 "group": "Орхоны хөндийн хиргисүүрүүд",
-                "url": "/images/panoramas/pano-7-3.jpg",
-                "hotspots": [
-                    { "yaw": 185.3, "pitch": -57.7, "targetIndex": 2, "label": "Дараах" },
-                    { "yaw": 93.4, "pitch": -3.3, "targetIndex": 0, "label": "Буцах" }
-                ]
-            },
-            {
-                "name": "Орхоны хөндийн хиргисүүрүүд — 3-р харагдац",
-                "group": "Орхоны хөндийн хиргисүүрүүд",
                 "url": "/images/panoramas/pano-7-4.jpg",
                 "hotspots": [
-                    { "yaw": 83.5, "pitch": -34.5, "targetIndex": 1, "label": "Буцах" }
+                    {
+                        "yaw": 83.5,
+                        "pitch": -34.5,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
                 ]
             }
         ],
@@ -526,10 +522,30 @@ export const sitesData = [
         "id": 13,
         "panoramaTour": [
             {
-                "name": "Орхон голын хадны зураг",
+                "name": "Орхон голын хадны зураг — 1-р харагдац",
                 "group": "Орхон голын хадны зураг",
                 "url": "/images/panoramas/pano-13-1.jpg",
-                "hotspots": []
+                "hotspots": [
+                    {
+                        "yaw": 326,
+                        "pitch": -4,
+                        "targetIndex": 1,
+                        "label": "Дараах"
+                    }
+                ]
+            },
+            {
+                "name": "Орхон голын хадны зураг — 2-р харагдац",
+                "group": "Орхон голын хадны зураг",
+                "url": "/images/panoramas/pano-7-2.jpg",
+                "hotspots": [
+                    {
+                        "yaw": 95,
+                        "pitch": -19,
+                        "targetIndex": 0,
+                        "label": "Буцах"
+                    }
+                ]
             }
         ],
         "name": "Орхон голын хадны зураг",
