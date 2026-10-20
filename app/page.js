@@ -5,7 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { translations } from './data/translations';
-import { sitesData } from './data/sites';
+import { sitesData, getPlaceHolder } from './data/sites';
+import { siteName as localizedSiteName } from '../lib/i18n';
+
+// Нүүрний "Онцлох дурсгал": Хархорум, Эрдэнэ Зуу, Хөшөө Цайдам, Төвхөн хийд, Харбалгас
+const FEATURED_IDS = [16, 24, 14, 26, 15];
 import clsx from 'clsx';
 import BottomNav from '../components/BottomNav';
 import { useLanguage } from '../lib/useLanguage';
@@ -45,11 +49,10 @@ export default function Home() {
 
     const vrSitesCount = sitesData.filter(s => s.panoramaUrl || (s.panoramaTour && s.panoramaTour.length > 0)).length;
 
-    const popularSites = [
-        { img: "/images/sites/16.jpg", title: t.kharakhorum, type: t['Эртний хот'], id: 16 },
-        { img: "/images/sites/24.jpg", title: t.erdeneZuu, type: t['Сүм хийд'], id: 24 },
-        { img: "/images/sites/31.jpg", title: t.ulaanTsutgalan, type: t.nature, id: 31 },
-    ];
+    // Онцлох дурсгал: ЮНЕСКО-гийн бүртгэлийн гол бүрэлдэхүүнүүд — нэр, ангилал, зургийг өгөгдлөөс авна
+    const popularSites = FEATURED_IDS.map((id) => sitesData.find((s) => s.id === id))
+        .filter(Boolean)
+        .map((s) => ({ id: s.id, img: s.images?.[0] || getPlaceHolder(s.id), title: localizedSiteName(s, language), type: t[s.category] || s.category }));
 
     const navCards = [
         { href: "/sites", icon: "fa-solid fa-landmark", title: t.navSites, desc: `${sitesData.length} ${t.sitesUnit}`, gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", accentColor: "bg-blue-500" },
@@ -170,7 +173,7 @@ export default function Home() {
                                     <Image src={item.img} alt={item.title} fill sizes="200px" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent p-4 flex flex-col justify-end">
                                         <span className="text-[10px] font-bold text-amber-400/90 uppercase tracking-[0.15em] mb-1">{item.type}</span>
-                                        <span className="text-white font-heading font-semibold text-[17px] leading-tight">{item.title}</span>
+                                        <span className="text-white font-heading font-semibold text-[16px] leading-tight line-clamp-3">{item.title}</span>
                                     </div>
                                 </motion.div>
                             </Link>

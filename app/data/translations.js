@@ -19,7 +19,7 @@ export const translations = {
         navInfo: "Мэдээлэл",
 
         // Popular section
-        popularTitle: "Алдартай",
+        popularTitle: "Онцлох дурсгал",
         seeAll: "Бүгдийг үзэх",
 
         // Bottom nav
@@ -227,7 +227,7 @@ export const translations = {
         navInfo: "Info",
 
         // Popular section
-        popularTitle: "Popular",
+        popularTitle: "Featured sites",
         seeAll: "See All",
 
         // Bottom nav
