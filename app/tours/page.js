@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { sitesData } from "../data/sites";
 import { buildTourSites, tourSiteId } from "../../lib/tour-sites";
-import { DonateButton } from "../../components/Donate";
+import { DonateButton, DonateDialog } from "../../components/Donate";
 import VirtualTour from "../../components/VirtualTour";
 import UnityPlayer from "../../components/UnityPlayer";
 import { translations } from "../data/translations";
@@ -48,6 +48,14 @@ export default function ToursPage() {
     const startTour = (unityMode = false) => {
         setUseUnityMode(unityMode);
         setIsTourActive(true);
+    };
+
+    // "VR 360 Аялал" дарахад эхлээд хандивын цонх гарна; "Аялал эхлүүлэх" эсвэл хаахад аялал эхэлнэ
+    const [donateGate, setDonateGate] = useState(false);
+    const startVrTour = () => setDonateGate(true);
+    const closeDonateGate = () => {
+        setDonateGate(false);
+        startTour(false);
     };
 
     // Панорамтай дурсгалууд; дөрвөн чулуун яст мэлхий зэргийг нэг дурсгал болгон нэгтгэнэ
@@ -110,13 +118,14 @@ export default function ToursPage() {
                     <div className="grid grid-cols-1 gap-3 relative z-20">
                         <button
                             className="btn btn-primary w-full shadow-lg shadow-amber-500/20"
-                            onClick={() => startTour(false)}
+                            onClick={startVrTour}
                         >
                             <i className="fa-solid fa-vr-cardboard"></i>
                             {t.vr360Tour}
                         </button>
 
                         <DonateButton t={t} className="btn btn-secondary w-full border-rose-500/25 text-rose-200 hover:bg-rose-500/10" />
+                        {donateGate && <DonateDialog t={t} onClose={closeDonateGate} actionLabel={t.donateStartTour} onAction={closeDonateGate} />}
 
                         {UNITY_ENABLED && (
                             <button
