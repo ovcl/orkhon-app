@@ -10,6 +10,7 @@ import { sitesData } from "../data/sites";
 import { translations } from "../data/translations";
 import BottomNav from "../../components/BottomNav";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import HScroll from "../../components/HScroll";
 import { useLanguage } from "../../lib/useLanguage";
 import { isLanguage, siteName, protectionName } from "../../lib/i18n";
 
@@ -208,7 +209,7 @@ function MapContent() {
                 </div>
 
                 {/* Категори шүүлтүүр (Horizontal scroll) */}
-                <div className="pointer-events-auto overflow-x-auto no-scrollbar flex items-center gap-1.5 py-1 -mx-4 px-4 mask-fade-right">
+                <HScroll className="flex items-center gap-1.5 py-1 -mx-4 px-4">
                     {categories.map((cat) => {
                         const isAll = cat === "All";
                         const isSelected = selectedCategory === cat;
@@ -245,7 +246,7 @@ function MapContent() {
                             </button>
                         );
                     })}
-                </div>
+                </HScroll>
             </header>
 
             {/* ── Interactive Map View ── */}
