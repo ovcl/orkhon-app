@@ -1373,7 +1373,7 @@ export const sitesData = [
             "lat": 47.20008333,
             "lng": 102.7433056
         },
-        "description": "Хангай овоот тахилгат уул (буюу Хангай хайрхан) нь Өвөрхангай аймгийн Хархорин сумын төвөөс баруун хойш 10 км зайд, Хангай нурууны төгсгөлд оршдог. Энэхүү уул нь далайн түвшнөөс дээш 1964.3 метр өндөр бөгөөд эртнээс эд хөрөнгө, эрүүл энхийн буян хишгийн эх хэмээн шүтэн тахиж ирсэн.\n\nХангай хайрханы тахилгын судрыг 1771 онд Очир түшлэгт хааны айлтгалаар Эрдэнэ Зуу хийдийн VII ширээт лам Дагвадаржаа зохиожээ.",
+        "description": "Хангай овоот тахилгат уул (буюу Хангай хайрхан) нь Өвөрхангай аймгийн Хархорин сумын төвөөс баруун хойш 10 км зайд, Хангай нурууны төгсгөлд оршдог. Энэхүү уул нь далайн түвшнөөс дээш 1964,3 метр өндөр бөгөөд эртнээс эд хөрөнгө, эрүүл энхийн буян хишгийн эх хэмээн шүтэн тахиж ирсэн.\n\nХангай хайрханы тахилгын судрыг 1771 онд Очир түшлэгт хааны айлтгалаар Эрдэнэ Зуу хийдийн VII ширээт лам Дагвадаржаа зохиожээ.",
         "descriptionEn": "A sacred 1964.3m peak situated at the termination of the Khangai mountain range, 10km northwest of Kharkhorin. Traditionally venerated as a source of prosperity and health. Its official ritual texts were composed in 1771 by the 7th Abbot of Erdene Zuu, Dagvadarjaa, at the request of the local ruler.",
         "images": [
             "/images/sites/31.jpg",
@@ -1385,19 +1385,19 @@ export const sitesData = [
         "id": 32,
         "panoramaTour": [
             {
-                "name": "Үндэр сантын тахилгат — 1-р харагдац", "group": "Үндэр сантын тахилгат",
+                "name": "Өндөр сантын тахилгат — 1-р харагдац", "group": "Өндөр сантын тахилгат",
                 "url": "/images/panoramas/pano-32-1.jpg",
                 "hotspots": []
             }
         ],
-        "name": "Үндэр сантын тахилгат хайрхан",
+        "name": "Өндөр сантын тахилгат хайрхан",
         "nameEn": "Undur Sant Sacred Mountain",
         "category": "Тахилгат газар",
         "location": {
             "lat": 47.23791667,
             "lng": 102.2551667
         },
-        "description": "Үндэр сантын тахилгат хайрхан нь Архангай аймгийн Хотонт, Өвөрхангай аймгийн Хархорин, Хужирт сумдын нутагт оршдог бөгөөд далайн түвшнөөс дээш 2312 метрийн өндөрт өргөгдсөн байдаг. Энэхүү уул нь Сайн ноён хан аймгийн Элдэн бэйлийн хошууны тахилгат уулсын нэг юм.\n\nҮндэр Сантыг цагаан уул гэж нэрлэдэг бөгөөд зөвхөн цагаан идээгийн зүйлийг тахидаг онцлогтой.",
+        "description": "Өндөр сантын тахилгат хайрхан нь Архангай аймгийн Хотонт, Өвөрхангай аймгийн Хархорин, Хужирт сумдын нутагт оршдог бөгөөд далайн түвшнөөс дээш 2312 метрийн өндөрт өргөгдсөн байдаг. Энэхүү уул нь Сайн ноён хан аймгийн Элдэн бэйлийн хошууны тахилгат уулсын нэг юм.\n\nӨндөр Сантыг цагаан уул гэж нэрлэдэг бөгөөд зөвхөн цагаан идээгийн зүйлийг тахидаг онцлогтой.",
         "descriptionEn": "A sacred mountain rising to 2312m above sea level, located at the junction of modern Arkhangai and Ovorkhangai provinces. Historically venerated by the Elden Beyl banner of Sain Noyon Khan province, it is uniquely characterized as a 'white mountain', receiving ritual offerings exclusively consisting of white dairy products.",
         "images": [
             "/images/sites/32.jpg",
