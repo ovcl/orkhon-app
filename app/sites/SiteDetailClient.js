@@ -160,7 +160,7 @@ export default function SiteDetailClient({ siteId }) {
 
                 {/* Offline save */}
                 <div className="mb-5">
-                    <OfflineSaveButton site={site} t={t} />
+                    <div className="kiosk-hide"><OfflineSaveButton site={site} t={t} /></div>
                 </div>
 
                 {/* Description */}

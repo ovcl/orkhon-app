@@ -60,3 +60,7 @@ image-backup-original/
 
 # Quest HTTPS dev cert
 /.cert/
+
+# kiosk runtime
+kiosk/logs/
+kiosk/STOP

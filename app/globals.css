@@ -438,3 +438,20 @@ a:focus-visible {
     width: 100% !important;
     height: 100% !important;
 }
+/* Киоск горим (?kiosk=1): текст сонгох, зураг чирэхийг хаах; киоскт хэрэггүй хэсгийг нуух */
+[data-kiosk] body {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+[data-kiosk] input,
+[data-kiosk] textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+[data-kiosk] img {
+    -webkit-user-drag: none;
+}
+[data-kiosk] .kiosk-hide {
+    display: none !important;
+}
