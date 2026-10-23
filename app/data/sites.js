@@ -757,7 +757,7 @@ export const sitesData = [
             },
             {
                 "name": "Цогт гэр эхийн сүмийн ил музей", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/pano-16-3.jpg", "hotspots": [
-                    { "yaw": 348, "pitch": -4, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                    { "yaw": 94, "pitch": 3.5, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
                 ]
             },
             {
