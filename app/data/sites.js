@@ -747,7 +747,7 @@ export const sitesData = [
                 "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
                     { "yaw": 48.5, "pitch": -1.2, "targetIndex": 0, "label": "Туурь руу буцах" },
                     { "yaw": 338.8, "pitch": -1.6, "targetIndex": 2, "label": "Хархорум хотын туурь руу" },
-                    { "yaw": 154, "pitch": -4, "targetIndex": 3, "label": "Туурийн малтлагын талбай руу" }
+                    { "yaw": 154, "pitch": -4, "targetIndex": 3, "label": "Сүмийн 2-р харагдац руу" }
                 ]
             },
             {
@@ -756,8 +756,8 @@ export const sitesData = [
                 ]
             },
             {
-                "name": "Хархорум хотын туурь — 3-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/pano-16-3.jpg", "hotspots": [
-                    { "yaw": 348, "pitch": -4, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                "name": "Цогт гэр эхийн сүм — 2-р харагдац", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/pano-16-3.jpg", "hotspots": [
+                    { "yaw": 348, "pitch": -4, "targetIndex": 1, "label": "Сүмийн 1-р харагдац руу" }
                 ]
             },
             {
