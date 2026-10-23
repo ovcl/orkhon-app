@@ -7,6 +7,7 @@
 param(
     [int]$Port = 3000,
     [ValidateSet('auto', 'edge', 'chrome')][string]$Browser = 'auto',
+    [double]$Scale = 0,          # 0 = auto from the screen size; e.g. 2.25 for a 1080x1920 portrait screen
     [switch]$NoWatchdog
 )
 
@@ -38,24 +39,44 @@ if (-not (Test-Path (Join-Path $Root "$distDir\BUILD_ID"))) {
 }
 
 # 2. Local server
-if (-not (Test-Server)) {
+function Start-Server {
+    if (Test-Server) { return $true }
     Log "Starting server on port $Port"
     $next = Join-Path $Root 'node_modules\next\dist\bin\next'
     Start-Process -FilePath 'node' -ArgumentList "`"$next`" start -p $Port" -WorkingDirectory $Root -WindowStyle Hidden `
         -RedirectStandardOutput (Join-Path $LogDir 'server.log') -RedirectStandardError (Join-Path $LogDir 'server.err.log') | Out-Null
     $deadline = (Get-Date).AddSeconds(90)
     while (-not (Test-Server)) {
-        if ((Get-Date) -gt $deadline) { Log 'Server did not start within 90 s - see logs\server.err.log'; exit 1 }
+        if ((Get-Date) -gt $deadline) { Log 'Server did not start within 90 s - see logs\server.err.log'; return $false }
         Start-Sleep -Seconds 1
     }
+    Log 'Server is up'
+    return $true
 }
-Log 'Server is up'
+if (-not (Start-Server)) { exit 1 }
 
 # 3. Browser
 $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
 $chrome = @("$env:ProgramFiles\Google\Chrome\Application\chrome.exe", "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe", "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
 $exe = switch ($Browser) { 'edge' { $edge } 'chrome' { $chrome } default { if ($edge) { $edge } else { $chrome } } }
 if (-not $exe) { Log 'Neither Edge nor Chrome was found'; exit 1 }
+
+# The app is a phone-width layout (max 480 CSS px). On a big kiosk screen it would look tiny,
+# so the whole page is scaled like a high-DPI display: portrait -> fill the width,
+# landscape -> about 900 CSS px tall.
+function Get-KioskScale {
+    try {
+        Add-Type -AssemblyName System.Windows.Forms
+        Add-Type -Namespace Win32 -Name Dpi -MemberDefinition '[DllImport("user32.dll")] public static extern bool SetProcessDPIAware();' -ErrorAction SilentlyContinue
+        [void][Win32.Dpi]::SetProcessDPIAware()   # physical pixels, not Windows-scaled ones
+        $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+        $s = if ($b.Height -ge $b.Width) { $b.Width / 480 } else { $b.Height / 900 }
+        Log ("Screen {0}x{1}" -f $b.Width, $b.Height)
+        [math]::Round([math]::Min([double]5,[math]::Max([double]1, [double]$s)), 2)   # [double]: int overload would truncate 1.2 -> 1
+    } catch { 1.0 }
+}
+if ($Scale -le 0) { $Scale = Get-KioskScale }
+Log "Page scale $Scale"
 
 $browserArgs = @(
     '--kiosk', $Url,
@@ -65,7 +86,8 @@ $browserArgs = @(
     '--overscroll-history-navigation=0',  # no swipe-back
     '--noerrdialogs', '--disable-session-crashed-bubble', '--disable-infobars',
     '--disable-features=Translate,TranslateUI',
-    '--autoplay-policy=no-user-gesture-required'
+    '--autoplay-policy=no-user-gesture-required',
+    "--force-device-scale-factor=$Scale"
 )
 if ($exe -eq $edge) { $browserArgs += '--edge-kiosk-type=fullscreen' }
 
@@ -76,16 +98,16 @@ function Test-Browser {
 }
 
 do {
-    if (-not (Test-Browser)) {
+    if (-not (Test-Path $StopFile) -and -not (Test-Browser)) {
         Log "Opening $(Split-Path $exe -Leaf) -> $Url"
         Start-Process -FilePath $exe -ArgumentList $browserArgs | Out-Null
         Start-Sleep -Seconds 8
     }
     if ($NoWatchdog) { break }
     Start-Sleep -Seconds 5
-    if (-not (Test-Server)) {
+    if (-not (Test-Path $StopFile) -and -not (Test-Server)) {
         Log 'Server stopped - restarting'
-        & $PSCommandPath -Port $Port -Browser $Browser -NoWatchdog
+        [void](Start-Server)   # on failure: logged, retried on the next round
     }
 } until (Test-Path $StopFile)
 Log 'Kiosk stopped'
