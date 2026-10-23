@@ -6,12 +6,36 @@ import { downloadedSiteIds, isOfflineSupported } from '../../lib/offline';
 
 // Service worker-ийн fallback хуудас: кэшлэгдээгүй хуудас руу офлайн орох үед харагдана.
 // Энгийн <a> ашигласан — офлайн үед client navigation (RSC fetch) бүтэлгүйтдэг тул бүтэн хуудсаар ачаална.
+// Сервер/интернэт эргэж ирмэгц хүссэн хуудсаа өөрөө дахин ачаална (киоскийн сервер дахин асахад дэлгэц гацахгүй).
+const RETRY_MS = 5000;
+
 export default function OfflinePage() {
     const [saved, setSaved] = useState([]);
 
     useEffect(() => {
         if (!isOfflineSupported()) return;
         downloadedSiteIds(sitesData).then((ids) => setSaved(sitesData.filter((s) => ids.includes(s.id))));
+    }, []);
+
+    useEffect(() => {
+        let stopped = false;
+        const check = async () => {
+            try {
+                // /api/health нь service worker-т NetworkOnly — кэшээс хариулахгүй
+                const res = await fetch(`/api/health?t=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok || stopped) return;
+                // /offline-ийг шууд нээсэн бол дахин ачаалах нь давталт болно — нүүр хуудас руу
+                if (window.location.pathname === '/offline') window.location.replace('/');
+                else window.location.reload();
+            } catch {}
+        };
+        const timer = setInterval(check, RETRY_MS);
+        window.addEventListener('online', check);
+        return () => {
+            stopped = true;
+            clearInterval(timer);
+            window.removeEventListener('online', check);
+        };
     }, []);
 
     return (

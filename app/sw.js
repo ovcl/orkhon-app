@@ -88,8 +88,11 @@ const runtimeCaching = [
 // (засахгүй бол precache 404 өгч service worker суулгагдахгүй)
 const manifest = (self.__SW_MANIFEST || []).map((e) => (typeof e === 'object' ? { ...e, url: e.url.replace(/\\/g, '/') } : e));
 
-// /offline fallback хуудас — build бүрт өөрчлөгддөг _buildManifest-ийн revision-ийг ашиглана
-const buildRevision = manifest.find((e) => typeof e === 'object' && e.url.endsWith('/_buildManifest.js'))?.revision || null;
+// /offline fallback хуудасны revision = build ID (_buildManifest.js-ийн зам /_next/static/<buildId>/...).
+// Файлын агуулгын hash build хооронд ихэвчлэн өөрчлөгддөггүй тул revision болгоход хуучин HTML
+// (устсан JS chunk-ийг заасан) precache-д үлдэж, офлайн үед "Application error" гардаг байв.
+const buildManifestUrl = manifest.find((e) => typeof e === 'object' && e.url.endsWith('/_buildManifest.js'))?.url;
+const buildRevision = buildManifestUrl?.split('/').slice(-2, -1)[0] || null;
 
 const serwist = new Serwist({
     precacheEntries: [...manifest, { url: '/offline', revision: buildRevision }],
@@ -109,3 +112,30 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+// Шинэ build идэвхжихэд кэшлэгдсэн HTML (офлайн хадгалсан хуудсууд ч) хуучин JS chunk-ийг заадаг —
+// тэр chunk-ууд cleanupOutdatedCaches-аар устсан тул офлайн үед "Application error" гарна.
+// Тиймээс хуудсуудыг шинэ build-ээр дахин татаж, татаж чадахгүйг устгана. RSC кэшийг бүрэн цэвэрлэнэ.
+const PAGES_CACHE = 'pages';
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        (async () => {
+            await Promise.all(['pages-rsc', 'pages-rsc-prefetch'].map((name) => caches.delete(name)));
+            const cache = await caches.open(PAGES_CACHE);
+            const requests = await cache.keys();
+            await Promise.all(
+                requests.map(async (req) => {
+                    try {
+                        const res = await fetch(req.url, { cache: 'no-store', credentials: 'same-origin' });
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        const headers = new Headers(res.headers);
+                        headers.delete('Vary'); // lib/offline.js-тэй адил — навигацийн хүсэлттэй таарна
+                        await cache.put(req.url, new Response(await res.blob(), { status: res.status, statusText: res.statusText, headers }));
+                    } catch {
+                        await cache.delete(req);
+                    }
+                })
+            );
+        })()
+    );
+});
