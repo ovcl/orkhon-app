@@ -39,6 +39,9 @@ export default function KioskMode() {
             const param = new URLSearchParams(window.location.search).get('kiosk');
             if (param === '1') localStorage.setItem('kiosk', '1');
             if (param === '0') localStorage.removeItem('kiosk');
+            // ?idle=секунд — build хийхгүйгээр идэвхгүй хугацааг өөрчилнө (10–3600)
+            const idle = Number(new URLSearchParams(window.location.search).get('idle'));
+            if (idle >= 10 && idle <= 3600) localStorage.setItem('kioskIdle', String(idle));
             setEnabled(localStorage.getItem('kiosk') === '1');
         } catch {}
     }, []);
@@ -83,6 +86,11 @@ export default function KioskMode() {
         if (!enabled) return;
         let timer;
         let used = pathname !== '/';
+        let idleMs = IDLE_MS;
+        try {
+            const s = Number(localStorage.getItem('kioskIdle'));
+            if (s >= 10) idleMs = s * 1000;
+        } catch {}
         const arm = () => {
             clearTimeout(timer);
             timer = setTimeout(() => {
@@ -92,7 +100,7 @@ export default function KioskMode() {
                     sessionStorage.clear();
                 } catch {}
                 window.location.replace('/');
-            }, IDLE_MS);
+            }, idleMs);
         };
         const onActivity = () => { used = true; arm(); };
         arm();
