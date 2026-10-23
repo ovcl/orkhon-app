@@ -739,18 +739,30 @@ export const sitesData = [
         "panoramaTour": [
             {
                 "name": "Хархорум хотын туурь", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16.JPG", "hotspots": [
-                    { "yaw": 194, "pitch": -4, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                    { "yaw": 194, "pitch": -4, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" },
+                    { "yaw": 143, "pitch": -4, "targetIndex": 4, "label": "Агаараас харах" }
                 ]
             },
             {
                 "name": "Цогт гэр эхийн сүм", "group": "Цогт гэр эхийн сүм", "url": "/images/panoramas/16-Цогт гэр эхийн сүм.JPG", "hotspots": [
                     { "yaw": 48.5, "pitch": -1.2, "targetIndex": 0, "label": "Туурь руу буцах" },
-                    { "yaw": 338.8, "pitch": -1.6, "targetIndex": 2, "label": "Хархорум хотын туурь руу" }
+                    { "yaw": 338.8, "pitch": -1.6, "targetIndex": 2, "label": "Хархорум хотын туурь руу" },
+                    { "yaw": 154, "pitch": -4, "targetIndex": 3, "label": "Туурийн малтлагын талбай руу" }
                 ]
             },
             {
                 "name": "Хархорум хотын туурь — 2-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/16-1 (1).JPG", "hotspots": [
                     { "yaw": 198.8, "pitch": -24.6, "targetIndex": 1, "label": "Буцах" }
+                ]
+            },
+            {
+                "name": "Хархорум хотын туурь — 3-р харагдац", "group": "Хархорум хотын туурь", "url": "/images/panoramas/pano-16-3.jpg", "hotspots": [
+                    { "yaw": 348, "pitch": -4, "targetIndex": 1, "label": "Цогт гэр эхийн сүм рүү" }
+                ]
+            },
+            {
+                "name": "Хархорум хотын туурь — агаараас", "group": "Хархорум хотын туурь", "url": "/images/panoramas/pano-16-4.jpg", "hotspots": [
+                    { "yaw": 103, "pitch": -13, "targetIndex": 0, "label": "Туурь руу буцах" }
                 ]
             }
         ],
@@ -1297,6 +1309,26 @@ export const sitesData = [
     },
     {
         "id": 28,
+        "panoramaTour": [
+            {
+                "name": "Хархорум хотын туурь дахь чулуун яст мэлхий — 1-р харагдац", "group": "Хархорум хотын туурь дахь чулуун яст мэлхий", "url": "/images/panoramas/pano-28-1.jpg", "hotspots": [
+                    { "yaw": 80.5, "pitch": -15.7, "targetIndex": 1, "label": "2-р харагдац" },
+                    { "yaw": 325, "pitch": -16.9, "targetIndex": 2, "label": "3-р харагдац" }
+                ]
+            },
+            {
+                "name": "Хархорум хотын туурь дахь чулуун яст мэлхий — 2-р харагдац", "group": "Хархорум хотын туурь дахь чулуун яст мэлхий", "url": "/images/panoramas/pano-28-2.jpg", "hotspots": [
+                    { "yaw": 339.7, "pitch": -26.2, "targetIndex": 0, "label": "1-р харагдац" },
+                    { "yaw": 10.6, "pitch": -16.8, "targetIndex": 2, "label": "3-р харагдац" }
+                ]
+            },
+            {
+                "name": "Хархорум хотын туурь дахь чулуун яст мэлхий — 3-р харагдац", "group": "Хархорум хотын туурь дахь чулуун яст мэлхий", "url": "/images/panoramas/pano-28-3.jpg", "hotspots": [
+                    { "yaw": 42, "pitch": -28, "targetIndex": 0, "label": "1-р харагдац" },
+                    { "yaw": 8.4, "pitch": -16.8, "targetIndex": 1, "label": "2-р харагдац" }
+                ]
+            }
+        ],
         "model3d": "/models/kharkhorum_hotiin_tuuri_dahi_melhi_Chuluu_1.glb",
         "name": "Эрдэнэзуу хийдийн хойд талд орших чулуун яст мэлхий",
         "nameEn": "Karakorum Museum Stone Turtle",
